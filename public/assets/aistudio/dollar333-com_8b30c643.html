@@ -1,0 +1,3112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="referrer" content="no-referrer">
+    <title>DOLLAR333</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
+    <style>
+        :root {
+            --bg-deep:    #071f18;
+            --bg-main:    #0a2e22;
+            --bg-card:    #0d3d2c;
+            --bg-card2:   #0f4530;
+            --teal:       #0d7a55;
+            --teal-light: #13a36e;
+            --gold:       #f0c030;
+            --gold-dark:  #c89a10;
+            --gold-text:  #ffd84d;
+            --green-btn:  #0a6644;
+            --text-main:  #e8f5ee;
+            --text-muted: #7eb89a;
+            --border:     rgba(255,255,255,0.08);
+            --glass:      rgba(13, 61, 44, 0.6);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: var(--bg-deep);
+            color: var(--text-main);
+            padding-bottom: 70px;
+            min-height: 100vh;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            background-image: linear-gradient(135deg, #071f18 0%, #0a2e22 50%, #071f18 100%);
+        }
+
+        /* ─── APP INSTALL BANNER ─── */
+        .app-banner-top {
+            width: 100%; background: linear-gradient(135deg, #0a2e22 0%, #0d3d2c 100%);
+            border-bottom: 1px solid rgba(240,192,48,0.25);
+            padding: 8px 10px; display: flex; align-items: center;
+            top: 50px;
+            justify-content: space-between; z-index: 200; position: fixed;
+        }
+        .app-banner-top-left { display: flex; align-items: center; gap: 9px; }
+        .app-banner-top-close {
+            width: 22px; height: 22px; border-radius: 50%;
+            background: rgba(255,255,255,0.1); display: flex;
+            align-items: center; justify-content: center;
+            cursor: pointer; color: var(--text-muted); font-size: 11px;
+            border: none; flex-shrink: 0;
+        }
+        .app-banner-top-logo {
+            width: 34px; height: 34px; border-radius: 8px; overflow: hidden;
+            background: var(--teal); display: flex; align-items: center;
+            justify-content: center; flex-shrink: 0;
+        }
+        .app-banner-top-logo img { width: 100%; height: 100%; object-fit: contain; }
+        .app-banner-top-name { font-size: 12px; font-weight: 800; color: var(--text-main); line-height: 1.2; }
+        .app-banner-top-stars { color: var(--gold-text); font-size: 10px; }
+        .app-banner-top-install {
+            padding: 7px 15px; border-radius: 8px; font-size: 12px; font-weight: 800;
+            text-transform: uppercase;
+            background: linear-gradient(180deg, #ffe066 0%, #f0c030 60%, #c89a10 100%);
+            color: #2a1500; border: none; cursor: pointer;
+            box-shadow: 0 4px 0 #8a6a00, 0 4px 8px rgba(0,0,0,0.3);
+            transition: all 0.15s; text-decoration: none; display: inline-block;
+            border-bottom: 2px solid #ffe57a;
+        }
+        .app-banner-top-install:active { transform: translateY(3px); box-shadow: 0 1px 0 #8a6a00; }
+
+        /* ─── HEADER ─── */
+        .site-header {
+            position: fixed; top: 0;left: 0;right: 0; z-index: 100; height: 56px;
+            background: rgba(7,31,24,1); backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: space-between; padding: 0 12px;
+        }
+        .logo-text {
+            font-size: 22px; font-weight: 900; font-style: italic; color: var(--gold-text);
+            letter-spacing: 1px; text-shadow: 0 0 20px rgba(240,192,48,0.4);
+        }
+        .logo-text span { color: #fff; }
+        .site-header-logo-img { height: 38px; max-width: 150px; object-fit: contain; display:block; }
+        .header-right { display: flex; align-items: center; gap: 8px; }
+
+        .btn-login {
+            padding: 7px 16px; border-radius: 6px; font-size: 13px; font-weight: 700;
+            cursor: pointer; border: none; text-decoration: none;
+            display: inline-flex; align-items: center; justify-content: center; transition: all 0.15s;
+            background: linear-gradient(180deg, #1a9966 0%, #0d7a55 60%, #0a5c3e 100%);
+            color: #fff; box-shadow: 0 4px 0 #064028, 0 4px 8px rgba(0,0,0,0.4);
+            border-bottom: 2px solid #1dcc85;
+        }
+        .btn-login:active { transform: translateY(3px); box-shadow: 0 1px 0 #064028, 0 1px 4px rgba(0,0,0,0.4); }
+
+        .btn-register {
+            padding: 7px 16px; border-radius: 6px; font-size: 13px; font-weight: 700;
+            cursor: pointer; border: none; text-decoration: none;
+            display: inline-flex; align-items: center; justify-content: center; transition: all 0.15s;
+            background: linear-gradient(180deg, #ffe066 0%, #f0c030 60%, #c89a10 100%);
+            color: #3a2500; box-shadow: 0 4px 0 #8a6a00, 0 4px 8px rgba(0,0,0,0.4);
+            border-bottom: 2px solid #ffe57a;
+        }
+        .btn-register:active { transform: translateY(3px); box-shadow: 0 1px 0 #8a6a00, 0 1px 4px rgba(0,0,0,0.4); }
+
+        /* ─── HAMBURGER ─── */
+        .hamburger-btn {
+            background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 8px; cursor: pointer; padding: 7px 8px;
+            display: flex; align-items: center; justify-content: center;
+            width: 36px; height: 36px; position: relative; transition: background 0.2s;
+        }
+        .hamburger-btn:active { background: rgba(255,255,255,0.15); }
+        .hamburger-icon { display: flex; flex-direction: column; gap: 4px; position: relative; width: 18px; }
+        .hamburger-icon .hb-arrow { display: flex; align-items: center; gap: 2px; }
+        .hamburger-icon .hb-arrow-left {
+            width: 0; height: 0; border-top: 4px solid transparent;
+            border-bottom: 4px solid transparent; border-right: 5px solid #fff; flex-shrink: 0;
+        }
+        .hamburger-icon .hb-line { height: 2px; background: #fff; border-radius: 2px; display: block; }
+        .hamburger-icon .hb-line.l1 { width: 100%; }
+        .hamburger-icon .hb-line.l2 { width: 100%; }
+        .hamburger-icon .hb-line.l3 { width: 65%; }
+
+        /* ─── ANNOUNCEMENT BAR ─── */
+        .announce-bar {
+            background: rgba(255,255,255,0.04); border-bottom: 1px solid var(--border);
+            padding: 7px 14px; display: flex; align-items: center; gap: 8px;
+        }
+        .announce-bar .ann-icon { font-size: 14px; color: var(--gold-text); flex-shrink: 0; }
+        .announce-bar marquee { font-size: 12px; color: var(--text-muted); font-weight: 500; }
+
+        /* ─── SLIDER ─── */
+        .slider-wrap { padding: 10px 10px 4px; }
+        .swiper.mainSlider { border-radius: 12px; overflow: hidden; }
+        .mainSlider img { width: 100%; height: 170px; object-fit: cover; display: block; border-radius: 12px; }
+        .swiper-pagination-bullet {
+            background: rgba(255,255,255,0.3) !important; opacity: 1 !important;
+            width: 6px !important; height: 6px !important; transition: all 0.3s;
+        }
+        .swiper-pagination-bullet-active {
+            background: var(--gold-text) !important; width: 18px !important; border-radius: 3px !important;
+        }
+
+        /* ─── DEPOSIT & WITHDRAW ─── */
+        .quick-actions { display: flex; gap: 10px; padding: 10px 10px 4px; }
+        .qa-btn {
+            flex: 1; display: flex; align-items: center; justify-content: center;
+            gap: 8px; padding: 12px 10px; border-radius: 10px;
+            font-size: 14px; font-weight: 800; text-decoration: none;
+            transition: all 0.15s; cursor: pointer; border: none;
+        }
+        .qa-btn i { font-size: 16px; }
+        .qa-btn.deposit {
+            background: linear-gradient(180deg, #1a9966 0%, #0d7a55 60%, #0a5c3e 100%);
+            color: #fff; box-shadow: 0 4px 0 #064028, 0 4px 12px rgba(13,122,85,0.4);
+            border-bottom: 2px solid #1dcc85;
+        }
+        .qa-btn.deposit:active { transform: translateY(3px); box-shadow: 0 1px 0 #064028; }
+        .qa-btn.withdraw {
+            background: linear-gradient(180deg, #ffe066 0%, #f0c030 60%, #c89a10 100%);
+            color: #2a1500; box-shadow: 0 4px 0 #8a6a00, 0 4px 12px rgba(240,192,48,0.3);
+            border-bottom: 2px solid #ffe57a;
+        }
+        .qa-btn.withdraw:active { transform: translateY(3px); box-shadow: 0 1px 0 #8a6a00; }
+
+        /* ─── SECTION HEADER ─── */
+        .hot-section { margin-bottom: 6px; }
+        .sec-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 12px 8px; }
+        .sec-title {
+            display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 800;
+            color: var(--gold-text); text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .sec-title i { font-size: 18px; color: var(--gold-text); }
+        .sec-actions { display: flex; align-items: center; gap: 6px; }
+
+        .btn-see-all {
+            padding: 6px 13px; border-radius: 7px; font-size: 12px; font-weight: 800;
+            color: var(--gold-text);
+            background: linear-gradient(180deg, rgba(255,220,70,0.18) 0%, rgba(240,192,48,0.10) 100%);
+            border: 1px solid rgba(240,192,48,0.4); border-bottom: 2px solid rgba(255,220,80,0.6);
+            text-decoration: none; transition: all 0.15s; box-shadow: 0 3px 0 rgba(0,0,0,0.3);
+            display: inline-flex; align-items: center;
+        }
+        .btn-see-all:active { transform: translateY(2px); box-shadow: 0 1px 0 rgba(0,0,0,0.3); }
+
+        .btn-nav-arrow {
+            width: 30px; height: 30px; border-radius: 7px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.05) 100%);
+            border: 1px solid rgba(255,255,255,0.15); border-bottom: 2px solid rgba(255,255,255,0.25);
+            color: var(--text-muted); display: flex; align-items: center; justify-content: center;
+            font-size: 12px; cursor: pointer; box-shadow: 0 3px 0 rgba(0,0,0,0.3);
+            transition: all 0.15s; text-decoration: none;
+        }
+        .btn-nav-arrow:active { transform: translateY(2px); box-shadow: 0 1px 0 rgba(0,0,0,0.3); color: var(--gold-text); }
+
+        /* ─── GAME GRID ─── */
+        .games-section { padding: 0 10px; margin-bottom: 6px; }
+        .game-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+        @media (min-width: 600px) { .game-grid { grid-template-columns: repeat(4, 1fr); } }
+        @media (min-width: 900px) {
+            .game-grid { grid-template-columns: repeat(6, 1fr); }
+            .mainSlider img { height: 240px; }
+        }
+
+        .game-card {
+            position: relative; border-radius: 10px; overflow: hidden; background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.07); border-bottom: 2px solid rgba(255,255,255,0.12);
+            transition: all 0.2s; text-decoration: none; display: block; box-shadow: 0 4px 0 rgba(0,0,0,0.4);
+        }
+        .game-card:active { transform: scale(0.94) translateY(3px); border-color: var(--teal-light); box-shadow: 0 1px 0 rgba(0,0,0,0.4); }
+        .game-card-img { width: 100%; aspect-ratio: 1; object-fit: cover; display: block; }
+.game-card::before {
+    content: "";
+    position: absolute;
+    z-index: 2;
+    top: 0;
+    left: -120%;
+    width: 65%;
+    height: 100%;
+
+    background: linear-gradient(
+        110deg,
+        transparent 5%,
+        rgba(255,255,255,0.08) 25%,
+        rgba(255,255,255,0.65) 50%,
+        rgba(255,255,255,0.08) 75%,
+        transparent 95%
+    );
+
+    transform: skewX(-25deg);
+    pointer-events: none;
+    animation: gameLight 5s ease-in-out infinite;
+}
+
+@keyframes gameLight {
+    0%, 45% {
+        left: -120%;
+    }
+    100% {
+        left: 160%;
+    }
+}
+        .game-card-fav {
+            position: absolute; top: 5px; right: 5px; width: 26px; height: 26px;
+            border-radius: 50%; background: rgba(0,0,0,0.45); backdrop-filter: blur(4px);
+            display: flex; align-items: center; justify-content: center;
+            color: rgba(255,255,255,0.6); font-size: 13px; cursor: pointer;
+            z-index: 5; transition: color 0.2s, background 0.2s; border: none; flex-shrink: 0;
+        }
+        .game-card-fav.active { color: var(--gold-text); background: rgba(240,192,48,0.18); }
+
+        .game-card-name {
+            font-size: 10px; font-weight: 700; color: var(--text-main); padding: 5px 6px;
+            text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .game-card-provider {
+            font-size: 9px; color: var(--text-muted); text-align: center;
+            padding: 0 6px 5px; font-weight: 600; text-transform: uppercase;
+        }
+
+        /* ─── JACKPOT ─── */
+        .jackpot-section {
+            margin: 8px 10px; border-radius: 14px;
+            background: linear-gradient(135deg, #0a2e22 0%, #0d3d2c 50%, #071f18 100%);
+            border: 1px solid rgba(240,192,48,0.25); padding: 18px 16px 16px;
+            text-align: center; position: relative; overflow: hidden;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.06);
+        }
+        .jackpot-section::before {
+            content: ''; position: absolute; top: -30px; left: -30px; width: 120px; height: 120px;
+            background: radial-gradient(circle, rgba(240,192,48,0.12) 0%, transparent 70%); border-radius: 50%;
+        }
+        .jackpot-section::after {
+            content: ''; position: absolute; bottom: -30px; right: -30px; width: 120px; height: 120px;
+            background: radial-gradient(circle, rgba(13,122,85,0.15) 0%, transparent 70%); border-radius: 50%;
+        }
+        .jackpot-label { font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; color: var(--text-muted); margin-bottom: 6px; }
+        .jackpot-img-row {
+            display: flex; align-items: center; justify-content: center;
+            gap: 10px; margin-bottom: 10px; position: relative; z-index: 1;
+        }
+        .jackpot-plane-img {
+            width: 64px; height: 64px; object-fit: contain;
+            animation: planeFly 3s ease-in-out infinite;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5));
+        }
+        @keyframes planeFly {
+            0%   { transform: translateY(0px) rotate(-3deg); }
+            50%  { transform: translateY(-8px) rotate(3deg); }
+            100% { transform: translateY(0px) rotate(-3deg); }
+        }
+        .jackpot-logo-img { height: 48px; object-fit: contain; filter: drop-shadow(0 0 16px rgba(240,192,48,0.5)); }
+        .jackpot-number-wrap { display: flex; align-items: center; justify-content: center; gap: 2px; flex-wrap: nowrap; }
+        .jp-digit {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 34px; height: 46px;
+            background: linear-gradient(180deg, #1a1a0e 0%, #0d0d06 100%);
+            border: 1px solid rgba(240,192,48,0.3); border-radius: 6px;
+            font-size: 26px; font-weight: 900; color: var(--gold-text);
+            text-shadow: 0 0 12px rgba(240,192,48,0.6);
+            box-shadow: 0 3px 0 rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05);
+            font-family: 'Courier New', monospace; transition: all 0.15s;
+        }
+        .jp-digit.changing { animation: digitFlip 0.15s ease; }
+        .jp-sep { font-size: 24px; font-weight: 900; color: var(--gold-text); margin: 0 1px; line-height: 1; padding-bottom: 4px; }
+        @keyframes digitFlip {
+            0%   { transform: scaleY(1); }
+            50%  { transform: scaleY(0.1); }
+            100% { transform: scaleY(1); }
+        }
+
+        /* ─── CATEGORY NAV ─── */
+        .cat-nav-wrap {
+            padding: 12px 10px 0; overflow-x: auto; white-space: nowrap;
+            scrollbar-width: none; -ms-overflow-style: none;
+        }
+        .cat-nav-wrap::-webkit-scrollbar { display: none; }
+        .cat-nav-inner { display: inline-flex; gap: 8px; padding-bottom: 10px; }
+        .cat-pill {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 7px 14px; border-radius: 20px; font-size: 12px; font-weight: 700;
+            text-decoration: none; color: var(--text-muted);
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.07);
+            transition: all 0.2s; white-space: nowrap; cursor: pointer;
+        }
+        .cat-pill i { font-size: 13px; }
+        .cat-pill.active, .cat-pill:active {
+            background: var(--teal); border-color: var(--teal-light); color: #fff;
+            box-shadow: 0 2px 10px rgba(13,122,85,0.4);
+        }
+
+        /* Category section */
+        .cat-section {
+            margin-bottom: 6px; background: rgba(13,61,44,0.3);
+            border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding-bottom: 8px;
+        }
+
+        /* ─── PARTNER ─── */
+        .partner-section { padding: 16px 12px; display: flex; gap: 12px; }
+        .partner-btn {
+            flex: 1; padding: 14px 10px; border-radius: 10px; text-align: center;
+            font-size: 14px; font-weight: 800; cursor: pointer; border: none;
+            transition: all 0.15s; text-decoration: none; display: block;
+        }
+        .partner-btn.partner {
+            background: linear-gradient(135deg, #1a3a2e 0%, #0d2a1e 100%);
+            border: 1px solid rgba(255,255,255,0.12); border-bottom: 2px solid rgba(255,255,255,0.2);
+            color: var(--gold-text); box-shadow: 0 4px 0 #040f09, inset 0 1px 0 rgba(255,255,255,0.08);
+        }
+        .partner-btn.live-chat {
+            background: linear-gradient(135deg, #1a4a35 0%, #0d3524 100%);
+            border: 1px solid rgba(255,255,255,0.12); border-bottom: 2px solid rgba(255,255,255,0.2);
+            color: var(--gold-text); box-shadow: 0 4px 0 #040f09, inset 0 1px 0 rgba(255,255,255,0.08);
+        }
+        .partner-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 #040f09; }
+        .partner-btn .chat-icon { font-size: 20px; margin-right: 6px; }
+
+        /* ─── GAME CENTER ─── */
+        .game-center { padding: 8px 12px 16px; }
+        .game-center-title { font-size: 18px; font-weight: 800; color: var(--gold-text); margin-bottom: 12px; }
+        .game-center-pills { display: flex; flex-wrap: wrap; gap: 8px; }
+        .gc-pill {
+            padding: 8px 18px; border-radius: 8px; font-size: 13px; font-weight: 700;
+            color: var(--teal-light); border: 1px solid rgba(13,122,85,0.4);
+            border-bottom: 2px solid rgba(30,200,130,0.5);
+            background: linear-gradient(180deg, rgba(13,122,85,0.12) 0%, rgba(13,122,85,0.06) 100%);
+            text-decoration: none; transition: all 0.15s; box-shadow: 0 3px 0 rgba(0,0,0,0.3);
+        }
+        .gc-pill:active { transform: translateY(2px); box-shadow: 0 1px 0 rgba(0,0,0,0.3); }
+
+        /* ─── PROVIDER LOGOS ─── */
+        .providers-section { padding: 12px; border-top: 1px solid var(--border); }
+        .providers-grid { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+        .provider-logo { font-size: 11px; font-weight: 800; color: var(--text-muted); letter-spacing: 0.5px; opacity: 0.7; }
+
+        /* ─── GUEST BOTTOM NAV ─── */
+        .guest-nav {
+            position: fixed; bottom: 0; left: 0; width: 100%; height: 60px;
+            display: flex; z-index: 100; background: rgba(7,20,14,0.97); border-top: 1px solid var(--border);
+        }
+        .guest-lang {
+            width: 30%; display: flex; align-items: center; justify-content: center;
+            gap: 6px; font-size: 12px; font-weight: 700; color: var(--text-main);
+            border-right: 1px solid var(--border); cursor: pointer;
+        }
+        .guest-flag { width: 20px; height: 20px; border-radius: 50%; overflow: hidden; }
+        .guest-flag img { width: 100%; height: 100%; object-fit: cover; }
+        .guest-login-btn {
+            width: 35%; display: flex; align-items: center; justify-content: center;
+            font-size: 14px; font-weight: 800; cursor: pointer;
+            background: linear-gradient(180deg, #1a9966 0%, #0d7a55 60%, #0a5c3e 100%);
+            color: #fff; border-right: 1px solid var(--border); border-top: 2px solid #1dcc85;
+            transition: 0.15s; box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
+        }
+        .guest-login-btn:active { filter: brightness(0.85); }
+        .guest-signup-btn {
+            width: 35%; display: flex; align-items: center; justify-content: center;
+            font-size: 14px; font-weight: 800; cursor: pointer;
+            background: linear-gradient(180deg, #ffe066 0%, #f0c030 60%, #c89a10 100%);
+            color: #2a1500; border-top: 2px solid #ffe57a; transition: 0.15s;
+        }
+        .guest-signup-btn:active { filter: brightness(0.9); }
+
+        /* ─── DESKTOP SIDEBAR ─── */
+        @media (min-width: 900px) {
+            .main-layout { display: flex; max-width: 1200px; margin: 0 auto; }
+            .desktop-sidebar {
+                width: 120px; flex-shrink: 0; position: sticky; top: 56px;
+                height: calc(100vh - 56px); overflow-y: auto; padding: 12px 6px;
+                border-right: 1px solid var(--border); scrollbar-width: none;
+            }
+            .desktop-sidebar::-webkit-scrollbar { display: none; }
+            .main-content { flex: 1; min-width: 0; }
+            .guest-nav { display: none; }
+            .site-header { max-width: 1200px; width: 100%; left: 50%; transform: translateX(-50%); }
+        }
+        .sidebar-item {
+            display: flex; flex-direction: column; align-items: center; gap: 5px;
+            padding: 10px 6px; border-radius: 10px; margin-bottom: 4px; cursor: pointer;
+            text-decoration: none; color: var(--text-muted); font-size: 10px;
+            font-weight: 700; text-align: center; transition: all 0.2s;
+        }
+        .sidebar-item i { font-size: 20px; }
+        .sidebar-item:hover, .sidebar-item.active {
+            background: rgba(13,122,85,0.15); color: var(--gold-text); border: 1px solid rgba(13,122,85,0.3);
+        }
+    </style>
+<link rel="manifest" href="/manifest.php?v=7">
+<meta name="theme-color" content="#003333">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="DOLLAR333">
+<meta name="application-name" content="DOLLAR333 App Install">
+<meta name="msapplication-TileColor" content="#003333">
+<meta name="msapplication-TileImage" content="/assets/icons/pwa_app_192_1792692224_6d54e4.png?v=7">
+<link rel="icon" type="image/png" sizes="192x192" href="/assets/icons/pwa_app_192_1792692224_6d54e4.png?v=7">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/pwa_app_192_1792692224_6d54e4.png?v=7">
+<link rel="stylesheet" href="/assets/css/mobile-scroll-fix.css?v=2">
+<script src="/pwa-install.js?v=6" defer></script>
+</head>
+<body>
+
+<!-- APP INSTALL BANNER -->
+<div id="dlBannerTop" class="app-banner-top">
+    <div class="app-banner-top-left">
+        <button class="app-banner-top-close" onclick="document.getElementById('dlBannerTop').style.display='none'">
+            <i class="fas fa-times"></i>
+        </button>
+        <div class="app-banner-top-logo">
+            <img src="/assets/icons/pwa_app_192_1792692224_6d54e4.png?v=7" alt="DOLLAR333 App Install" onerror="this.src='https://placehold.co/34x34/0d7a55/fff?text=App'">
+        </div>
+        <div class="app-banner-top-info">
+            <div class="app-banner-top-name">DOLLAR333 App Install</div>
+            <div class="app-banner-top-stars">★★★★½</div>
+        </div>
+    </div>
+    <a href="/download.php" class="app-banner-top-install js-pwa-install">Download</a>
+</div>
+
+<!-- HEADER -->
+<header class="site-header">
+    <button class="hamburger-btn" onclick="toggleSidebar()">
+        <div class="hamburger-icon">
+            <div class="hb-arrow">
+                <span class="hb-arrow-left"></span>
+                <span class="hb-line l1"></span>
+            </div>
+            <span class="hb-line l2"></span>
+            <span class="hb-line l3"></span>
+        </div>
+    </button>
+    <div class="logo-text">
+                    DOLLAR333            </div>
+    <div class="header-right">
+        <a href="/player/login.php" class="btn-login">Log In</a>
+        <a href="/player/signup.php" class="btn-register">Register</a>
+    </div>
+</header>
+
+<!-- ANNOUNCEMENT -->
+<div class="announce-bar">
+    <i class="fas fa-bullhorn ann-icon"></i>
+    <marquee scrollamount="4">
+        Welcome to DOLLAR333 Bkash, nagad,rocket 10% Bonus    </marquee>
+</div>
+
+<div class="main-layout">
+
+    <!-- DESKTOP SIDEBAR -->
+    <aside class="desktop-sidebar" id="desktop-sidebar" style="display:none">
+                <a href="/player/login.php" class="sidebar-item active">
+            <i class="fas fa-fire"></i>
+            <span>গরম খেলা</span>
+        </a>
+                <a href="/player/login.php" class="sidebar-item ">
+            <i class="fas fa-heart"></i>
+            <span>প্রিয়</span>
+        </a>
+                <a href="/player/login.php" class="sidebar-item ">
+            <i class="fas fa-dice"></i>
+            <span>স্লট</span>
+        </a>
+                <a href="/player/login.php" class="sidebar-item ">
+            <i class="fas fa-video"></i>
+            <span>লাইভ</span>
+        </a>
+                <a href="/player/login.php" class="sidebar-item ">
+            <i class="fas fa-futbol"></i>
+            <span>স্পোর্টস</span>
+        </a>
+                <a href="/player/login.php" class="sidebar-item ">
+            <i class="fas fa-gamepad"></i>
+            <span>ই-স্পোর্টস</span>
+        </a>
+                <a href="/player/login.php" class="sidebar-item ">
+            <i class="fas fa-cards"></i>
+            <span>পোকার</span>
+        </a>
+                <a href="/player/login.php" class="sidebar-item ">
+            <i class="fas fa-fish"></i>
+            <span>ফিশিং</span>
+        </a>
+                <a href="/player/login.php" class="sidebar-item ">
+            <i class="fas fa-ticket"></i>
+            <span>লটারি</span>
+        </a>
+            </aside>
+
+    <div class="main-content">
+
+        <!-- SLIDER -->
+        <div class="slider-wrap">
+            <div class="swiper mainSlider" style="border-radius:12px;overflow:hidden">
+                <div class="swiper-wrapper">
+                                            <div class="swiper-slide">
+                            <img src="assets/img/banners/banner_1771206698.jpg" loading="lazy" decoding="async" style="width:100%;height:170px;object-fit:cover;display:block;border-radius:12px">
+                        </div>
+                                            <div class="swiper-slide">
+                            <img src="assets/img/banners/banner_1771206705.jpg" loading="lazy" decoding="async" style="width:100%;height:170px;object-fit:cover;display:block;border-radius:12px">
+                        </div>
+                                            <div class="swiper-slide">
+                            <img src="assets/img/banners/banner_1775507033.jpg" loading="lazy" decoding="async" style="width:100%;height:170px;object-fit:cover;display:block;border-radius:12px">
+                        </div>
+                                    </div>
+                <div class="swiper-pagination" style="bottom:10px"></div>
+            </div>
+        </div>
+
+        <!-- DEPOSIT & WITHDRAW → login -->
+        <div class="quick-actions">
+            <a href="/player/login.php?redirect=/player/deposit.php" class="qa-btn deposit">
+                <i class="fas fa-plus-circle"></i> Deposit
+            </a>
+            <a href="/player/login.php?redirect=/player/withdraw.php" class="qa-btn withdraw">
+                <i class="fas fa-arrow-up-from-bracket"></i> Withdraw
+            </a>
+        </div>
+        
+        <!-- CATEGORY PILLS -->
+        <nav class="cat-nav-wrap">
+            <div class="cat-nav-inner">
+                <a href="#" class="cat-pill active" onclick="activatePill(this)">
+                    <i class="fas fa-fire"></i> HOT GAMES
+                </a>
+                <a href="/player/login.php" class="cat-pill">
+                    <i class="fas fa-heart"></i> FAVORITES
+                </a>
+                                <a href="#cat-1" class="cat-pill" onclick="activatePill(this)">
+                    <i class="fas fa-gamepad"></i> POPULAR                </a>
+                                <a href="#cat-2" class="cat-pill" onclick="activatePill(this)">
+                    <i class="fas fa-video"></i> LIVE CASINO                </a>
+                                <a href="#cat-3" class="cat-pill" onclick="activatePill(this)">
+                    <i class="fas fa-futbol"></i> SPORTS                </a>
+                                <a href="#cat-8" class="cat-pill" onclick="activatePill(this)">
+                    <i class="fas fa-dice"></i> SLOTS                </a>
+                                <a href="#cat-4" class="cat-pill" onclick="activatePill(this)">
+                    <i class="fas fa-spade"></i> POKER                </a>
+                                <a href="#cat-5" class="cat-pill" onclick="activatePill(this)">
+                    <i class="fas fa-fish"></i> FISHING                </a>
+                                <a href="#cat-6" class="cat-pill" onclick="activatePill(this)">
+                    <i class="fas fa-gamepad"></i> DICE GAME                </a>
+                                <a href="#cat-7" class="cat-pill" onclick="activatePill(this)">
+                    <i class="fas fa-ticket"></i> LOTTERY                </a>
+                                <a href="#cat-9" class="cat-pill" onclick="activatePill(this)">
+                    <i class="fas fa-rocket"></i> CRASH                </a>
+                                <a href="#cat-10" class="cat-pill" onclick="activatePill(this)">
+                    <i class="fas fa-gamepad"></i> EXTRA GAMES                </a>
+                                <a href="#cat-11" class="cat-pill" onclick="activatePill(this)">
+                    <i class="fas fa-gamepad"></i> CARD GAMES                </a>
+                                <a href="#cat-12" class="cat-pill" onclick="activatePill(this)">
+                    <i class="fas fa-gamepad"></i> TABLE GAMES                </a>
+                            </div>
+        </nav>
+
+        <!-- HOT GAMES → all links go to login -->
+                <section class="hot-section">
+            <div class="sec-header">
+                <div class="sec-title"><i class="fas fa-fire"></i> HOT GAMES</div>
+                <div class="sec-actions">
+                    <a href="/player/login.php" class="btn-see-all">See All</a>
+                    <a href="/player/login.php" class="btn-nav-arrow"><i class="fas fa-chevron-left"></i></a>
+                    <a href="/player/login.php" class="btn-nav-arrow"><i class="fas fa-chevron-right"></i></a>
+                </div>
+            </div>
+            <div class="games-section">
+                <div class="game-grid">
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flogin.php" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/737/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Aviator">
+                        <button class="game-card-fav" data-game-uid="737" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Aviator</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flogin.php" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/6260/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="BtiGaming">
+                        <button class="game-card-fav" data-game-uid="6260" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">BtiGaming</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flogin.php" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://cdn.gambllyapi.com/assets/providers/JL/super-ace.png"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Super Ace">
+                        <button class="game-card-fav" data-game-uid="879" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Super Ace</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flogin.php" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://cdn.gambllyapi.com/assets/providers/JL/fortune-gems.png"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Fortune Gems">
+                        <button class="game-card-fav" data-game-uid="792" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Fortune Gems</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flogin.php" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="/uploads/game_icons/evolution-live/crazy-time-a.webp"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Crazy Time A">
+                        <button class="game-card-fav" data-game-uid="6302" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Crazy Time A</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flogin.php" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://cdn.gambllyapi.com/assets/providers/JL/agent-ace.png"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Agent Ace">
+                        <button class="game-card-fav" data-game-uid="634" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Agent Ace</div>
+                                            </a>
+                                    </div>
+            </div>
+        </section>
+        
+        <!-- JACKPOT SECTION -->
+        <div class="jackpot-section">
+            
+            <div class="jackpot-img-row">
+                <img src="/player/assets/img/aroplane.png" class="jackpot-plane-img"
+                     onerror="this.style.display='none'" alt="Airplane">
+                <img src="/player/assets/img/jackpot.png" class="jackpot-logo-img"
+                     onerror="this.outerHTML='<span style=\'font-size:28px;font-weight:900;font-style:italic;color:var(--gold-text);text-shadow:0 0 30px rgba(240,192,48,0.5);letter-spacing:1px\'>Jackpot</span>'"
+                     alt="Jackpot">
+            </div>
+            <div class="jackpot-number-wrap" id="jackpotDisplay"></div>
+        </div>
+
+        
+
+        <!-- GAME SECTIONS (category) → all links go to login -->
+                <section id="cat-1" class="cat-section">
+            <div class="sec-header">
+                <div class="sec-title">
+                    <i class="fas fa-fire"></i>
+                    POPULAR                </div>
+                <div class="sec-actions">
+                    <a href="/player/login.php" class="btn-see-all">See All</a>
+                    <a href="/player/login.php" class="btn-nav-arrow"><i class="fas fa-chevron-left"></i></a>
+                    <a href="/player/login.php" class="btn-nav-arrow"><i class="fas fa-chevron-right"></i></a>
+                </div>
+            </div>
+            <div class="games-section">
+                <div class="game-grid">
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D879" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://cdn.gambllyapi.com/assets/providers/JL/super-ace.png"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Super Ace">
+                        <button class="game-card-fav" data-game-uid="879" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Super Ace</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D792" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://cdn.gambllyapi.com/assets/providers/JL/fortune-gems.png"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Fortune Gems">
+                        <button class="game-card-fav" data-game-uid="792" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Fortune Gems</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D737" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/737/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Aviator">
+                        <button class="game-card-fav" data-game-uid="737" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Aviator</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D581" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://cdn.gambllyapi.com/assets/providers/JL/super-ace-deluxe.png"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Super Ace Deluxe">
+                        <button class="game-card-fav" data-game-uid="581" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Super Ace Deluxe</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D4602" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/4602/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Revenge of Loki Megaways">
+                        <button class="game-card-fav" data-game-uid="4602" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Revenge of Loki Megaways</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D6299" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="/uploads/game_icons/evolution-live/monopoly-big-baller.webp"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Monopoly Big Baller">
+                        <button class="game-card-fav" data-game-uid="6299" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Monopoly Big Baller</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D1074" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://cdn.gambllyapi.com/assets/providers/JL/mega-ace.png"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Mega Ace">
+                        <button class="game-card-fav" data-game-uid="1074" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Mega Ace</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D75" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://cdn.gambllyapi.com/assets/providers/JL/jilijilijili-caishen.png"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="JILI CAISHEN">
+                        <button class="game-card-fav" data-game-uid="75" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">JILI CAISHEN</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D4800" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/4800/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Extra Juicy Megaways">
+                        <button class="game-card-fav" data-game-uid="4800" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Extra Juicy Megaways</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D925" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://cdn.gambllyapi.com/assets/providers/JL/fish-mega-fishing.png"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Mega Fishing">
+                        <button class="game-card-fav" data-game-uid="925" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Mega Fishing</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D767" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/767/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Super Ace">
+                        <button class="game-card-fav" data-game-uid="767" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Super Ace</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D4868" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/4868/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Christmas Carol Megaways">
+                        <button class="game-card-fav" data-game-uid="4868" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Christmas Carol Megaways</div>
+                                            </a>
+                                    </div>
+            </div>
+        </section>
+                <section id="cat-2" class="cat-section">
+            <div class="sec-header">
+                <div class="sec-title">
+                    <i class="fas fa-fire"></i>
+                    LIVE CASINO                </div>
+                <div class="sec-actions">
+                    <a href="/player/login.php" class="btn-see-all">See All</a>
+                    <a href="/player/login.php" class="btn-nav-arrow"><i class="fas fa-chevron-left"></i></a>
+                    <a href="/player/login.php" class="btn-nav-arrow"><i class="fas fa-chevron-right"></i></a>
+                </div>
+            </div>
+            <div class="games-section">
+                <div class="game-grid">
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D6302" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="/uploads/game_icons/evolution-live/crazy-time-a.webp"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Crazy Time A">
+                        <button class="game-card-fav" data-game-uid="6302" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Crazy Time A</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D5764" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/5764/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Mega Roulette">
+                        <button class="game-card-fav" data-game-uid="5764" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Mega Roulette</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D6301" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="/uploads/game_icons/evolution-live/monopoly-live.webp"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Monopoly Live">
+                        <button class="game-card-fav" data-game-uid="6301" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Monopoly Live</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D5746" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/5746/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Korean Speed Baccarat 3">
+                        <button class="game-card-fav" data-game-uid="5746" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Korean Speed Baccarat 3</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D6300" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="/uploads/game_icons/evolution-live/mega-ball.webp"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Mega Ball">
+                        <button class="game-card-fav" data-game-uid="6300" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Mega Ball</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D6330" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="/uploads/game_icons/evolution-live/lightning-roulette.webp"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Lightning Roulette">
+                        <button class="game-card-fav" data-game-uid="6330" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Lightning Roulette</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D6291" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="/uploads/game_icons/evolution-live/dream-catcher.webp"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Dream Catcher">
+                        <button class="game-card-fav" data-game-uid="6291" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Dream Catcher</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D6299" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="/uploads/game_icons/evolution-live/monopoly-big-baller.webp"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Monopoly Big Baller">
+                        <button class="game-card-fav" data-game-uid="6299" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Monopoly Big Baller</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D5685" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/5685/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Italian Mega Roulette">
+                        <button class="game-card-fav" data-game-uid="5685" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Italian Mega Roulette</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D6296" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="/uploads/game_icons/evolution-live/deal-or-no-deal.webp"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Deal or No Deal">
+                        <button class="game-card-fav" data-game-uid="6296" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Deal or No Deal</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D6298" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="/uploads/game_icons/evolution-live/cash-or-crash.webp"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Cash or Crash">
+                        <button class="game-card-fav" data-game-uid="6298" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Cash or Crash</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D5669" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/5669/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Baccarat 8">
+                        <button class="game-card-fav" data-game-uid="5669" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Baccarat 8</div>
+                                            </a>
+                                    </div>
+            </div>
+        </section>
+                <section id="cat-3" class="cat-section">
+            <div class="sec-header">
+                <div class="sec-title">
+                    <i class="fas fa-fire"></i>
+                    SPORTS                </div>
+                <div class="sec-actions">
+                    <a href="/player/login.php" class="btn-see-all">See All</a>
+                    <a href="/player/login.php" class="btn-nav-arrow"><i class="fas fa-chevron-left"></i></a>
+                    <a href="/player/login.php" class="btn-nav-arrow"><i class="fas fa-chevron-right"></i></a>
+                </div>
+            </div>
+            <div class="games-section">
+                <div class="game-grid">
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D6260" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/6260/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="BtiGaming">
+                        <button class="game-card-fav" data-game-uid="6260" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">BtiGaming</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D7004" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/7004/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="LuckSportGaming">
+                        <button class="game-card-fav" data-game-uid="7004" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">LuckSportGaming</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D11539" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="/uploads/game_icons/9wickets.jpg"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="9Wicket">
+                        <button class="game-card-fav" data-game-uid="11539" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">9Wicket</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D4451" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/4451/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="SABA Sports">
+                        <button class="game-card-fav" data-game-uid="4451" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">SABA Sports</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D7107" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/7107/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="SaGaming">
+                        <button class="game-card-fav" data-game-uid="7107" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">SaGaming</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D897" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/897/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="United Gaming">
+                        <button class="game-card-fav" data-game-uid="897" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">United Gaming</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D7106" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/7106/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="TFGaming">
+                        <button class="game-card-fav" data-game-uid="7106" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">TFGaming</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D7463" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/7463/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="SBO Sportsbook">
+                        <button class="game-card-fav" data-game-uid="7463" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">SBO Sportsbook</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D7464" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/7464/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="568win Sportsbook">
+                        <button class="game-card-fav" data-game-uid="7464" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">568win Sportsbook</div>
+                                            </a>
+                                    </div>
+            </div>
+        </section>
+                <section id="cat-8" class="cat-section">
+            <div class="sec-header">
+                <div class="sec-title">
+                    <i class="fas fa-fire"></i>
+                    SLOTS                </div>
+                <div class="sec-actions">
+                    <a href="/player/login.php" class="btn-see-all">See All</a>
+                    <a href="/player/login.php" class="btn-nav-arrow"><i class="fas fa-chevron-left"></i></a>
+                    <a href="/player/login.php" class="btn-nav-arrow"><i class="fas fa-chevron-right"></i></a>
+                </div>
+            </div>
+            <div class="games-section">
+                <div class="game-grid">
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D634" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://cdn.gambllyapi.com/assets/providers/JL/agent-ace.png"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Agent Ace">
+                        <button class="game-card-fav" data-game-uid="634" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Agent Ace</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D931" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://cdn.gambllyapi.com/assets/providers/JL/ali-baba.png"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Ali Baba">
+                        <button class="game-card-fav" data-game-uid="931" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Ali Baba</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D641" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://cdn.gambllyapi.com/assets/providers/JL/bao-boon-chin.png"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Bao boon chin">
+                        <button class="game-card-fav" data-game-uid="641" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Bao boon chin</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D802" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://cdn.gambllyapi.com/assets/providers/JL/bone-fortune.png"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Bone Fortune">
+                        <button class="game-card-fav" data-game-uid="802" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Bone Fortune</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D257" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://cdn.gambllyapi.com/assets/providers/JL/bonus-hunter.png"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Bonus Hunter">
+                        <button class="game-card-fav" data-game-uid="257" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Bonus Hunter</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D482" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://cdn.gambllyapi.com/assets/providers/JL/book-of-gold.png"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Book of Gold">
+                        <button class="game-card-fav" data-game-uid="482" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Book of Gold</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D699" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://cdn.gambllyapi.com/assets/providers/JL/boxing-king.png"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Boxing King">
+                        <button class="game-card-fav" data-game-uid="699" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Boxing King</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D782" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://cdn.gambllyapi.com/assets/providers/JL/bubble-beauty.png"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Bubble Beauty">
+                        <button class="game-card-fav" data-game-uid="782" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Bubble Beauty</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D202" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://cdn.gambllyapi.com/assets/providers/JL/candy-baby.png"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Candy Baby">
+                        <button class="game-card-fav" data-game-uid="202" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Candy Baby</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D700" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://cdn.gambllyapi.com/assets/providers/JL/charge-buffalo.png"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Charge Buffalo">
+                        <button class="game-card-fav" data-game-uid="700" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Charge Buffalo</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D158" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://cdn.gambllyapi.com/assets/providers/JL/fish-chin-shi-huang.png"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Chin Shi Huang">
+                        <button class="game-card-fav" data-game-uid="158" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Chin Shi Huang</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D468" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://cdn.gambllyapi.com/assets/providers/JL/crazy-hunter.png"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Crazy Hunter">
+                        <button class="game-card-fav" data-game-uid="468" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Crazy Hunter</div>
+                                            </a>
+                                    </div>
+            </div>
+        </section>
+                <section id="cat-4" class="cat-section">
+            <div class="sec-header">
+                <div class="sec-title">
+                    <i class="fas fa-fire"></i>
+                    POKER                </div>
+                <div class="sec-actions">
+                    <a href="/player/login.php" class="btn-see-all">See All</a>
+                    <a href="/player/login.php" class="btn-nav-arrow"><i class="fas fa-chevron-left"></i></a>
+                    <a href="/player/login.php" class="btn-nav-arrow"><i class="fas fa-chevron-right"></i></a>
+                </div>
+            </div>
+            <div class="games-section">
+                <div class="game-grid">
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D1308" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/1308/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="ALL-IN POKER">
+                        <button class="game-card-fav" data-game-uid="1308" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">ALL-IN POKER</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D6308" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="/uploads/game_icons/evolution-live/caribbean-stud-poker.webp"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Caribbean Stud Poker">
+                        <button class="game-card-fav" data-game-uid="6308" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Caribbean Stud Poker</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D21" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://cdn.gambllyapi.com/assets/providers/JL/india-poker-caribbean-stud-poker.png"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Caribbean Stud Poker">
+                        <button class="game-card-fav" data-game-uid="21" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Caribbean Stud Poker</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D7296" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/7296/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Crystal Poker">
+                        <button class="game-card-fav" data-game-uid="7296" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Crystal Poker</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D1962" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/1962/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Double Bonus Poker 100 Hand">
+                        <button class="game-card-fav" data-game-uid="1962" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Double Bonus Poker 100 Hand</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D6791" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/6791/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="5 Card Poker">
+                        <button class="game-card-fav" data-game-uid="6791" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">5 Card Poker</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D10486" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/10486/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Evolution Poker">
+                        <button class="game-card-fav" data-game-uid="10486" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Evolution Poker</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D7901" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/7901/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="First Person Video Poker">
+                        <button class="game-card-fav" data-game-uid="7901" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">First Person Video Poker</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D5800" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/5800/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Jacks or Better Draw Poker">
+                        <button class="game-card-fav" data-game-uid="5800" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Jacks or Better Draw Poker</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D2780" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/2780/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Joker Poker">
+                        <button class="game-card-fav" data-game-uid="2780" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Joker Poker</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D7364" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/7364/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Joker Poker">
+                        <button class="game-card-fav" data-game-uid="7364" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Joker Poker</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D2785" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/2785/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Joker Poker 50 Hand">
+                        <button class="game-card-fav" data-game-uid="2785" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Joker Poker 50 Hand</div>
+                                            </a>
+                                    </div>
+            </div>
+        </section>
+                <section id="cat-5" class="cat-section">
+            <div class="sec-header">
+                <div class="sec-title">
+                    <i class="fas fa-fire"></i>
+                    FISHING                </div>
+                <div class="sec-actions">
+                    <a href="/player/login.php" class="btn-see-all">See All</a>
+                    <a href="/player/login.php" class="btn-nav-arrow"><i class="fas fa-chevron-left"></i></a>
+                    <a href="/player/login.php" class="btn-nav-arrow"><i class="fas fa-chevron-right"></i></a>
+                </div>
+            </div>
+            <div class="games-section">
+                <div class="game-grid">
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D1290" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/1290/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Alaskan Fishing">
+                        <button class="game-card-fav" data-game-uid="1290" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Alaskan Fishing</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D728" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://cdn.gambllyapi.com/assets/providers/JL/fish-all-star-fishing.png"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="All-star Fishing">
+                        <button class="game-card-fav" data-game-uid="728" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">All-star Fishing</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D864" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/864/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="All-star Fishing">
+                        <button class="game-card-fav" data-game-uid="864" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">All-star Fishing</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D1413" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/1413/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="BAO CHUAN FISHING">
+                        <button class="game-card-fav" data-game-uid="1413" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">BAO CHUAN FISHING</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D1041" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://cdn.gambllyapi.com/assets/providers/JL/fish-bombing-fishing.png"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Bombing Fishing">
+                        <button class="game-card-fav" data-game-uid="1041" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Bombing Fishing</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D252" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/252/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Bombing Fishing">
+                        <button class="game-card-fav" data-game-uid="252" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Bombing Fishing</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D496" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://cdn.gambllyapi.com/assets/providers/JDB/fish-game-cai-shen-fishing.png"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Cai Shen Fishing">
+                        <button class="game-card-fav" data-game-uid="496" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Cai Shen Fishing</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D72" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://cdn.gambllyapi.com/assets/providers/JDB/fish-game-dragon-fishing.png"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Dragon Fishing">
+                        <button class="game-card-fav" data-game-uid="72" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Dragon Fishing</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D488" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://cdn.gambllyapi.com/assets/providers/JDB/fish-game-dragon-fishing-ii.png"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Dragon Fishing Ii">
+                        <button class="game-card-fav" data-game-uid="488" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Dragon Fishing Ii</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D2140" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/2140/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="FA CHAI FISHING">
+                        <button class="game-card-fav" data-game-uid="2140" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">FA CHAI FISHING</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D2165" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/2165/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="FIERCE FISHING">
+                        <button class="game-card-fav" data-game-uid="2165" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">FIERCE FISHING</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D2220" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/2220/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Fishing">
+                        <button class="game-card-fav" data-game-uid="2220" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Fishing</div>
+                                            </a>
+                                    </div>
+            </div>
+        </section>
+                <section id="cat-6" class="cat-section">
+            <div class="sec-header">
+                <div class="sec-title">
+                    <i class="fas fa-fire"></i>
+                    DICE GAME                </div>
+                <div class="sec-actions">
+                    <a href="/player/login.php" class="btn-see-all">See All</a>
+                    <a href="/player/login.php" class="btn-nav-arrow"><i class="fas fa-chevron-left"></i></a>
+                    <a href="/player/login.php" class="btn-nav-arrow"><i class="fas fa-chevron-right"></i></a>
+                </div>
+            </div>
+            <div class="games-section">
+                <div class="game-grid">
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D1391" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/1391/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Aztec&#039;s Claw Wild Dice">
+                        <button class="game-card-fav" data-game-uid="1391" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Aztec's Claw Wild Dice</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D618" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/618/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Banker Dice Bull-Bull">
+                        <button class="game-card-fav" data-game-uid="618" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Banker Dice Bull-Bull</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D9998" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/9998/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Blazing Crown Dice">
+                        <button class="game-card-fav" data-game-uid="9998" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Blazing Crown Dice</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D6785" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/6785/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Bonus Dice">
+                        <button class="game-card-fav" data-game-uid="6785" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Bonus Dice</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D477" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://cdn.gambllyapi.com/assets/providers/JDB/fish-game-dice.png"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Dice">
+                        <button class="game-card-fav" data-game-uid="477" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Dice</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D635" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/635/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Dice">
+                        <button class="game-card-fav" data-game-uid="635" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Dice</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D8778" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/8778/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Dice">
+                        <button class="game-card-fav" data-game-uid="8778" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Dice</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D10828" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/10828/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Dice">
+                        <button class="game-card-fav" data-game-uid="10828" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Dice</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D1912" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/1912/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Dice Bonanza">
+                        <button class="game-card-fav" data-game-uid="1912" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Dice Bonanza</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D5801" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/5801/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Dice City">
+                        <button class="game-card-fav" data-game-uid="5801" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Dice City</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D1913" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/1913/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Dice Clash">
+                        <button class="game-card-fav" data-game-uid="1913" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Dice Clash</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D9991" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/9991/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Dice Club">
+                        <button class="game-card-fav" data-game-uid="9991" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Dice Club</div>
+                                            </a>
+                                    </div>
+            </div>
+        </section>
+                <section id="cat-7" class="cat-section">
+            <div class="sec-header">
+                <div class="sec-title">
+                    <i class="fas fa-fire"></i>
+                    LOTTERY                </div>
+                <div class="sec-actions">
+                    <a href="/player/login.php" class="btn-see-all">See All</a>
+                    <a href="/player/login.php" class="btn-nav-arrow"><i class="fas fa-chevron-left"></i></a>
+                    <a href="/player/login.php" class="btn-nav-arrow"><i class="fas fa-chevron-right"></i></a>
+                </div>
+            </div>
+            <div class="games-section">
+                <div class="game-grid">
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D237" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/237/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="CQ9 Lottery">
+                        <button class="game-card-fav" data-game-uid="237" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">CQ9 Lottery</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D213" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://cdn.gambllyapi.com/assets/providers/JDB/lottery-game-gold-rooster-lottery.png"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Gold Rooster Lottery">
+                        <button class="game-card-fav" data-game-uid="213" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Gold Rooster Lottery</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D981" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://cdn.gambllyapi.com/assets/providers/JDB/arcade-game-happy-lottery.png"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Happy Lottery">
+                        <button class="game-card-fav" data-game-uid="981" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Happy Lottery</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D2969" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/2969/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Lottery Ticket">
+                        <button class="game-card-fav" data-game-uid="2969" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Lottery Ticket</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D3013" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/3013/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="LUCKY LOTTERY">
+                        <button class="game-card-fav" data-game-uid="3013" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">LUCKY LOTTERY</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D1102" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://cdn.gambllyapi.com/assets/providers/JDB/lottery-game-cai-shen-bingo.png"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Cai Shen Bingo">
+                        <button class="game-card-fav" data-game-uid="1102" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Cai Shen Bingo</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D7284" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/7284/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Hi-Lo">
+                        <button class="game-card-fav" data-game-uid="7284" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Hi-Lo</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D10296" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/10296/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Jogo Do Bicho">
+                        <button class="game-card-fav" data-game-uid="10296" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Jogo Do Bicho</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D7280" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/7280/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Magic Keno">
+                        <button class="game-card-fav" data-game-uid="7280" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Magic Keno</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D7358" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/7358/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Win &amp; Go">
+                        <button class="game-card-fav" data-game-uid="7358" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Win & Go</div>
+                                            </a>
+                                    </div>
+            </div>
+        </section>
+                <section id="cat-9" class="cat-section">
+            <div class="sec-header">
+                <div class="sec-title">
+                    <i class="fas fa-fire"></i>
+                    CRASH                </div>
+                <div class="sec-actions">
+                    <a href="/player/login.php" class="btn-see-all">See All</a>
+                    <a href="/player/login.php" class="btn-nav-arrow"><i class="fas fa-chevron-left"></i></a>
+                    <a href="/player/login.php" class="btn-nav-arrow"><i class="fas fa-chevron-right"></i></a>
+                </div>
+            </div>
+            <div class="games-section">
+                <div class="game-grid">
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D8771" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/8771/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Air Jet">
+                        <button class="game-card-fav" data-game-uid="8771" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Air Jet</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D8793" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/8793/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Astronaut Rivals">
+                        <button class="game-card-fav" data-game-uid="8793" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Astronaut Rivals</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D10518" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/10518/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="aviatrix">
+                        <button class="game-card-fav" data-game-uid="10518" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">aviatrix</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D10075" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/10075/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Balloon Doggo">
+                        <button class="game-card-fav" data-game-uid="10075" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Balloon Doggo</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D8773" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/8773/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Fortune Crash">
+                        <button class="game-card-fav" data-game-uid="8773" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Fortune Crash</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D8774" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/8774/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Meta Crash">
+                        <button class="game-card-fav" data-game-uid="8774" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Meta Crash</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D8772" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/8772/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="StarX">
+                        <button class="game-card-fav" data-game-uid="8772" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">StarX</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D8775" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/8775/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Tropicana">
+                        <button class="game-card-fav" data-game-uid="8775" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Tropicana</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D10074" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/10074/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Chicken Route">
+                        <button class="game-card-fav" data-game-uid="10074" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Chicken Route</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D10055" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/10055/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Crash">
+                        <button class="game-card-fav" data-game-uid="10055" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Crash</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D10048" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/10048/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Limbo">
+                        <button class="game-card-fav" data-game-uid="10048" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Limbo</div>
+                                            </a>
+                                    </div>
+            </div>
+        </section>
+                <section id="cat-11" class="cat-section">
+            <div class="sec-header">
+                <div class="sec-title">
+                    <i class="fas fa-fire"></i>
+                    CARD GAMES                </div>
+                <div class="sec-actions">
+                    <a href="/player/login.php" class="btn-see-all">See All</a>
+                    <a href="/player/login.php" class="btn-nav-arrow"><i class="fas fa-chevron-left"></i></a>
+                    <a href="/player/login.php" class="btn-nav-arrow"><i class="fas fa-chevron-right"></i></a>
+                </div>
+            </div>
+            <div class="games-section">
+                <div class="game-grid">
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D28" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://cdn.gambllyapi.com/assets/providers/JDB/card-game-dragon-tiger-joker-bonus.png"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Dragon Tiger - Joker Bonus">
+                        <button class="game-card-fav" data-game-uid="28" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Dragon Tiger - Joker Bonus</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D1089" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://cdn.gambllyapi.com/assets/providers/JDB/card-game-pusoy-rush.png"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Pusoy Rush">
+                        <button class="game-card-fav" data-game-uid="1089" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Pusoy Rush</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D316" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://cdn.gambllyapi.com/assets/providers/JDB/card-game-tongits.png"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Tongits">
+                        <button class="game-card-fav" data-game-uid="316" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Tongits</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D472" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://cdn.gambllyapi.com/assets/providers/JDB/card-game-tongits-fight.png"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Tongits Fight">
+                        <button class="game-card-fav" data-game-uid="472" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Tongits Fight</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D914" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="/assets/img/jdb/code_17001 Tongits Go.png"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Tongits Go">
+                        <button class="game-card-fav" data-game-uid="914" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Tongits Go</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D277" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://cdn.gambllyapi.com/assets/providers/JDB/lottery-game-tongits-rush.png"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Tongits Rush">
+                        <button class="game-card-fav" data-game-uid="277" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Tongits Rush</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D10362" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/10362/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Classic Multihand Blackjack">
+                        <button class="game-card-fav" data-game-uid="10362" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Classic Multihand Blackjack</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D10298" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/10298/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Multihand Blackjack">
+                        <button class="game-card-fav" data-game-uid="10298" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Multihand Blackjack</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D10302" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/10302/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Multihand Blackjack Pro 2">
+                        <button class="game-card-fav" data-game-uid="10302" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Multihand Blackjack Pro 2</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D10335" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/10335/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Surrender Multihand Blackjack">
+                        <button class="game-card-fav" data-game-uid="10335" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Surrender Multihand Blackjack</div>
+                                            </a>
+                                    </div>
+            </div>
+        </section>
+                <section id="cat-12" class="cat-section">
+            <div class="sec-header">
+                <div class="sec-title">
+                    <i class="fas fa-fire"></i>
+                    TABLE GAMES                </div>
+                <div class="sec-actions">
+                    <a href="/player/login.php" class="btn-see-all">See All</a>
+                    <a href="/player/login.php" class="btn-nav-arrow"><i class="fas fa-chevron-left"></i></a>
+                    <a href="/player/login.php" class="btn-nav-arrow"><i class="fas fa-chevron-right"></i></a>
+                </div>
+            </div>
+            <div class="games-section">
+                <div class="game-grid">
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D10453" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/10453/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Blackjack Lucky 7s Xmas">
+                        <button class="game-card-fav" data-game-uid="10453" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Blackjack Lucky 7s Xmas</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D10454" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/10454/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="European Christmas Roulette">
+                        <button class="game-card-fav" data-game-uid="10454" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">European Christmas Roulette</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D10417" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/10417/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="European Roulette">
+                        <button class="game-card-fav" data-game-uid="10417" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">European Roulette</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D10418" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/10418/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="French Roulette Classic">
+                        <button class="game-card-fav" data-game-uid="10418" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">French Roulette Classic</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D10419" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/10419/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Oasis Poker Classic">
+                        <button class="game-card-fav" data-game-uid="10419" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Oasis Poker Classic</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D10420" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/10420/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Texas Holdem Bonus">
+                        <button class="game-card-fav" data-game-uid="10420" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Texas Holdem Bonus</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D10421" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/10421/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Texas Holdem Poker">
+                        <button class="game-card-fav" data-game-uid="10421" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Texas Holdem Poker</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D10422" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/10422/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Video Poker">
+                        <button class="game-card-fav" data-game-uid="10422" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Video Poker</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D6168" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/6168/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Baccarat">
+                        <button class="game-card-fav" data-game-uid="6168" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Baccarat</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D6212" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/6212/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="BlackJack Gold">
+                        <button class="game-card-fav" data-game-uid="6212" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">BlackJack Gold</div>
+                                            </a>
+                                        <a href="/player/login.php?redirect=%2Fplayer%2Flaunch.php%3Fgame_id%3D6254" class="game-card">
+                        <img class="game-card-img"
+                             loading="lazy" decoding="async"
+                             src="https://imagedelivery.net/nVyft9zNw2I0pNVtrnC1zA/6254/public"
+                             onerror="this.src='https://placehold.co/120x120/0d3d2c/ffd84d?text=GAME'"
+                             alt="Video Poker">
+                        <button class="game-card-fav" data-game-uid="6254" onclick="toggleFav(event, this)" title="Favorite">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="game-card-name">Video Poker</div>
+                                            </a>
+                                    </div>
+            </div>
+        </section>
+        
+        <!-- PARTNER + LIVE CHAT — login ছাড়াও যেতে পারে -->
+        <div class="partner-section">
+            <a href="/player/partner.php" class="partner-btn partner">🤝 PARTNER</a>
+            <a href="/player/support_chat.php" class="partner-btn live-chat">
+                <span class="chat-icon">💬</span> Live Chat
+            </a>
+        </div>
+
+        <!-- GAME CENTER → login -->
+        <div class="game-center">
+            <div class="game-center-title">Game Center</div>
+            <div class="game-center-pills">
+                                <a href="/player/login.php" class="gc-pill">Slots</a>
+                                <a href="/player/login.php" class="gc-pill">Live Casino</a>
+                                <a href="/player/login.php" class="gc-pill">Sports</a>
+                                <a href="/player/login.php" class="gc-pill">E-sports</a>
+                                <a href="/player/login.php" class="gc-pill">Poker</a>
+                                <a href="/player/login.php" class="gc-pill">Fish</a>
+                                <a href="/player/login.php" class="gc-pill">Lottery</a>
+                            </div>
+        </div>
+
+        <!-- PROVIDER LOGOS -->
+        
+
+        <div style="height:20px"></div>
+    </div>
+</div>
+
+<!-- GUEST BOTTOM NAV -->
+<div class="guest-nav">
+    <div class="guest-lang">
+        <div class="guest-flag"><img src="https://flagcdn.com/w40/bd.png"></div>
+        <div style="display:flex;flex-direction:column;line-height:1.2">
+            <span>BDT</span>
+            <span style="font-size:9px;font-weight:400;color:var(--text-muted)">English</span>
+        </div>
+    </div>
+    <div class="guest-login-btn" onclick="location.href='/player/login.php'">Log In</div>
+    <div class="guest-signup-btn" onclick="location.href='/player/signup.php'">Registration</div>
+</div>
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+/* ============================================
+   SIDEBAR
+   ============================================ */
+
+/* Desktop: always visible as left sidebar */
+@media (min-width: 900px) {
+    #sidebarOverlay { display: none !important; }
+    #sidebar {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        transform: translateX(0) !important;
+        height: 100vh !important;
+        z-index: 50 !important;
+        box-shadow: 2px 0 16px rgba(0,0,0,0.4) !important;
+    }
+    body { padding-left: 280px; }
+}
+
+/* Mobile: hidden by default, slides in */
+@media (max-width: 899px) {
+    #sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+    #sidebar.open {
+        transform: translateX(0) !important;
+    }
+}
+
+#sidebar {
+    background-color: #062c23 !important;
+    width: 235px !important;
+
+    position: fixed !important;
+    top: 20px !important;
+    left: 0 !important;
+
+    height: calc(100dvh - 60px) !important;
+    box-sizing: border-box !important;
+
+    z-index: 70 !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    padding-bottom: 10px !important;
+}
+#sidebar::-webkit-scrollbar { display: none !important; }
+#sidebar { -ms-overflow-style: none !important; scrollbar-width: none !important; }
+
+/* === TOP HEADER BAR === */
+.sb-header {
+    background-color: #062c23 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 14px 16px !important;
+    border-bottom: 1px solid rgba(255,255,255,0.06) !important;
+}
+.sb-logo-text {
+    color: #f5c518 !important;
+    font-size: 20px !important;
+    font-weight: 900 !important;
+    font-style: italic !important;
+    letter-spacing: 1px !important;
+    font-family: Arial Black, sans-serif !important;
+    text-shadow: 0 0 16px rgba(245,197,24,0.35) !important;
+}
+.sb-close-btn {
+    background: transparent !important;
+    border: none !important;
+    color: #ffffff !important;
+    width: 34px !important;
+    height: 34px !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    font-size: 18px !important;
+    transition: background 0.2s !important;
+}
+.sb-close-btn:hover { background: rgba(255,255,255,0.1) !important; }
+
+/* Desktop: hide close button */
+@media (min-width: 900px) {
+    .sb-close-btn { display: none !important; }
+}
+
+/* === 2-COLUMN MENU GRID === */
+.sb-menu-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 9px !important;
+    padding: 14px !important;
+}
+
+/* ── Card design — exact match to screenshot ── */
+.sb-menu-card {
+    background: #093327 !important;
+    border-radius: 14px !important;
+    padding: 18px 8px 14px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 10px !important;
+    text-decoration: none !important;
+    cursor: pointer !important;
+    min-height: 100px !important;
+    position: relative !important;
+
+    /* 
+      Border: top & sides = slightly lighter teal, bottom = darker (3D depth)
+      This matches the screenshot exactly — top-left edges are brighter,
+      bottom edge is the "shadow" side
+    */
+    border-top: 1.5px solid rgba(30, 180, 130, 0.35) !important;
+    border-left: 1.5px solid rgba(30, 180, 130, 0.25) !important;
+    border-right: 1.5px solid rgba(10, 60, 40, 0.8) !important;
+    border-bottom: 3px solid #031913 !important;  /* thick dark bottom = 3D base */
+
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.07),   /* inner top highlight */
+        0 6px 0 #031510,                          /* hard 3D bottom drop */
+        0 8px 16px rgba(0,0,0,0.45) !important;  /* soft outer shadow */
+
+    transition: transform 0.12s ease, box-shadow 0.12s ease !important;
+}
+
+.sb-menu-card:active {
+    transform: translateY(5px) !important;
+    border-bottom-width: 1px !important;
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.07),
+        0 1px 0 #031510,
+        0 2px 6px rgba(0,0,0,0.3) !important;
+}
+
+/* Icon wrapper */
+.sb-card-icon {
+    font-size: 20px !important;
+    line-height: 1 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+/* Card label */
+.sb-card-label {
+    color: #ffffff !important;
+    font-size: 11.5px !important;
+    font-weight: 700 !important;
+    text-align: center !important;
+    line-height: 1.2 !important;
+    letter-spacing: 0.2px !important;
+    font-family: Arial, sans-serif !important;
+}
+
+/* Icon Colors */
+.ic-red  { color: #d76d5e !important; }
+.ic-teal { color: #49b9ab !important; }
+.ic-gold { color: #db9c3f !important; }
+
+/* Language flag */
+.lang-flag-circle {
+    width: 34px !important;
+    height: 34px !important;
+    border-radius: 50% !important;
+    overflow: hidden !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 28px !important;
+    line-height: 1 !important;
+}
+
+/* === LOGOUT BOTTOM === */
+.sb-bottom-strip {
+    padding: 0 16px 40px 16px !important;
+}
+.btn-logout {
+    background: rgba(239,68,68,0.08) !important;
+    border: 1px solid rgba(239,68,68,0.25) !important;
+    border-bottom: 3px solid rgba(180,30,30,0.5) !important;
+    color: #ef4444 !important;
+    padding: 12px !important;
+    border-radius: 10px !important;
+    text-align: center !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    text-decoration: none !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    width: 100% !important;
+    transition: all 0.15s !important;
+    box-shadow: 0 4px 0 rgba(120,20,20,0.4) !important;
+}
+.btn-logout:active {
+    transform: translateY(3px) !important;
+    box-shadow: 0 1px 0 rgba(120,20,20,0.4) !important;
+}
+
+/* Overlay */
+#sidebarOverlay {
+    background-color: rgba(0,0,0,0.65) !important;
+    backdrop-filter: blur(6px) !important;
+    -webkit-backdrop-filter: blur(6px) !important;
+    z-index: 60 !important;
+    position: fixed !important;
+    top: 0; left: 0; right: 0; bottom: 0;
+}
+.hidden { display: none !important; }
+</style>
+
+<div id="sidebarOverlay" onclick="toggleSidebar()" class="hidden"></div>
+
+<div id="sidebar">
+
+    <div class="sb-header">
+        <span class="sb-logo-text">DOLLAR333</span>
+        <button onclick="toggleSidebar()" class="sb-close-btn">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
+    <div class="sb-menu-grid">
+
+        <a href="../player/login.php" class="sb-menu-card">
+            <div class="sb-card-icon ic-red"><i class="fa-solid fa-fire"></i></div>
+            <span class="sb-card-label">Hot Games</span>
+        </a>
+
+        <a href="../player/login.php" class="sb-menu-card">
+            <div class="sb-card-icon ic-teal"><i class="fa-solid fa-user-group"></i></div>
+            <span class="sb-card-label">Invite friends</span>
+        </a>
+
+        <a href="../player/login.php" class="sb-menu-card">
+            <div class="sb-card-icon ic-red"><i class="fa-solid fa-folder-heart"></i></div>
+            <span class="sb-card-label">Favorites</span>
+        </a>
+
+        <a href="../player/login.php" class="sb-menu-card">
+            <div class="sb-card-icon ic-gold"><i class="fa-solid fa-gift"></i></div>
+            <span class="sb-card-label">Promotion</span>
+        </a>
+
+        <a href="../player/login.php" class="sb-menu-card">
+            <div class="sb-card-icon ic-red"><i class="fa-solid fa-dice"></i></div>
+            <span class="sb-card-label">Slots</span>
+        </a>
+
+        <a href="../player/login.php" class="sb-menu-card">
+            <div class="sb-card-icon ic-gold"><i class="fa-solid fa-award"></i></div>
+            <span class="sb-card-label">Reward Center</span>
+        </a>
+
+        <a href="../player/login.php" class="sb-menu-card">
+            <div class="sb-card-icon ic-red"><i class="fa-solid fa-dharmachakra"></i></div>
+            <span class="sb-card-label">Live Casino</span>
+        </a>
+
+        <a href="../player/login.php" class="sb-menu-card">
+            <div class="sb-card-icon ic-gold"><i class="fa-solid fa-hand-holding-dollar"></i></div>
+            <span class="sb-card-label">Manual Rebate</span>
+        </a>
+
+        <a href="../player/login.php" class="sb-menu-card">
+            <div class="sb-card-icon ic-red"><i class="fa-solid fa-cricket-bat-ball"></i></div>
+            <span class="sb-card-label">Sports</span>
+        </a>
+
+        <a href="../player/login.php" class="sb-menu-card">
+            <div class="sb-card-icon ic-gold"><i class="fa-solid fa-gem"></i></div>
+            <span class="sb-card-label">VIP</span>
+        </a>
+
+        <a href="../player/login.php" class="sb-menu-card">
+            <div class="sb-card-icon ic-red"><i class="fa-solid fa-gamepad"></i></div>
+            <span class="sb-card-label">E-sports</span>
+        </a>
+
+        <a href="../player/login.php" class="sb-menu-card">
+            <div class="sb-card-icon ic-gold"><i class="fa-solid fa-bullseye"></i></div>
+            <span class="sb-card-label">Mission</span>
+        </a>
+
+        <a href="../player/login.php" class="sb-menu-card">
+            <div class="sb-card-icon ic-red"><i class="fa-solid fa-spade"></i></div>
+            <span class="sb-card-label">Poker</span>
+        </a>
+
+        <a href="../player/login.php" class="sb-menu-card">
+            <div class="sb-card-icon ic-red"><i class="fa-solid fa-fish"></i></div>
+            <span class="sb-card-label">Fish</span>
+        </a>
+
+        <a href="../player/login.php" class="sb-menu-card">
+            <div class="sb-card-icon ic-red"><i class="fa-solid fa-ticket"></i></div>
+            <span class="sb-card-label">Lottery</span>
+        </a>
+
+        <a href="../player/login.php" class="sb-menu-card">
+            <div class="sb-card-icon ic-teal"><i class="fa-solid fa-cloud-arrow-down"></i></div>
+            <span class="sb-card-label">APP Download</span>
+        </a>
+
+        <a href="../player/login.php" class="sb-menu-card">
+            <div class="sb-card-icon ic-teal"><i class="fa-solid fa-headset"></i></div>
+            <span class="sb-card-label">Customer Service</span>
+        </a>
+
+        <a href="../player/login.php" class="sb-menu-card">
+            <div class="sb-card-icon ic-gold"><i class="fa-solid fa-handshake"></i></div>
+            <span class="sb-card-label">Affiliate</span>
+        </a>
+
+    </div>
+
+    <div class="sb-bottom-strip">
+            </div>
+
+</div>
+
+<script>
+function toggleSidebar() {
+    var sidebar = document.getElementById('sidebar');
+    var overlay = document.getElementById('sidebarOverlay');
+    var isDesktop = window.innerWidth >= 900;
+    if (isDesktop) return; // desktop-এ toggle করা যাবে না
+    sidebar.classList.toggle('open');
+    overlay.classList.toggle('hidden');
+}
+</script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+/* =============================================
+   BOTTOM NAV BAR — Pill style (exact match)
+   ============================================= */
+.bottom-nav {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    z-index: 10000;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-around;
+    padding: 0 10px 8px 10px;
+    height: 70px;
+    background: #071f18;
+}
+
+.bottom-nav-pill {
+    width: 100%;
+    max-width: 480px;
+    margin: 0 auto;
+    height: 58px;
+    background: linear-gradient(180deg, #0e3d2c 0%, #0a2d1f 100%);
+    border-radius: 999px;
+    border: 1.5px solid #1a5c40;
+    box-shadow:
+        0 0 0 2px #071f18,
+        inset 0 1px 0 rgba(30,200,130,0.18),
+        0 -2px 0 0 #1edd96,
+        0 4px 24px rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 0 6px;
+    position: relative;
+}
+
+.bnav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    flex: 1;
+    text-decoration: none;
+    color: #3db88a;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+    padding: 6px 0;
+    transition: color 0.2s;
+    position: relative;
+}
+
+.bnav-item.active { color: #f5c518; }
+.bnav-item.active .bnav-label {
+    border-bottom: 2px solid #f5c518;
+    padding-bottom: 1px;
+}
+
+.bnav-icon {
+    font-size: 20px;
+    line-height: 1;
+}
+.bnav-label { font-size: 10px; font-weight: 700; }
+
+.bnav-item.center-invite {
+    position: relative;
+    flex: 1;
+    justify-content: flex-end;
+    padding-bottom: 0;
+}
+.bnav-invite-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    position: relative;
+    top: -18px;
+}
+.bnav-invite-circle {
+    width: 54px; height: 54px;
+    border-radius: 50%;
+    background: linear-gradient(145deg, #1de9b6, #00897b);
+    display: flex;
+    align-items: center; justify-content: center;
+    box-shadow:
+        0 0 0 3px #071f18,
+        0 0 0 5px #1edd96,
+        0 6px 20px rgba(0,188,140,0.55);
+    font-size: 24px;
+    color: #fff;
+    transition: transform 0.2s;
+    border: none;
+    overflow: hidden;
+}
+.bnav-invite-circle img {
+    width: 100%; height: 100%; object-fit: contain;
+}
+.bnav-invite-circle i { font-size: 22px; }
+.bnav-item.center-invite:active .bnav-invite-circle { transform: scale(0.93); }
+
+.bnav-invite-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: #3db88a;
+    margin: 0;
+    letter-spacing: 0.2px;
+}
+
+.float-social-btns {
+    position: fixed;
+    right: 12px;
+    bottom: 80px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.float-btn {
+    width: 46px; height: 46px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center; justify-content: center;
+    font-size: 20px;
+    text-decoration: none;
+    color: #fff;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.4);
+    transition: transform 0.2s, box-shadow 0.2s;
+    overflow: hidden;
+}
+.float-btn:active { transform: scale(0.9); }
+.float-btn img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+.float-btn.wa-float  { background: #25d366; }
+.float-btn.fb-float  { background: #1877f2; }
+.float-btn.tg-float  { background: #0088cc; }
+.float-btn.live-float { background: linear-gradient(135deg, #0d7a55, #13a36e); }
+
+.footer-section {
+    background: linear-gradient(180deg, #071f18 0%, #050f0c 100%);
+    color: #7eb89a;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    font-size: 11px;
+    padding: 24px 14px 90px 14px;
+    line-height: 1.6;
+    border-top: 1px solid rgba(255,255,255,0.06);
+}
+.footer-container { max-width: 100%; margin: 0 auto; }
+
+.cv-license-block {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 10px;
+    padding: 14px;
+    margin-bottom: 18px;
+    border: 1px solid rgba(255,255,255,0.06);
+}
+.cv-site-logo-text {
+    background: linear-gradient(135deg, #0d4a3a, #1a7a5e);
+    color: #ffd84d;
+    font-weight: 900; font-style: italic;
+    font-size: 13px;
+    width: 52px; height: 52px;
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 10px;
+    border: 1px solid #1a7a5e;
+}
+.cv-license-text {
+    font-size: 10px;
+    color: #7eb89a;
+    line-height: 1.6;
+    flex: 1;
+}
+
+.cv-media-section { margin-bottom: 20px; }
+.cv-media-title {
+    font-size: 11px;
+    font-weight: 800;
+    color: rgba(255,255,255,0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 10px;
+    display: block;
+}
+.cv-media-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+}
+.cv-media-item {
+    height: 28px;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+    object-fit: contain;
+}
+.cv-media-item:hover { opacity: 1; }
+
+.ft-separator { border: none; border-top: 1px solid rgba(255,255,255,0.05); margin: 16px 0; }
+
+.ft-links-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+.ft-link-col { display: flex; flex-direction: column; gap: 10px; }
+.ft-link-item {
+    border-left: 2px solid #0d7a55;
+    padding-left: 8px;
+    line-height: 1.3;
+}
+.ft-link-item a {
+    color: #7eb89a;
+    text-decoration: none;
+    font-size: 10.5px;
+    font-weight: 500;
+    display: block;
+    transition: color 0.2s;
+}
+.ft-link-item a:hover { color: #ffd84d; }
+
+/* =============================================
+   FIXED PROVIDER GRID — Full Box Style
+   ============================================= */
+.cv-providers-section { margin-bottom: 20px; }
+.cv-providers-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 7px;
+}
+.cv-provider-item {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 7px;
+    /* Removed padding to let image fill the box */
+    padding: 0; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+    min-height: 45px;
+    /* Ensure no overflow */
+    overflow: hidden; 
+    transition: background 0.2s;
+}
+.cv-provider-item:hover { background: rgba(255,255,255,0.07); }
+.cv-provider-item img {
+    /* Image now fits the entire box */
+    width: 100%; 
+    height: 45px; 
+    object-fit: cover; /* This makes the image fill the area */
+    filter: brightness(0.8);
+    transition: filter 0.2s;
+}
+.cv-provider-item:hover img { filter: brightness(1); }
+/* Hidden the label as per your request */
+.cv-provider-item span { display: none; } 
+
+.ft-brand {
+    display: flex; align-items: center; gap: 12px;
+    margin-top: 20px;
+    background: rgba(0,0,0,0.2);
+    padding: 10px 12px; border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.05);
+}
+.bb-logo {
+    background: linear-gradient(135deg, #0d4a3a, #071f18);
+    color: #ffd84d;
+    font-weight: 900; font-style: italic;
+    padding: 4px 10px; border-radius: 6px;
+    font-size: 16px;
+    border: 1px solid #1a7a5e;
+}
+.brand-text h4 { color: #e8f5ee; font-size: 12px; font-weight: 800; margin: 0 0 2px 0; }
+.brand-text p { font-size: 10px; color: #7eb89a; margin: 0; }
+
+.seo-content h3 {
+    color: #e8f5ee; font-size: 12px; font-weight: 800;
+    margin-bottom: 10px; margin-top: 20px;
+    text-transform: uppercase; letter-spacing: 0.5px;
+}
+.seo-content p {
+    margin-bottom: 10px; text-align: justify;
+    color: #4a7a5e; line-height: 1.6; font-size: 10px;
+}
+</style>
+
+<div class="float-social-btns">
+    <a href="login.php" class="float-btn wa-float" target="_self">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+    <a href="login.php" class="float-btn fb-float" target="_self">
+        <i class="fab fa-facebook-f"></i>
+    </a>
+    <a href="login.php" class="float-btn tg-float" target="_self">
+        <i class="fab fa-telegram-plane"></i>
+    </a>
+    <a href="login.php" class="float-btn live-float">
+        <i class="fas fa-headset"></i>
+    </a>
+</div>
+
+<nav class="bottom-nav">
+    <div class="bottom-nav-pill">
+        <a href="index.php" class="bnav-item active">
+            <span class="bnav-icon"><i class="fas fa-home"></i></span>
+            <span class="bnav-label">Home</span>
+        </a>
+        <a href="login.php" class="bnav-item">
+            <span class="bnav-icon"><i class="fas fa-gift"></i></span>
+            <span class="bnav-label">Promotion</span>
+        </a>
+        <a href="login.php" class="bnav-item center-invite">
+            <div class="bnav-invite-wrap">
+                <div class="bnav-invite-circle"><i class="fas fa-share-nodes"></i></div>
+                <span class="bnav-invite-label">Invite</span>
+            </div>
+        </a>
+        <a href="login.php" class="bnav-item">
+            <span class="bnav-icon"><i class="fas fa-trophy"></i></span>
+            <span class="bnav-label">Reward</span>
+        </a>
+        <a href="login.php" class="bnav-item">
+            <span class="bnav-icon"><i class="fas fa-user-circle"></i></span>
+            <span class="bnav-label">Member</span>
+        </a>
+    </div>
+</nav>
+
+<div class="footer-section">
+    <div class="footer-container">
+
+        <div class="cv-media-section">
+            <span class="cv-media-title">Payment Methods</span>
+            <div class="cv-media-grid">
+                <img src="/assets/img/bkash.png"   class="cv-media-item" alt="bKash">
+                <img src="/assets/img/nagad.png"   class="cv-media-item" alt="Nagad">
+                <img src="/assets/img/rocket.png"  class="cv-media-item" alt="Rocket">
+                <img src="/assets/img/upay.png"    class="cv-media-item" alt="Upay">
+                <img src="/assets/img/bank.png"    class="cv-media-item" alt="Bank">
+                <img src="/assets/img/crypto.png"  class="cv-media-item" alt="Crypto">
+            </div>
+        </div>
+
+        <hr class="ft-separator">
+
+        <div class="cv-providers-section">
+            <div class="cv-providers-grid">
+                <div class="cv-provider-item"><img src="/assets/img/providers/pg.png" alt="PG"><span>PG</span></div>
+                <div class="cv-provider-item"><img src="/assets/img/providers/bng.png" alt="BNG"><span>BNG</span></div>
+                <div class="cv-provider-item"><img src="/assets/img/providers/pp.png" alt="Pragmatic"><span>PRAGMATIC</span></div>
+                <div class="cv-provider-item"><img src="/assets/img/providers/jili.png" alt="JILI"><span>JILI</span></div>
+                <div class="cv-provider-item"><img src="/assets/img/providers/bom.png" alt="SPRIBE"><span>BOM</span></div>
+                <div class="cv-provider-item"><img src="/assets/img/providers/fc.png" alt="FA CHAI"><span>FA CHAI</span></div>
+                <div class="cv-provider-item"><img src="/assets/img/providers/CG-COLOR.png" alt="NetEnt"><span>CG</span></div>
+                <div class="cv-provider-item"><img src="/assets/img/providers/jdb.png" alt="JDB"><span>JDB</span></div>
+                <div class="cv-provider-item"><img src="/assets/img/providers/FTG-COLOR.png" alt="Gameplay"><span>FTG</span></div>
+                <div class="cv-provider-item"><img src="/assets/img/providers/AMBS-COLOR.png" alt="Booming"><span>AMBS</span></div>
+                <div class="cv-provider-item"><img src="/assets/img/providers/mega.png" alt="MEGA"><span>MEGA</span></div>
+                <div class="cv-provider-item"><img src="/assets/img/providers/jk.png" alt="JOKER"><span>JOKER</span></div>
+                <div class="cv-provider-item"><img src="/assets/img/providers/TPG-COLOR.png" alt="Spadegaming"><span>TPG</span></div>
+                <div class="cv-provider-item"><img src="/assets/img/providers/YB-COLOR.png" alt="AskMeSlot"><span>YB</span></div>
+                <div class="cv-provider-item"><img src="https://s3-eu-west-1.amazonaws.com/tpd/logos/62ee6a82d2b7fa45d5216e8f/0x0.png" alt="Evolution"><span>Evolation</span></div>
+                <div class="cv-provider-item"><img src="/assets/img/providers/YL-COLOR.png" alt="PlayStar"><span>YL</span></div>
+                <div class="cv-provider-item"><img src="/assets/img/providers/AE-COLOR.png" alt="Yellow Bat"><span>AE</span></div>
+                <div class="cv-provider-item"><img src="/assets/img/providers/NE-COLOR.png" alt="First Person"><span>NE</span></div>
+                <div class="cv-provider-item"><img src="/assets/img/providers/PS-COLOR.png" alt="KK Gaming"><span>PS</span></div>
+                <div class="cv-provider-item"><img src="/assets/img/providers/SG-COLOR.png" alt="7 Mojos"><span>SG</span></div>
+            </div>
+        </div>
+
+        <hr class="ft-separator">
+
+        <div class="ft-brand">
+            <div class="bb-logo">DO</div>
+            <div class="brand-text">
+                <h4>Best Quality Platform</h4>
+                <p>© 2026 DOLLAR333. All Rights Reserved</p>
+            </div>
+        </div>
+
+        <div class="seo-content">
+            <h3>DOLLAR333 Bangladesh — Top Casino & Betting Platform</h3>
+            <p>DOLLAR333 is one of the most trusted online casino and betting platforms in Bangladesh, offering cricket betting, slots, live casino, and more with top-tier security and fast payments via bKash, Nagad, Rocket, and Crypto.</p>
+            <p>Join DOLLAR333 today and try your luck!</p>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+<script>
+new Swiper(".mainSlider", {
+    loop: true,
+    autoplay: { delay: 3500, disableOnInteraction: false },
+    pagination: { el: ".swiper-pagination", clickable: true }
+});
+
+function toggleSidebar() {
+    if (window.innerWidth >= 900) return;
+    var sidebar = document.getElementById('sidebar');
+    var overlay = document.getElementById('sidebarOverlay');
+    if(sidebar) sidebar.classList.toggle('open');
+    if(overlay) overlay.classList.toggle('hidden');
+}
+
+function activatePill(el) {
+    document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
+    el.classList.add('active');
+}
+
+function handleResize() {
+    const dSidebar = document.getElementById('desktop-sidebar');
+    if(dSidebar) dSidebar.style.display = window.innerWidth >= 900 ? 'block' : 'none';
+}
+handleResize();
+window.addEventListener('resize', handleResize);
+
+const FAV_STORAGE_KEY = 'redjili_favorites';
+function getFavoriteGames() {
+    try { return JSON.parse(localStorage.getItem(FAV_STORAGE_KEY) || '[]'); }
+    catch (e) { return []; }
+}
+function setFavoriteGames(list) {
+    localStorage.setItem(FAV_STORAGE_KEY, JSON.stringify([...new Set(list)]));
+}
+function toggleFav(e, btn) {
+    e.preventDefault();
+    e.stopPropagation();
+    const uid = btn.getAttribute('data-game-uid');
+    if (!uid) return;
+    let favs = getFavoriteGames();
+    if (favs.includes(uid)) {
+        favs = favs.filter(id => id !== uid);
+        btn.classList.remove('active');
+    } else {
+        favs.push(uid);
+        btn.classList.add('active');
+    }
+    setFavoriteGames(favs);
+}
+function initFavoriteButtons() {
+    const favs = getFavoriteGames();
+    document.querySelectorAll('.game-card-fav[data-game-uid]').forEach(btn => {
+        if (favs.includes(btn.getAttribute('data-game-uid'))) btn.classList.add('active');
+    });
+}
+document.addEventListener('DOMContentLoaded', initFavoriteButtons);
+
+// JACKPOT COUNTER
+(function() {
+    const BASE_NUMBER = 10921288702;
+    let currentVal = BASE_NUMBER;
+
+    function formatJackpot(val) {
+        let intPart = Math.floor(val / 100);
+        let decPart = (val % 100).toString().padStart(2, '0');
+        return intPart.toLocaleString('en-US') + '.' + decPart;
+    }
+
+    function buildDigitHTML(numStr) {
+        let html = '';
+        for (let i = 0; i < numStr.length; i++) {
+            let ch = numStr[i];
+            if (ch === ',')      html += '<span class="jp-sep">,</span>';
+            else if (ch === '.') html += '<span class="jp-sep">.</span>';
+            else                 html += '<span class="jp-digit" id="jpd-' + i + '">' + ch + '</span>';
+        }
+        return html;
+    }
+
+    function renderJackpot(animated) {
+        const container = document.getElementById('jackpotDisplay');
+        if (!container) return;
+        const numStr = formatJackpot(currentVal);
+        if (!animated) { container.innerHTML = buildDigitHTML(numStr); return; }
+        const spans = container.querySelectorAll('.jp-digit');
+        const digits = numStr.replace(/[,.]/g, '');
+        let idx = 0;
+        spans.forEach(span => {
+            const newChar = digits[idx] || '0';
+            if (span.textContent !== newChar) {
+                span.classList.remove('changing');
+                void span.offsetWidth;
+                span.classList.add('changing');
+                span.textContent = newChar;
+                setTimeout(() => span.classList.remove('changing'), 200);
+            }
+            idx++;
+        });
+    }
+
+    renderJackpot(false);
+    (function scheduleNext() {
+        setTimeout(function() {
+            currentVal += Math.floor(Math.random() * 9998) + 1;
+            renderJackpot(true);
+            scheduleNext();
+        }, 1500 + Math.random() * 2000);
+    })();
+})();
+</script>
+
+</body>
+</html>

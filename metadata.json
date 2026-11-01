@@ -1,0 +1,8 @@
+{
+  "name": "Remix Binary Trade Pro",
+  "description": "A professional binary and standard trading platform featuring advanced tracking tools for streamlined investment management.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

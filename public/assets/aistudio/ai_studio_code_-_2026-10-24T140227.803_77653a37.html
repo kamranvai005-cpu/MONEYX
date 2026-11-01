@@ -1,0 +1,1448 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>FM CLUB — Official Gaming Platform</title>
+  <link rel="icon" type="image/jpeg" href="favicon.jpeg">
+  <link rel="shortcut icon" type="image/jpeg" href="favicon.jpeg">
+  <link rel="apple-touch-icon" href="favicon.jpeg">
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <!-- Supabase JS Library -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- Preload Game Video Assets -->
+  <link rel="preload" as="video" href="https://pub-8f7f45da1f9a4bff9621e0805f0516a4.r2.dev/wingobig.mp4">
+  <link rel="preload" as="video" href="https://pub-8f7f45da1f9a4bff9621e0805f0516a4.r2.dev/wingosmall.mp4">
+
+  <style>
+    :root {
+      --primary: #10b981;
+      --primary-dark: #059669;
+      --primary-gradient: linear-gradient(135deg, #059669 0%, #10b981 100%);
+      --accent-gold: #f59e0b;
+      --accent-blue: #3b82f6;
+      --accent-red: #ef4444;
+      --accent-violet: #8b5cf6;
+      --bg: #f1f5f9;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border-color: #e2e8f0;
+    }
+
+    *, *:before, *:after {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent !important;
+      -webkit-touch-callout: none !important;
+      outline: none !important;
+      user-select: none;
+    }
+
+    input, textarea {
+      user-select: text !important;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      background: #0f172a;
+      font-family: 'Inter', sans-serif;
+      color: var(--text-main);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .app-viewport {
+      width: 100%;
+      max-width: 480px;
+      min-height: 100vh;
+      margin: 0 auto;
+      background: var(--bg);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 0 50px rgba(0,0,0,0.4);
+      overflow-x: hidden;
+    }
+
+    /* Views container */
+    .view-container {
+      flex: 1;
+      width: 100%;
+      display: none;
+    }
+
+    .view-container.active {
+      display: block;
+      animation: fadeIn 0.25s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ─── HOME VIEW STYLES ─── */
+    .home-top {
+      height: 200px;
+      position: relative;
+      padding: 22px 20px 0;
+      background: linear-gradient(125deg, #047857 0%, #10b981 60%, #34d399 100%);
+      border-radius: 0 0 34px 34px;
+      color: #fff;
+    }
+    .profile {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .avatar {
+      width: 78px;
+      height: 78px;
+      border-radius: 50%;
+      object-fit: cover;
+      flex: 0 0 78px;
+      border: 3px solid rgba(255, 255, 255, 0.4);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .user-info { min-width: 0; }
+    .user-line {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+    }
+    .username {
+      font-size: 17px;
+      font-weight: 700;
+      color: #fff;
+      max-width: 160px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .vip-badge-img {
+      height: 26px;
+      object-fit: contain;
+    }
+    .uid-pill {
+      display: inline-flex;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.22);
+      backdrop-filter: blur(8px);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-top: 6px;
+      cursor: pointer;
+      border: 1px solid rgba(255,255,255,0.3);
+      transition: background 0.2s;
+    }
+    .uid-pill:active { background: rgba(255, 255, 255, 0.4); }
+    .last-login {
+      font-size: 11px;
+      opacity: 0.85;
+      margin-top: 5px;
+    }
+
+    /* Balance Box */
+    .balance-card {
+      position: absolute;
+      left: 16px;
+      right: 16px;
+      top: 122px;
+      background: #fff;
+      border-radius: 18px;
+      color: var(--text-main);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+      border: 1px solid rgba(0,0,0,0.03);
+    }
+    .balance-card-header {
+      padding: 14px 18px 0;
+      color: var(--text-muted);
+      font-size: 14px;
+      font-weight: 500;
+    }
+    .balance-card-val {
+      padding: 4px 18px 12px;
+      font-size: 26px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      color: #0f172a;
+    }
+    .refresh-icon {
+      width: 22px;
+      height: 22px;
+      margin-left: 10px;
+      cursor: pointer;
+      opacity: 0.7;
+      transition: transform 0.3s, opacity 0.2s;
+    }
+    .refresh-icon:hover { opacity: 1; }
+    .refresh-spin { animation: spin 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+    .quick-actions {
+      border-top: 1px solid #f1f5f9;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      padding: 10px 0;
+    }
+    .qa-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #475569;
+      cursor: pointer;
+    }
+    .qa-item img { width: 34px; height: 34px; object-fit: contain; }
+
+    .home-content {
+      padding: 85px 16px 80px;
+    }
+
+    /* Game Banner */
+    .game-banner {
+      height: 154px;
+      border-radius: 18px;
+      overflow: hidden;
+      position: relative;
+      background: linear-gradient(120deg, #065f46 0%, #059669 50%, #10b981 100%);
+      box-shadow: 0 10px 20px rgba(5, 150, 105, 0.25);
+      margin-bottom: 20px;
+      color: #fff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+      transition: transform 0.15s ease;
+    }
+    .game-banner:active { transform: scale(0.985); }
+    .game-banner-text { z-index: 2; }
+    .gb-title { font-size: 24px; font-weight: 800; }
+    .gb-sub { font-size: 13px; font-weight: 500; opacity: 0.95; margin-top: 2px; }
+    .gb-desc { font-size: 10px; color: #a7f3d0; margin-top: 6px; }
+    .gb-btn {
+      margin-top: 14px;
+      background: rgba(255, 255, 255, 0.22);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #fff;
+      display: inline-block;
+    }
+    .gb-img {
+      position: absolute;
+      right: 10px;
+      bottom: 6px;
+      height: 140px;
+      object-fit: contain;
+      z-index: 1;
+    }
+
+    /* History & Menus */
+    .history-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .h-card {
+      background: #fff;
+      border-radius: 14px;
+      padding: 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    }
+    .h-card img { width: 34px; height: 34px; object-fit: contain; }
+    .h-card-title { font-size: 14px; font-weight: 700; color: #1e293b; }
+    .h-card-sub { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+    .menu-box {
+      background: #fff;
+      border-radius: 16px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+      overflow: hidden;
+    }
+    .menu-item {
+      display: flex;
+      align-items: center;
+      padding: 16px;
+      border-bottom: 1px solid #f8fafc;
+      cursor: pointer;
+    }
+    .menu-item:last-child { border-bottom: none; }
+    .menu-item img { width: 26px; height: 26px; margin-right: 14px; object-fit: contain; }
+    .menu-item span { font-size: 14.5px; font-weight: 600; color: #334155; }
+    .menu-item .arrow { margin-left: auto; color: #94a3b8; font-weight: 400; font-size: 18px; }
+
+    .logout-btn-wrap { margin-top: 10px; margin-bottom: 25px; }
+    .logout-btn-action {
+      width: 100%;
+      height: 48px;
+      border-radius: 24px;
+      border: 1.5px solid var(--accent-red);
+      background: rgba(239, 68, 68, 0.05);
+      color: var(--accent-red);
+      font-size: 15px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+
+    /* ─── GAME (TRADE GO / WINGO) VIEW STYLES ─── */
+    .game-header {
+      height: 64px;
+      background: linear-gradient(135deg, #047857 0%, #10b981 100%);
+      padding: 0 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: #fff;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+    .game-header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .brand-title {
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing: 0.5px;
+      color: #fff;
+      text-transform: uppercase;
+    }
+    .game-header-balance {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 20px;
+      font-weight: 800;
+    }
+
+    .game-content {
+      padding: 14px 14px 80px;
+    }
+
+    /* Results Bar */
+    .top-results {
+      background: #fff;
+      border-radius: 16px;
+      padding: 12px 14px;
+      margin-bottom: 12px;
+      position: relative;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    }
+    .tr-title { font-size: 14px; font-weight: 700; color: #475569; margin-bottom: 10px; }
+    .tr-row {
+      display: grid;
+      grid-template-columns: repeat(10, 1fr);
+      gap: 4px;
+    }
+    .res-ball {
+      width: 28px;
+      height: 28px;
+      margin: 0 auto;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 800;
+      box-shadow: inset -2px -2px 4px rgba(0,0,0,0.25);
+    }
+    .ball-green { background: #10b981; }
+    .ball-red { background: #ef4444; }
+    .ball-violet { background: linear-gradient(135deg, #10b981 0 49%, #8b5cf6 50% 100%); }
+
+    .speaker-toggle {
+      position: absolute;
+      right: 0;
+      top: 0;
+      width: 58px;
+      height: 36px;
+      background: #d1fae5;
+      color: #059669;
+      border-radius: 0 16px 0 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    /* Issue Card */
+    .issue-card {
+      background: #fff;
+      border-radius: 18px;
+      padding: 16px;
+      position: relative;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+      margin-bottom: 14px;
+    }
+    .issue-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .issue-num { font-size: 13px; color: #475569; }
+    .issue-num b { color: #0f172a; font-weight: 700; }
+    .how-btn {
+      position: absolute;
+      top: 0;
+      right: 0;
+      background: linear-gradient(135deg, #059669, #10b981);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 0 18px 0 18px;
+      cursor: pointer;
+    }
+    .timer-pill {
+      height: 38px;
+      background: #ecfdf5;
+      border: 1px solid #a7f3d0;
+      border-radius: 8px;
+      color: #065f46;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: 800;
+    }
+
+    .video-viewport {
+      width: 100%;
+      height: 190px;
+      margin: 14px 0;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #000;
+      position: relative;
+    }
+    .video-viewport video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      pointer-events: none;
+    }
+    .video-shield {
+      position: absolute;
+      inset: 0;
+      z-index: 5;
+    }
+
+    .bet-buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .btn-choice {
+      height: 64px;
+      border-radius: 12px;
+      color: #fff;
+      font-size: 20px;
+      font-weight: 800;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.1s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .btn-choice:active { transform: translateY(3px); }
+    .btn-choice span { font-size: 13px; font-weight: 500; opacity: 0.95; }
+    .btn-big { background: #f59e0b; box-shadow: 0 4px 0 #d97706; }
+    .btn-small { background: #3b82f6; box-shadow: 0 4px 0 #2563eb; }
+
+    .multiplier-grid {
+      display: grid;
+      grid-template-columns: 1.3fr repeat(6, 1fr);
+      gap: 5px;
+      margin-top: 12px;
+    }
+    .btn-mult {
+      height: 42px;
+      background: #fff;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #334155;
+      cursor: pointer;
+    }
+
+    /* Tabs & History */
+    .tabs-card {
+      background: #fff;
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    }
+    .tab-headers {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      border-bottom: 1px solid #f1f5f9;
+      height: 52px;
+    }
+    .tab-btn {
+      font-size: 15px;
+      font-weight: 600;
+      color: #64748b;
+      background: none;
+      border: none;
+      cursor: pointer;
+      position: relative;
+    }
+    .tab-btn.active {
+      color: #0f172a;
+      font-weight: 800;
+    }
+    .tab-btn.active::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 25%;
+      right: 25%;
+      height: 3px;
+      background: var(--primary);
+      border-radius: 3px 3px 0 0;
+    }
+
+    .table-head, .table-row {
+      display: grid;
+      grid-template-columns: 1.8fr 0.8fr 1.2fr 0.8fr;
+      align-items: center;
+      text-align: center;
+    }
+    .table-head {
+      height: 46px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #475569;
+      background: #f8fafc;
+    }
+    .table-row {
+      min-height: 52px;
+      border-top: 1px solid #f1f5f9;
+      font-size: 14px;
+    }
+    .row-num { font-size: 20px; font-weight: 800; }
+    .col-green { color: #10b981; }
+    .col-red { color: #ef4444; }
+    .col-violet { color: #8b5cf6; }
+    .history-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin: 0 2px; }
+    .dot-green { background: #10b981; }
+    .dot-red { background: #ef4444; }
+    .dot-violet { background: #8b5cf6; }
+
+    .pagination {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 25px;
+      padding: 16px;
+      border-top: 1px solid #f1f5f9;
+    }
+    .page-arrow {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      background: #f1f5f9;
+      color: #94a3b8;
+      font-size: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    .page-arrow.active {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    /* ─── MODALS ─── */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.65);
+      z-index: 1000;
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+    }
+    .modal-overlay.active { display: flex; }
+
+    .bottom-sheet {
+      width: 100%;
+      max-width: 480px;
+      background: #fff;
+      border-radius: 24px 24px 0 0;
+      overflow: hidden;
+      animation: sheetUp 0.25s ease-out;
+    }
+    @keyframes sheetUp {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
+    }
+
+    .bet-body { padding: 18px 20px; }
+    .bet-field { display: flex; align-items: center; margin-bottom: 14px; gap: 12px; }
+    .bf-label { width: 64px; font-size: 14px; color: #64748b; font-weight: 600; }
+    .bf-choice-pill { padding: 6px 20px; border-radius: 6px; color: #fff; font-weight: 700; font-size: 15px; }
+    .bf-choice-pill.big { background: var(--accent-gold); }
+    .bf-choice-pill.small { background: var(--accent-blue); }
+
+    .bf-btn-group { display: flex; gap: 8px; flex: 1; }
+    .b-sel-opt {
+      flex: 1; height: 38px; border: 1px solid #cbd5e1; border-radius: 6px;
+      background: #fff; font-size: 14px; font-weight: 700; color: #334155; cursor: pointer;
+    }
+    .b-sel-opt.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+    .bet-counter {
+      display: flex; align-items: center; flex: 1; border: 1px solid #cbd5e1; border-radius: 6px;
+    }
+    .btn-step { width: 40px; height: 38px; background: #f8fafc; font-size: 20px; color: #475569; font-weight: 700; }
+    .input-mult { flex: 1; border: none; text-align: center; font-size: 16px; font-weight: 700; }
+
+    .bet-footer { display: flex; height: 54px; }
+    .bf-btn-cancel { flex: 1; background: #f1f5f9; color: #64748b; font-weight: 700; }
+    .bf-btn-confirm { flex: 2; background: var(--primary-gradient); color: #fff; font-size: 16px; font-weight: 800; }
+
+    /* Win / Lose Popup */
+    .popup-dialog-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      padding: 20px;
+    }
+    .popup-dialog-overlay.active { display: flex; }
+    .popup-box {
+      background: #fff;
+      border-radius: 24px;
+      width: 100%;
+      max-width: 320px;
+      padding: 24px 20px;
+      text-align: center;
+      animation: zoomIn 0.25s ease;
+    }
+    @keyframes zoomIn {
+      from { transform: scale(0.9); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    .popup-title-win { font-size: 15px; font-weight: 700; color: #10b981; }
+    .popup-win-amount { font-size: 40px; font-weight: 900; color: #10b981; margin: 6px 0 16px; }
+    .popup-title-lose { font-size: 24px; font-weight: 800; color: #1e293b; margin: 10px 0 16px; }
+
+    /* ─── BOTTOM NAVIGATION BAR ─── */
+    .nav-bar {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 480px;
+      height: 60px;
+      background: #ffffff;
+      border-top: 1px solid #e2e8f0;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      z-index: 100;
+    }
+    .nav-link {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      color: #94a3b8;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .nav-link.active { color: var(--primary); }
+    .nav-link svg { width: 22px; height: 22px; }
+
+    /* Toast */
+    .club-toast {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(15, 23, 42, 0.95);
+      color: #fff;
+      padding: 12px 22px;
+      border-radius: 30px;
+      font-size: 14px;
+      font-weight: 600;
+      z-index: 99999;
+      display: none;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-viewport">
+
+  <!-- ==================== VIEW 1: HOME ==================== -->
+  <div id="view-home" class="view-container active">
+    <section class="home-top">
+      <div class="profile">
+        <img class="avatar" id="homeAvatar" src="korean_avatar_v2.jpg?v=3" alt="Avatar">
+        <div class="user-info">
+          <div class="user-line">
+            <span class="username" id="homeNickname">FM Member</span>
+            <img class="vip-badge-img" src="https://pub-6a119534039b4776b0ed2ff115f76196.r2.dev/viip01-removebg-preview.png" alt="VIP">
+          </div>
+          <div class="uid-pill" id="homeUidPill" onclick="copyUID()">
+            <span>UID | <span id="homeUidVal">---</span></span>
+            <svg style="width:13px;height:13px;margin-left:6px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          </div>
+          <div class="last-login" id="homeLastLogin">Last login: Loading...</div>
+        </div>
+      </div>
+
+      <!-- Balance Card -->
+      <div class="balance-card">
+        <div class="balance-card-header">Total Balance</div>
+        <div class="balance-card-val">
+          BDT <span id="homeBalanceText" style="margin-left: 4px;">0.00</span>
+          <img src="https://pub-6a119534039b4776b0ed2ff115f76196.r2.dev/1000035090-removebg-preview.png" class="refresh-icon" alt="Refresh" onclick="refreshAppBalance()">
+        </div>
+        <div class="quick-actions">
+          <div class="qa-item" onclick="triggerToast('Opening Wallet...')">
+            <img src="https://pub-6a119534039b4776b0ed2ff115f76196.r2.dev/wallet-removebg-preview.png" alt="Wallet">
+            <span>Wallet</span>
+          </div>
+          <div class="qa-item" onclick="triggerToast('Deposit Portal...')">
+            <img src="https://pub-6a119534039b4776b0ed2ff115f76196.r2.dev/withdraw-removebg-preview.png" alt="Deposit">
+            <span>Deposit</span>
+          </div>
+          <div class="qa-item" onclick="triggerToast('Withdraw Portal...')">
+            <img src="https://pub-6a119534039b4776b0ed2ff115f76196.r2.dev/withdrawx-removebg-preview.png" alt="Withdraw">
+            <span>Withdraw</span>
+          </div>
+          <div class="qa-item" onclick="triggerToast('VIP Club Rewards')">
+            <img src="https://pub-6a119534039b4776b0ed2ff115f76196.r2.dev/viip-removebg-preview.png" alt="VIP">
+            <span>VIP</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="home-content">
+      <!-- GAME BANNER (TRADE GO 30S) -->
+      <section class="game-banner" onclick="navigateToView('game')">
+        <div class="game-banner-text">
+          <div class="gb-title">FM Trade Go</div>
+          <div class="gb-sub">WinGo 30 Seconds Live</div>
+          <div class="gb-desc">Instant 30s Draws · Highest Multipliers</div>
+          <div class="gb-btn">▶ Trade Now</div>
+        </div>
+        <img class="gb-img" src="https://pub-6a119534039b4776b0ed2ff115f76196.r2.dev/lotterycategory_20230725010909y1nq%20(1).png" alt="Trade Go Live">
+      </section>
+
+      <!-- History Grid -->
+      <section class="history-grid">
+        <div class="h-card" onclick="navigateToView('game', 'myhistory')">
+          <img src="https://pub-6a119534039b4776b0ed2ff115f76196.r2.dev/1000035035-removebg-preview%20(1).png" alt="History">
+          <div>
+            <div class="h-card-title">Trade Record</div>
+            <div class="h-card-sub">Review my trades</div>
+          </div>
+        </div>
+        <div class="h-card" onclick="triggerToast('Bonuses record')">
+          <img src="https://pub-6a119534039b4776b0ed2ff115f76196.r2.dev/1000035034-removebg-preview.png" alt="Bonuses">
+          <div>
+            <div class="h-card-title">Bonus History</div>
+            <div class="h-card-sub">Reward claims</div>
+          </div>
+        </div>
+        <div class="h-card" onclick="triggerToast('Deposit Records')">
+          <img src="https://pub-6a119534039b4776b0ed2ff115f76196.r2.dev/1000036919-removebg-preview.png" alt="Deposit">
+          <div>
+            <div class="h-card-title">Deposits</div>
+            <div class="h-card-sub">Transaction logs</div>
+          </div>
+        </div>
+        <div class="h-card" onclick="triggerToast('Withdraw Records')">
+          <img src="https://pub-6a119534039b4776b0ed2ff115f76196.r2.dev/1000036921-removebg-preview.png" alt="Withdraw">
+          <div>
+            <div class="h-card-title">Withdrawals</div>
+            <div class="h-card-sub">Cashout logs</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Menus -->
+      <section class="menu-box">
+        <div class="menu-item" onclick="triggerToast('Invite & Earn Program')">
+          <img src="https://pub-6a119534039b4776b0ed2ff115f76196.r2.dev/1000035043-removebg-preview.png" alt="Invite">
+          <span>Invite Friends</span>
+          <span class="arrow">›</span>
+        </div>
+        <div class="menu-item" onclick="triggerToast('Gift Redemption')">
+          <img src="https://pub-6a119534039b4776b0ed2ff115f76196.r2.dev/1000035050-removebg-preview.png" alt="Gifts">
+          <span>Daily Gifts</span>
+          <span class="arrow">›</span>
+        </div>
+        <div class="menu-item" onclick="triggerToast('24/7 Customer Support')">
+          <img src="https://pub-6a119534039b4776b0ed2ff115f76196.r2.dev/1000035077-removebg-preview.png" alt="Support">
+          <span>Customer Service</span>
+          <span class="arrow">›</span>
+        </div>
+      </section>
+
+      <div class="logout-btn-wrap">
+        <button class="logout-btn-action" onclick="openLogoutModal()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path><line x1="12" y1="2" x2="12" y2="12"></line></svg>
+          <span>Log Out</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== VIEW 2: GAME (WINGO 30S) ==================== -->
+  <div id="view-game" class="view-container">
+    <header class="game-header">
+      <div class="game-header-left">
+        <button onclick="navigateToView('home')" style="color:#fff;display:flex;align-items:center;">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <div class="brand-title">FM CLUB</div>
+      </div>
+      <div class="game-header-balance">
+        <span>BDT <span id="gameBalanceText">0.00</span></span>
+        <img src="https://pub-6a119534039b4776b0ed2ff115f76196.r2.dev/1000035090-removebg-preview.png" class="refresh-icon" style="filter:brightness(0) invert(1);" alt="Refresh" onclick="refreshAppBalance()">
+      </div>
+    </header>
+
+    <div class="game-content">
+      <!-- Top recent results -->
+      <section class="top-results">
+        <div class="tr-title">Recent Draw Results</div>
+        <div class="tr-row" id="gameTopRow">
+          <!-- 10 balls injected dynamically -->
+        </div>
+        <div class="speaker-toggle" id="gameSpeakerBtn" onclick="toggleMuteState()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>
+        </div>
+      </section>
+
+      <!-- Current Period & Video Box -->
+      <section class="issue-card">
+        <div class="issue-info">
+          <div class="issue-num">Period: <b id="gameIssueDisplay">0000000000</b></div>
+          <button class="how-btn" onclick="openHowModal()">Rules</button>
+        </div>
+        <div class="timer-pill" id="gameTimerDisplay">Time remaining 00:30</div>
+
+        <!-- Video Simulation Container -->
+        <div class="video-viewport">
+          <video id="gameDrawVideo" muted playsinline preload="auto" src="https://pub-8f7f45da1f9a4bff9621e0805f0516a4.r2.dev/wingobig.mp4#t=0.0"></video>
+          <div class="video-shield"></div>
+        </div>
+
+        <!-- Big / Small Buttons -->
+        <div class="bet-buttons">
+          <button class="btn-choice btn-big" id="btnBetBig" onclick="openPlaceBetModal('Big')">
+            Big <span>x1.96</span>
+          </button>
+          <button class="btn-choice btn-small" id="btnBetSmall" onclick="openPlaceBetModal('Small')">
+            Small <span>x1.96</span>
+          </button>
+        </div>
+
+        <div class="multiplier-grid">
+          <button class="btn-mult" onclick="handleQuickBet('Random')">Random</button>
+          <button class="btn-mult" onclick="handleQuickBet('x1')">x1</button>
+          <button class="btn-mult" onclick="handleQuickBet('x5')">x5</button>
+          <button class="btn-mult" onclick="handleQuickBet('x10')">x10</button>
+          <button class="btn-mult" onclick="handleQuickBet('x20')">x20</button>
+          <button class="btn-mult" onclick="handleQuickBet('x50')">x50</button>
+          <button class="btn-mult" onclick="handleQuickBet('x100')">x100</button>
+        </div>
+      </section>
+
+      <!-- History Tabs -->
+      <section class="tabs-card">
+        <div class="tab-headers">
+          <button class="tab-btn active" id="tabHeadHistory" onclick="switchGameTab('history')">History</button>
+          <button class="tab-btn" id="tabHeadChart" onclick="switchGameTab('chart')">Trends</button>
+          <button class="tab-btn" id="tabHeadMy" onclick="switchGameTab('my')">My Bets</button>
+        </div>
+
+        <!-- Tab 1: Game History -->
+        <div id="gameTabHistoryContent">
+          <div class="table-head">
+            <span>Period</span><span>Number</span><span>Size</span><span>Color</span>
+          </div>
+          <div id="gameHistoryList"></div>
+          <div class="pagination">
+            <button class="page-arrow" id="gHistPrev" onclick="changeHistPage(-1)">‹</button>
+            <span id="gHistPageNum" style="font-size:14px;font-weight:700;">1/1</span>
+            <button class="page-arrow active" id="gHistNext" onclick="changeHistPage(1)">›</button>
+          </div>
+        </div>
+
+        <!-- Tab 2: Chart Trends -->
+        <div id="gameTabChartContent" style="display:none;padding:15px;">
+          <div style="font-size:13px;color:#64748b;text-align:center;padding:20px 0;">Number Trends & Probability Line Active</div>
+          <div id="chartSimpleRows"></div>
+        </div>
+
+        <!-- Tab 3: My Orders -->
+        <div id="gameTabMyContent" style="display:none;">
+          <div id="myBetsList" style="padding:10px 14px;"></div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- Bottom Navigation -->
+  <nav class="nav-bar">
+    <div class="nav-link active" id="navHome" onclick="navigateToView('home')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span>Home</span>
+    </div>
+    <div class="nav-link" id="navGame" onclick="navigateToView('game')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+      <span>FM Trade</span>
+    </div>
+    <div class="nav-link" onclick="triggerToast('VIP Center')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      <span>VIP</span>
+    </div>
+    <div class="nav-link" onclick="navigateToView('home')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span>My Club</span>
+    </div>
+  </nav>
+
+</div>
+
+<!-- ==================== BET CONFIRMATION BOTTOM SHEET ==================== -->
+<div class="modal-overlay" id="betModalOverlay" onclick="if(event.target===this)closeBetModal()">
+  <div class="bottom-sheet">
+    <div class="bet-body">
+      <div class="bet-field">
+        <span class="bf-label">Choice</span>
+        <div class="bf-choice-pill big" id="betModalChoicePill">Big</div>
+      </div>
+      <div class="bet-field">
+        <span class="bf-label">Amount</span>
+        <div class="bf-btn-group">
+          <button class="b-sel-opt active" onclick="setBaseAmt(1, this)">1</button>
+          <button class="b-sel-opt" onclick="setBaseAmt(10, this)">10</button>
+          <button class="b-sel-opt" onclick="setBaseAmt(100, this)">100</button>
+          <button class="b-sel-opt" onclick="setBaseAmt(1000, this)">1K</button>
+        </div>
+      </div>
+      <div class="bet-field">
+        <span class="bf-label">Multiple</span>
+        <div class="bet-counter">
+          <button class="btn-step" onclick="adjustMult(-1)">-</button>
+          <input type="number" class="input-mult" id="betMultField" value="1" min="1" oninput="onMultInput(this.value)">
+          <button class="btn-step" onclick="adjustMult(1)">+</button>
+        </div>
+      </div>
+    </div>
+    <div class="bet-footer">
+      <button class="bf-btn-cancel" onclick="closeBetModal()">Cancel</button>
+      <button class="bf-btn-confirm" id="betConfirmBtn" onclick="confirmPlaceBet()">Total BDT <span id="betTotalVal">1.00</span></button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== WIN / LOSE POPUPS ==================== -->
+<div class="popup-dialog-overlay" id="resultPopup" onclick="if(event.target===this)closeResultPopup()">
+  <div class="popup-box">
+    <div id="winPopupContent">
+      <div class="popup-title-win">Congratulations! Trade Win</div>
+      <div class="popup-win-amount" id="resWinAmt">+0.00</div>
+    </div>
+    <div id="losePopupContent" style="display:none;">
+      <div style="font-size:14px;color:#94a3b8;font-weight:600;">Trade Result</div>
+      <div class="popup-title-lose">No Win</div>
+    </div>
+    <div style="font-size:13px;color:#64748b;margin-bottom:18px;">
+      Period: <b id="resPopupPeriod">--</b> | Result: <b id="resPopupSize">--</b>
+    </div>
+    <button style="width:100%;height:44px;border-radius:22px;background:var(--primary);color:#fff;font-weight:700;" onclick="closeResultPopup()">Close</button>
+  </div>
+</div>
+
+<!-- ==================== HOW TO PLAY MODAL ==================== -->
+<div class="modal-overlay" id="howModal" onclick="if(event.target===this)closeHowModal()">
+  <div class="bottom-sheet" style="padding: 24px 20px;">
+    <h3 style="margin-top:0;font-size:18px;font-weight:800;color:var(--primary);">FM CLUB — WinGo 30s Rules</h3>
+    <p style="font-size:13px;line-height:1.7;color:#475569;">
+      1 issue every 30 seconds. 25 seconds to place trade, 5 seconds draw time.<br><br>
+      • <b>Select Big:</b> If number is 5, 6, 7, 8, 9 (Payout x1.96)<br>
+      • <b>Select Small:</b> If number is 0, 1, 2, 3, 4 (Payout x1.96)<br>
+      • <b>Color Rules:</b> Number 0 is Red+Violet, 5 is Green+Violet, evens are Red, odds are Green.
+    </p>
+    <button style="width:100%;height:46px;border-radius:23px;background:var(--primary);color:#fff;font-weight:700;margin-top:14px;" onclick="closeHowModal()">Got It</button>
+  </div>
+</div>
+
+<div class="club-toast" id="appToast">Notification</div>
+
+<script>
+/* =========================================================================
+   FM CLUB SUPABASE & APPLICATION STATE ENGINE
+   ========================================================================= */
+const SUPABASE_URL = 'https://lecagzcgytczipdfvozx.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxlY2FnemNneXRjemlwZGZ2b3p4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkxNjY5OTIsImV4cCI6MjEwNDc0Mjk5Mn0.-Cn6shcdF4cTve9Y42w-tTnYnpsIi6UDK3Ljx_-5B00';
+const sb = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
+
+let currentUser = null;
+let userBalance = 0;
+let currentPeriod = 0;
+let secondsRemaining = 30;
+let isDrawing = false;
+let isBettingDisabled = false;
+let hasTriggeredDraw = false;
+let serverOffset = 0;
+let isMuted = true;
+
+// Active bet settings
+let activeChoice = 'Big';
+let baseBetAmt = 1;
+let currentMult = 1;
+
+// History & Pagination
+let gameHistoryAll = [];
+let histPage = 1;
+
+// Video Blobs
+const VIDEO_BIG = 'https://pub-8f7f45da1f9a4bff9621e0805f0516a4.r2.dev/wingobig.mp4';
+const VIDEO_SMALL = 'https://pub-8f7f45da1f9a4bff9621e0805f0516a4.r2.dev/wingosmall.mp4';
+let blobBig = null, blobSmall = null;
+
+// Audio
+const videoEl = document.getElementById('gameDrawVideo');
+
+function triggerToast(msg) {
+  const t = document.getElementById('appToast');
+  t.innerText = msg;
+  t.style.display = 'block';
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => { t.style.display = 'none'; }, 2200);
+}
+
+/* Navigation System */
+function navigateToView(viewId, subTab) {
+  document.querySelectorAll('.view-container').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
+
+  if (viewId === 'home') {
+    document.getElementById('view-home').classList.add('active');
+    document.getElementById('navHome').classList.add('active');
+  } else if (viewId === 'game') {
+    document.getElementById('view-game').classList.add('active');
+    document.getElementById('navGame').classList.add('active');
+    if (subTab) switchGameTab(subTab);
+  }
+  window.scrollTo(0, 0);
+}
+
+/* Balance Management */
+function updateBalanceDisplays() {
+  const formatted = userBalance.toFixed(2);
+  document.getElementById('homeBalanceText').innerText = formatted;
+  document.getElementById('gameBalanceText').innerText = formatted;
+}
+
+async function refreshAppBalance() {
+  document.querySelectorAll('.refresh-icon').forEach(icon => {
+    icon.classList.add('refresh-spin');
+    setTimeout(() => icon.classList.remove('refresh-spin'), 650);
+  });
+  if (!sb || !currentUser) return;
+  try {
+    const { data } = await sb.from('profiles').select('balance').eq('id', currentUser.id).single();
+    if (data) {
+      userBalance = parseFloat(data.balance || 0);
+      updateBalanceDisplays();
+    }
+  } catch(e) { console.warn(e); }
+}
+
+/* Time Synchronization & Period System */
+function getNow() { return Date.now() + serverOffset; }
+function getServerPeriod() { return Math.floor(getNow() / 1000 / 30); }
+function getSecondsRemaining() { return 30 - ((getNow() / 1000) % 30); }
+
+function formatPeriodId(p) {
+  const d = new Date(p * 30 * 1000);
+  return '' + d.getUTCFullYear() + String(d.getUTCMonth()+1).padStart(2,'0') + String(d.getUTCDate()).padStart(2,'0') + String(p).slice(-6);
+}
+
+function updateGameClock() {
+  const newPeriod = getServerPeriod();
+  if (newPeriod !== currentPeriod) {
+    currentPeriod = newPeriod;
+    hasTriggeredDraw = false;
+    document.getElementById('gameIssueDisplay').innerText = formatPeriodId(currentPeriod);
+  }
+
+  const s = Math.ceil(getSecondsRemaining());
+  secondsRemaining = s;
+  document.getElementById('gameIssueDisplay').innerText = formatPeriodId(currentPeriod);
+
+  const locked = secondsRemaining <= 5;
+  isBettingDisabled = locked || isDrawing;
+  document.getElementById('btnBetBig').disabled = isBettingDisabled;
+  document.getElementById('btnBetSmall').disabled = isBettingDisabled;
+  document.getElementById('btnBetBig').style.opacity = isBettingDisabled ? '0.55' : '1';
+  document.getElementById('btnBetSmall').style.opacity = isBettingDisabled ? '0.55' : '1';
+
+  document.getElementById('gameTimerDisplay').innerText = `Time remaining 00:${s < 10 ? '0' + s : s}`;
+
+  if (secondsRemaining <= 5 && !hasTriggeredDraw && !isDrawing) {
+    hasTriggeredDraw = true;
+    handleGameDraw(currentPeriod);
+  }
+}
+
+/* Draw Phase Animation & Settlement */
+async function handleGameDraw(period) {
+  if (isDrawing) return;
+  isDrawing = true;
+
+  try {
+    let result = null;
+    if (sb) {
+      const rpcRes = await sb.rpc('resolve_wingo_period', { p_period: period });
+      if (rpcRes && rpcRes.data && rpcRes.data.success) {
+        result = rpcRes.data;
+      }
+    }
+
+    const isBig = result ? (result.size === 'Big') : (Math.random() > 0.5);
+    const videoSrc = isBig ? (blobBig || VIDEO_BIG) : (blobSmall || VIDEO_SMALL);
+
+    videoEl.src = videoSrc;
+    videoEl.currentTime = 0;
+    videoEl.muted = isMuted;
+    videoEl.playbackRate = 2.2;
+    await videoEl.play().catch(() => {});
+
+    await new Promise(r => setTimeout(r, 4500));
+
+    videoEl.pause();
+    isDrawing = false;
+
+    // Refresh data
+    await Promise.all([loadGameHistory(), refreshAppBalance(), loadMyBets()]);
+
+    // Check my orders for modal popups
+    if (sb && currentUser) {
+      const { data: bets } = await sb.from('wingo_bets').select('*').eq('user_id', currentUser.id).eq('period', period);
+      if (bets && bets.length > 0) {
+        let totalWin = 0;
+        bets.forEach(b => {
+          if (b.status === 'Win') totalWin += (parseFloat(b.net_amount || 0) + parseFloat(b.amount || 0));
+        });
+        showResultPopup(formatPeriodId(period), isBig ? 'Big' : 'Small', totalWin);
+      }
+    }
+  } catch(e) {
+    console.error(e);
+  } finally {
+    isDrawing = false;
+  }
+}
+
+/* Game History Display */
+async function loadGameHistory() {
+  if (!sb) return;
+  try {
+    const { data } = await sb.from('wingo_results').select('period, number_result, size_result, color_result').order('period', { ascending: false }).limit(60);
+    if (data && data.length > 0) {
+      gameHistoryAll = data;
+      renderHistoryPage();
+      updateTopResultBalls(data.slice(0, 10));
+    }
+  } catch(e) { console.warn(e); }
+}
+
+function updateTopResultBalls(recent) {
+  const row = document.getElementById('gameTopRow');
+  row.innerHTML = '';
+  recent.forEach(r => {
+    const ball = document.createElement('div');
+    const c = (r.color_result || '').toLowerCase();
+    const cl = c.includes('violet') ? 'ball-violet' : (c.includes('red') ? 'ball-red' : 'ball-green');
+    ball.className = `res-ball ${cl}`;
+    ball.innerText = r.size_result === 'Big' ? 'B' : 'S';
+    row.appendChild(ball);
+  });
+}
+
+function renderHistoryPage() {
+  const items = gameHistoryAll.slice((histPage - 1) * 10, histPage * 10);
+  let html = '';
+  items.forEach(r => {
+    const num = r.number_result;
+    const cl = (r.color_result || '').toLowerCase();
+    let colClass = 'col-green';
+    let dotHtml = '<span class="history-dot dot-green"></span>';
+    if (cl.includes('red')) { colClass = 'col-red'; dotHtml = '<span class="history-dot dot-red"></span>'; }
+    if (cl.includes('violet')) { colClass = 'col-violet'; dotHtml += '<span class="history-dot dot-violet"></span>'; }
+
+    html += `<div class="table-row">
+      <span>${formatPeriodId(r.period)}</span>
+      <span class="row-num ${colClass}">${num}</span>
+      <span style="font-weight:700;">${r.size_result}</span>
+      <div>${dotHtml}</div>
+    </div>`;
+  });
+  document.getElementById('gameHistoryList').innerHTML = html;
+  document.getElementById('gHistPageNum').innerText = `${histPage}/${Math.ceil(gameHistoryAll.length / 10) || 1}`;
+}
+
+function changeHistPage(d) {
+  const total = Math.ceil(gameHistoryAll.length / 10) || 1;
+  histPage = Math.max(1, Math.min(total, histPage + d));
+  renderHistoryPage();
+}
+
+/* My Bets Tab */
+async function loadMyBets() {
+  if (!sb || !currentUser) return;
+  try {
+    const { data } = await sb.from('wingo_bets').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false }).limit(20);
+    const container = document.getElementById('myBetsList');
+    if (!data || data.length === 0) {
+      container.innerHTML = '<div style="text-align:center;color:#94a3b8;padding:20px;">No trade history found</div>';
+      return;
+    }
+    let html = '';
+    data.forEach(b => {
+      const isWin = b.status === 'Win';
+      const isLose = b.status === 'Lose';
+      const color = isWin ? '#10b981' : (isLose ? '#ef4444' : '#64748b');
+      html += `<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #f1f5f9;">
+        <div>
+          <div style="font-weight:700;font-size:14px;">${b.choice} <span style="font-size:12px;color:#94a3b8;">(${formatPeriodId(b.period)})</span></div>
+          <div style="font-size:11px;color:#94a3b8;">${new Date(b.created_at).toLocaleTimeString()}</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-weight:800;color:${color}">${b.status}</div>
+          <div style="font-size:13px;font-weight:700;">BDT ${parseFloat(b.amount).toFixed(2)}</div>
+        </div>
+      </div>`;
+    });
+    container.innerHTML = html;
+  } catch(e) {}
+}
+
+/* Betting Modal & Action */
+function openPlaceBetModal(choice) {
+  if (isBettingDisabled) {
+    triggerToast('No trading allowed during draw countdown');
+    return;
+  }
+  activeChoice = choice;
+  const pill = document.getElementById('betModalChoicePill');
+  pill.innerText = choice;
+  pill.className = `bf-choice-pill ${choice.toLowerCase()}`;
+  document.getElementById('betModalOverlay').classList.add('active');
+  recalcTotalBet();
+}
+
+function closeBetModal() {
+  document.getElementById('betModalOverlay').classList.remove('active');
+}
+
+function setBaseAmt(amt, btn) {
+  baseBetAmt = amt;
+  document.querySelectorAll('.b-sel-opt').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  recalcTotalBet();
+}
+
+function adjustMult(delta) {
+  currentMult = Math.max(1, currentMult + delta);
+  document.getElementById('betMultField').value = currentMult;
+  recalcTotalBet();
+}
+
+function onMultInput(val) {
+  currentMult = Math.max(1, parseInt(val) || 1);
+  recalcTotalBet();
+}
+
+function handleQuickBet(type) {
+  if (type === 'Random') {
+    openPlaceBetModal(Math.random() > 0.5 ? 'Big' : 'Small');
+  } else {
+    currentMult = parseInt(type.replace('x', '')) || 1;
+    document.getElementById('betMultField').value = currentMult;
+    recalcTotalBet();
+    openPlaceBetModal('Big');
+  }
+}
+
+function recalcTotalBet() {
+  const total = (baseBetAmt * currentMult).toFixed(2);
+  document.getElementById('betTotalVal').innerText = total;
+}
+
+async function confirmPlaceBet() {
+  const total = parseFloat((baseBetAmt * currentMult).toFixed(2));
+  if (total > userBalance) { triggerToast('Insufficient BDT Balance'); return; }
+
+  const btn = document.getElementById('betConfirmBtn');
+  btn.disabled = true;
+
+  try {
+    const p = getServerPeriod();
+    const { data, error } = await sb.rpc('place_wingo_bet', {
+      p_period: p,
+      p_amount: total,
+      p_choice: activeChoice
+    });
+
+    if (error || (data && !data.success)) {
+      triggerToast(error ? error.message : data.message);
+    } else {
+      triggerToast('Trade Successful!');
+      closeBetModal();
+      await Promise.all([refreshAppBalance(), loadMyBets()]);
+    }
+  } catch(e) {
+    triggerToast('Failed to place trade');
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+/* Modals & Sound */
+function showResultPopup(period, size, totalWin) {
+  const pop = document.getElementById('resultPopup');
+  document.getElementById('resPopupPeriod').innerText = period;
+  document.getElementById('resPopupSize').innerText = size;
+
+  if (totalWin > 0) {
+    document.getElementById('winPopupContent').style.display = 'block';
+    document.getElementById('losePopupContent').style.display = 'none';
+    document.getElementById('resWinAmt').innerText = `+${totalWin.toFixed(2)}`;
+  } else {
+    document.getElementById('winPopupContent').style.display = 'none';
+    document.getElementById('losePopupContent').style.display = 'block';
+  }
+  pop.classList.add('active');
+}
+
+function closeResultPopup() { document.getElementById('resultPopup').classList.remove('active'); }
+function openHowModal() { document.getElementById('howModal').classList.add('active'); }
+function closeHowModal() { document.getElementById('howModal').classList.remove('active'); }
+
+function toggleMuteState() {
+  isMuted = !isMuted;
+  videoEl.muted = isMuted;
+  document.getElementById('gameSpeakerBtn').style.color = isMuted ? '#94a3b8' : '#059669';
+}
+
+function copyUID() {
+  const uid = document.getElementById('homeUidVal').innerText;
+  navigator.clipboard.writeText(uid).then(() => triggerToast('✓ UID Copied!'));
+}
+
+function switchGameTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('gameTabHistoryContent').style.display = 'none';
+  document.getElementById('gameTabChartContent').style.display = 'none';
+  document.getElementById('gameTabMyContent').style.display = 'none';
+
+  if (tab === 'history') {
+    document.getElementById('tabHeadHistory').classList.add('active');
+    document.getElementById('gameTabHistoryContent').style.display = 'block';
+  } else if (tab === 'chart') {
+    document.getElementById('tabHeadChart').classList.add('active');
+    document.getElementById('gameTabChartContent').style.display = 'block';
+  } else if (tab === 'my') {
+    document.getElementById('tabHeadMy').classList.add('active');
+    document.getElementById('gameTabMyContent').style.display = 'block';
+    loadMyBets();
+  }
+}
+
+/* Preload Video Blobs */
+async function preloadVideoBlobs() {
+  try {
+    const [b1, b2] = await Promise.all([
+      fetch(VIDEO_BIG).then(r => r.blob()),
+      fetch(VIDEO_SMALL).then(r => r.blob())
+    ]);
+    blobBig = URL.createObjectURL(b1);
+    blobSmall = URL.createObjectURL(b2);
+  } catch(e) {}
+}
+
+/* User Initialization */
+async function initFMClubApp() {
+  setInterval(updateGameClock, 120);
+  preloadVideoBlobs();
+
+  if (sb) {
+    const { data: { session } } = await sb.auth.getSession();
+    if (session && session.user) {
+      currentUser = session.user;
+      const { data: profile } = await sb.from('profiles').select('*').eq('id', currentUser.id).single();
+      if (profile) {
+        userBalance = parseFloat(profile.balance || 0);
+        document.getElementById('homeNickname').innerText = profile.nickname || 'FM Member';
+        document.getElementById('homeUidVal').innerText = profile.uid || '883921';
+        document.getElementById('homeLastLogin').innerText = `Last login: ${new Date().toLocaleDateString()}`;
+        updateBalanceDisplays();
+      }
+      loadMyBets();
+    }
+  }
+  loadGameHistory();
+}
+
+function openLogoutModal() {
+  if (confirm('Are you sure you want to log out of FM CLUB?')) {
+    if (sb) sb.auth.signOut();
+    localStorage.removeItem('isLoggedIn');
+    window.location.href = 'login';
+  }
+}
+
+initFMClubApp();
+</script>
+</body>
+</html>

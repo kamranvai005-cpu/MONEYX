@@ -1,0 +1,397 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Deposit</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        body{background:#f1f4f9;font-family:'Roboto',sans-serif;padding-bottom:120px;overflow-x:hidden}.header-premium{background:linear-gradient(90deg,#0e3d2c 0%,#1a5c40 100%)}.modern-notice-container{background:#fff;border-left:5px solid #1de9b6;box-shadow:0 4px 15px rgba(0,0,0,.05);border-radius:8px;padding:12px 20px;display:flex;align-items:center}.notice-badge{background:#1de9b6;color:#071f18;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;margin-right:15px;letter-spacing:1px}.notice-content i{color:#1de9b6;margin-right:10px;font-size:18px}.pay-card{background:#fff;border:2px solid #e2e8f0;border-radius:14px;min-height:108px;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:.25s;position:relative;padding:12px}.pay-card.active{border-color:#1de9b6;background:#f0fffb;box-shadow:0 8px 22px rgba(30,233,182,.14)}.pay-card img{width:48px;height:48px;object-fit:contain}.gateway-fallback{width:48px;height:48px;border-radius:15px;background:#e8f8f3;color:#0d4a3a;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:900}.bonus-badge{position:absolute;top:-9px;right:-5px;background:#ef4444;color:#fff;font-size:9px;font-weight:900;padding:2px 7px;border-radius:6px}.amt-btn{background:#fff;border:1px solid #d1d9e6;color:#0d4a3a;padding:12px 0;border-radius:10px;font-size:13px;font-weight:800;transition:.2s}.amt-btn.active{background:#1de9b6;color:#071f18;border-color:#1de9b6;box-shadow:0 4px 10px rgba(30,233,182,.2)}.confirm-btn{background:linear-gradient(180deg,#1de9b6 0%,#00897b 100%);color:#fff;width:100%;padding:18px;border-radius:15px;font-weight:900;text-transform:uppercase;letter-spacing:1px;display:flex;align-items:center;justify-content:center}.confirm-btn:disabled{filter:grayscale(1);opacity:.55}.promo-dropdown{display:none;position:absolute;width:100%;left:0;top:100%;background:#fff;border:1px solid #e2e8f0;border-radius:0 0 12px 12px;z-index:100;box-shadow:0 10px 20px rgba(0,0,0,.1)}.promo-dropdown.show{display:block}.range-note{font-size:10px;font-weight:900;color:#f43f5e;text-transform:uppercase;font-style:italic}.empty-gateway{background:#fff;border:1px dashed #f59e0b;border-radius:14px;padding:22px;text-align:center;color:#92400e}.grid-methods{grid-template-columns:repeat(2,minmax(0,1fr))}@media(min-width:700px){.grid-methods{grid-template-columns:repeat(3,minmax(0,1fr))}}
+    </style>
+</head>
+<body>
+    <div class="header-premium p-4 flex justify-between items-center text-white shadow-lg">
+        <button onclick="window.history.back()" class="w-10 h-10 flex items-center p-1 active:scale-90 transition"><i class="fas fa-chevron-left"></i></button>
+        <h1 class="font-black uppercase tracking-tighter italic text-lg">Funds Management</h1>
+        <div class="w-10 h-10"></div>
+    </div>
+
+    <div class="modern-notice-container mt-4 mx-4">
+        <span class="notice-badge">NOTICE</span>
+        <div class="notice-content"><i class="fas fa-bullhorn"></i><span class="text-wrapper text-xs font-bold text-gray-600">নাম্বার ভালো করে দেখে টাকা ডিপোজিট করবেন, ভুল হলে আমরা দায়ী থাকব না</span></div>
+    </div>
+
+    
+    <form id="depositForm" action="manual_payment.php" method="POST" class="p-4 space-y-6" onsubmit="return validateDepositForm()">
+        <div class="flex bg-gray-200 rounded-xl p-1">
+            <div class="flex-1 text-center py-2.5 bg-white text-[#0d4a3a] font-black rounded-lg shadow-sm text-sm uppercase italic">Deposit</div>
+            <a href="withdraw.php" class="flex-1 text-center py-2.5 text-gray-500 font-bold text-sm uppercase italic">Withdraw</a>
+        </div>
+
+        <div class="relative">
+            <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-2">Available Promotion</label>
+            <div class="bg-white border-2 border-dashed border-emerald-100 p-3 rounded-xl bg-emerald-50/30 flex justify-between items-center cursor-pointer" onclick="togglePromo()">
+                <span id="selectedPromoLabel" class="text-xs font-bold text-[#0d4a3a]"><i class="fas fa-gift mr-2"></i> Regular Deposit</span>
+                <i class="fas fa-chevron-down text-[#0d4a3a]"></i>
+            </div>
+            <input type="hidden" name="promo_id" id="promoIdInput" value="0">
+            <div id="promoDropdownList" class="promo-dropdown overflow-hidden">
+                <div class="p-3 text-xs border-b hover:bg-gray-50 font-bold text-gray-600" onclick="selectPromo('Regular Deposit',0)">Regular Deposit</div>
+                                    <div class="p-3 text-xs border-b hover:bg-gray-50 font-bold text-gray-600" onclick="selectPromo("\u09b8\u09a6\u09cd\u09af \u09a8\u09bf\u09ac\u09a8\u09cd\u09a7\u09bf\u09a4 \u09b8\u09a6\u09b8\u09cd\u09af  50% bonus",9)">সদ্য নিবন্ধিত সদস্য  50% bonus</div>
+                                    <div class="p-3 text-xs border-b hover:bg-gray-50 font-bold text-gray-600" onclick="selectPromo("\u09e9 \u099f\u09bf \u09ad\u09bf\u0986\u0987\u09aa\u09bf \u09b2\u09be\u0987\u09ab\u099f\u09be\u0987\u09ae \u09b8\u09c1\u09ac\u09bf\u09a7\u09be",8)">৩ টি ভিআইপি লাইফটাইম সুবিধা</div>
+                                    <div class="p-3 text-xs border-b hover:bg-gray-50 font-bold text-gray-600" onclick="selectPromo("Dollar333 APP \u09a1\u09be\u0989\u09a8\u09b2\u09cb\u09a1 \u0995\u09b0\u09c1\u09a8",6)">Dollar333 APP ডাউনলোড করুন</div>
+                                    <div class="p-3 text-xs border-b hover:bg-gray-50 font-bold text-gray-600" onclick="selectPromo("\u098f\u099c\u09c7\u09a8\u09cd\u099f \u09ea \u09b8\u09c1\u09aa\u09be\u09b0 \u0995\u09ae\u09bf\u09b6\u09a8",5)">এজেন্ট ৪ সুপার কমিশন</div>
+                                    <div class="p-3 text-xs border-b hover:bg-gray-50 font-bold text-gray-600" onclick="selectPromo("\u09aa\u09cd\u09b0\u09a5\u09ae \u09a1\u09bf\u09aa\u09cb\u099c\u09bf\u099f \u09ac\u09cb\u09a8\u09be\u09b8 \u09e7\u09e8\u09ef%",4)">প্রথম ডিপোজিট বোনাস ১২৯%</div>
+                                    <div class="p-3 text-xs border-b hover:bg-gray-50 font-bold text-gray-600" onclick="selectPromo("\u09ac\u09a8\u09cd\u09a7\u09c1\u09a6\u09c7\u09b0 \u0986\u09ae\u09a8\u09cd\u09a4\u09cd\u09b0\u09a3 \u0995\u09b0\u09c1\u09a8 \u0986\u099c\u09c0\u09ac\u09a8 \u09b8\u09c1\u09ac\u09bf\u09a7\u09be",3)">বন্ধুদের আমন্ত্রণ করুন আজীবন সুবিধা</div>
+                            </div>
+        </div>
+
+        <div>
+            <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-3 ml-1">Select Payment Method</label>
+                            <div class="grid grid-methods gap-4">
+                                            <label class="cursor-pointer">
+                            <input type="radio" name="gateway_id" value="1" class="hidden gateway-radio" data-min="100.00" data-max="25000.00" onchange="updateGateway(this)">
+                            <div class="pay-card">
+                                <div class="bonus-badge">+10% Bonus</div>                                                                    <img src="../uploads/manual_gateways/gateway_1786064790_dc1dd7d36f6f88bee6957292.webp" alt="bKash">
+                                                                <span class="text-[11px] font-black mt-2 text-[#0d4a3a] uppercase">bKash</span>
+                                <span class="text-[9px] font-bold mt-1 text-gray-400 uppercase">Send Money</span>
+                            </div>
+                        </label>
+                                            <label class="cursor-pointer">
+                            <input type="radio" name="gateway_id" value="2" class="hidden gateway-radio" data-min="100.00" data-max="25000.00" onchange="updateGateway(this)">
+                            <div class="pay-card">
+                                <div class="bonus-badge">+10% Bonus</div>                                                                    <img src="../uploads/manual_gateways/gateway_1786064799_4e6210df1716e6fbdc321d27.png" alt="Nagad">
+                                                                <span class="text-[11px] font-black mt-2 text-[#0d4a3a] uppercase">Nagad</span>
+                                <span class="text-[9px] font-bold mt-1 text-gray-400 uppercase">Send Money</span>
+                            </div>
+                        </label>
+                                    </div>
+                    </div>
+
+        <div class="bg-white rounded-2xl p-5 border border-emerald-50 shadow-sm">
+            <div class="flex justify-between items-center mb-4">
+                <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Amount (BDT)</label>
+                <span id="rangeNote" class="range-note">Select Method</span>
+            </div>
+            <div class="flex items-center border-b-2 border-emerald-400 pb-2 mb-6">
+                <span class="text-3xl font-black text-[#0d4a3a] mr-3">৳</span>
+                <input type="number" step="0.01" name="amount" id="amtInput" value="" placeholder="100" min="100" max="25000" class="w-full text-3xl font-black text-[#0d4a3a] outline-none bg-transparent" oninput="syncAmtButtons()" required>
+            </div>
+            <div class="grid grid-cols-3 gap-2">
+                <button type="button" class="amt-btn" data-val="100" onclick="setAmt(100,this)">100</button><button type="button" class="amt-btn" data-val="200" onclick="setAmt(200,this)">200</button><button type="button" class="amt-btn" data-val="300" onclick="setAmt(300,this)">300</button><button type="button" class="amt-btn" data-val="500" onclick="setAmt(500,this)">500</button><button type="button" class="amt-btn" data-val="1000" onclick="setAmt(1000,this)">1,000</button><button type="button" class="amt-btn" data-val="5000" onclick="setAmt(5000,this)">5,000</button><button type="button" class="amt-btn" data-val="10000" onclick="setAmt(10000,this)">10,000</button><button type="button" class="amt-btn" data-val="20000" onclick="setAmt(20000,this)">20,000</button><button type="button" class="amt-btn" data-val="25000" onclick="setAmt(25000,this)">25,000</button>            </div>
+        </div>
+
+        <div class="p-4"><button type="submit" id="submitBtn" class="confirm-btn active:scale-95 transition-all shadow-xl" >Deposit Now</button></div>
+    </form>
+
+    
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+/* =============================================
+   BOTTOM NAV BAR — Pill Style
+   ============================================= */
+.bottom-nav {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    z-index: 10000;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-around;
+    padding: 0 10px 8px 10px;
+    height: 70px;
+    background: #071f18; /* Outer background */
+}
+
+.bottom-nav-pill {
+    width: 100%;
+    max-width: 480px;
+    margin: 0 auto;
+    height: 58px;
+    background: linear-gradient(180deg, #0e3d2c 0%, #0a2d1f 100%);
+    border-radius: 999px;
+    border: 1.5px solid #1a5c40;
+    box-shadow:
+        0 0 0 2px #071f18,
+        inset 0 1px 0 rgba(30,200,130,0.18),
+        0 -2px 0 0 #1edd96,
+        0 4px 24px rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 0 6px;
+    position: relative;
+}
+
+.bnav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    flex: 1;
+    text-decoration: none;
+    color: #3db88a;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+    padding: 6px 0;
+    transition: color 0.2s;
+    position: relative;
+}
+
+/* Active State - Automatically detects current page */
+.bnav-item.active { color: #f5c518; }
+.bnav-item.active .bnav-label {
+    border-bottom: 2px solid #f5c518;
+    padding-bottom: 1px;
+}
+
+.bnav-icon { font-size: 20px; line-height: 1; }
+.bnav-label { font-size: 10px; font-weight: 700; }
+
+/* Center Invite Button Style */
+.bnav-item.center-btn {
+    position: relative;
+    flex: 1;
+    justify-content: flex-end;
+    padding-bottom: 0;
+}
+.bnav-center-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    position: relative;
+    top: -18px; /* Lifted above pill */
+}
+.bnav-center-circle {
+    width: 54px; height: 54px;
+    border-radius: 50%;
+    background: linear-gradient(145deg, #1de9b6, #00897b);
+    display: flex;
+    align-items: center; justify-content: center;
+    box-shadow:
+        0 0 0 3px #071f18,
+        0 0 0 5px #1edd96,
+        0 6px 20px rgba(0,188,140,0.55);
+    font-size: 24px;
+    color: #fff;
+    transition: transform 0.2s;
+    border: none;
+    overflow: hidden;
+}
+.bnav-item.center-btn:active .bnav-center-circle { transform: scale(0.93); }
+
+.bnav-center-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: #3db88a;
+    margin: 0;
+}
+</style>
+
+<nav class="bottom-nav">
+    <div class="bottom-nav-pill">
+        
+        <a href="index.php" class="bnav-item ">
+            <span class="bnav-icon"><i class="fas fa-home"></i></span>
+            <span class="bnav-label">Home</span>
+        </a>
+
+        <a href="promotions.php" class="bnav-item ">
+            <span class="bnav-icon"><i class="fas fa-gift"></i></span>
+            <span class="bnav-label">Promotion</span>
+        </a>
+
+        <a href="referral.php" class="bnav-item center-btn">
+            <div class="bnav-center-wrap">
+                <div class="bnav-center-circle"><i class="fas fa-share-nodes"></i></div>
+                <span class="bnav-center-label">Invite</span>
+            </div>
+        </a>
+
+        <a href="rewards.php" class="bnav-item ">
+            <span class="bnav-icon"><i class="fas fa-trophy"></i></span>
+            <span class="bnav-label">Reward</span>
+        </a>
+
+        <a href="account.php" class="bnav-item ">
+            <span class="bnav-icon"><i class="fas fa-user-circle"></i></span>
+            <span class="bnav-label">Member</span>
+        </a>
+        
+    </div>
+</nav>
+<link rel="manifest" href="/manifest.php?v=7">
+<meta name="theme-color" content="#003333">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="DOLLAR333">
+<meta name="application-name" content="DOLLAR333 App Install">
+<meta name="msapplication-TileColor" content="#003333">
+<meta name="msapplication-TileImage" content="/assets/icons/pwa_app_192_1792692224_6d54e4.png?v=7">
+<link rel="icon" type="image/png" sizes="192x192" href="/assets/icons/pwa_app_192_1792692224_6d54e4.png?v=7">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/pwa_app_192_1792692224_6d54e4.png?v=7">
+<link rel="stylesheet" href="/assets/css/mobile-scroll-fix.css?v=2">
+<script src="/pwa-install.js?v=6" defer></script>
+<style id="wcbDailyBonusFloatingStyle">
+#wcbDailyBonusWidget{position:fixed;right:22px;bottom:230px;width:76px;z-index:2147483000;font-family:Arial,'Hind Siliguri',sans-serif;text-align:center;pointer-events:auto;animation:wcbBonusFloat 2.8s ease-in-out infinite}#wcbDailyBonusWidget *{box-sizing:border-box}#wcbDailyBonusWidget.wcb-hide{display:none}.wcb-daily-close{position:absolute;top:-25px;left:-6px;width:24px;height:24px;border:0;border-radius:50%;background:rgba(80,84,92,.88);color:#fff;font-size:22px;line-height:20px;font-weight:300;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 10px rgba(0,0,0,.16);z-index:4;padding:0}.wcb-daily-close:hover{background:rgba(58,63,70,.96)}.wcb-daily-mini-card{position:relative;border-radius:16px;padding:0;background:transparent;filter:drop-shadow(0 7px 11px rgba(255,112,37,.18))}.wcb-daily-gift-wrap{position:relative;width:68px;height:76px;margin:0 auto}.wcb-daily-halo{position:absolute;left:4px;right:4px;top:2px;height:60px;border-radius:50%;background:radial-gradient(circle at 50% 35%,#ffd86c 0%,#ff8b3e 52%,#c1343d 100%);box-shadow:inset 0 0 0 2px rgba(255,255,255,.28),0 5px 12px rgba(255,102,45,.22)}.wcb-daily-gift{position:absolute;left:10px;right:10px;top:8px;height:40px;display:flex;align-items:center;justify-content:center;font-size:35px;line-height:1;text-shadow:0 3px 5px rgba(0,0,0,.13);transform:translateZ(0)}.wcb-daily-claim{position:absolute;left:4px;right:4px;bottom:12px;height:23px;border:0;border-radius:7px;background:linear-gradient(180deg,#ffb044 0%,#ff7043 44%,#ff3f6a 100%);color:#fff;font-size:11px;font-weight:500;letter-spacing:.05px;cursor:pointer;box-shadow:0 4px 8px rgba(239,68,68,.18);text-shadow:0 1px 1px rgba(0,0,0,.08);touch-action:manipulation;padding:0}.wcb-daily-claim:disabled{opacity:.72;cursor:not-allowed;background:linear-gradient(180deg,#ffbd70,#f08672)}.wcb-daily-amount{position:absolute;right:-4px;top:0;background:linear-gradient(180deg,#fff8b5,#ffd83f);color:#c2410c;border-radius:999px;padding:2px 5px;font-size:9px;font-weight:600;line-height:1;box-shadow:0 3px 7px rgba(234,88,12,.14);max-width:54px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.wcb-daily-timer{margin-top:1px;color:#d78be8;font-size:13px;font-weight:600;line-height:1.05;text-shadow:0 1px 0 rgba(255,255,255,.55);letter-spacing:.2px}.wcb-daily-status{display:none}.wcb-daily-pop-title{display:none}.wcb-fireworks-layer{position:fixed;inset:0;z-index:2147483001;pointer-events:none;overflow:hidden}.wcb-fire-particle{position:absolute;width:8px;height:8px;border-radius:50%;background:var(--c);left:var(--l);top:var(--t);box-shadow:0 0 10px var(--c);animation:wcbFire 1.15s cubic-bezier(.16,.75,.4,1) forwards}.wcb-success-ring{position:fixed;left:50%;top:50%;width:12px;height:12px;border-radius:50%;border:3px solid rgba(255,193,7,.82);z-index:2147483001;pointer-events:none;transform:translate(-50%,-50%);animation:wcbRing 1.1s ease-out forwards}@keyframes wcbBonusFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}@keyframes wcbFire{0%{opacity:1;transform:translate(0,0) scale(1)}100%{opacity:0;transform:translate(var(--x),var(--y)) scale(.15)}}@keyframes wcbRing{0%{opacity:.95;width:12px;height:12px}100%{opacity:0;width:380px;height:380px}}@media(max-width:480px){#wcbDailyBonusWidget{right:24px;bottom:255px;width:74px}.wcb-daily-close{top:-24px;left:-4px;width:23px;height:23px;font-size:21px}.wcb-daily-gift-wrap{width:66px;height:74px}.wcb-daily-halo{left:4px;right:4px;height:58px}.wcb-daily-gift{font-size:34px;height:39px;top:8px}.wcb-daily-claim{height:22px;font-size:10.5px;bottom:12px}.wcb-daily-timer{font-size:12.5px}.wcb-daily-amount{font-size:8.5px;max-width:52px}}@media(max-width:360px){#wcbDailyBonusWidget{right:18px;bottom:235px;width:70px}.wcb-daily-gift-wrap{width:62px;height:70px}.wcb-daily-halo{height:54px}.wcb-daily-gift{font-size:31px;height:37px}.wcb-daily-claim{height:21px;font-size:10px}.wcb-daily-timer{font-size:12px}.wcb-daily-amount{font-size:8px;max-width:48px}}
+</style>
+<div id="wcbDailyBonusWidget" data-can-claim="1" data-seconds="0" data-cycle="86400" data-deposit-qualified="0" data-title="Daily Free Bonus" data-text="Claim your daily free reward once every 24 hours.">
+  <button type="button" class="wcb-daily-close" id="wcbDailyBonusClose" aria-label="Close">×</button>
+  <div class="wcb-daily-mini-card">
+    <div class="wcb-daily-gift-wrap">
+      <div class="wcb-daily-halo"></div>
+      <div class="wcb-daily-gift">🎁</div>
+      <div class="wcb-daily-amount">৳ 1.00</div>
+      <button type="button" id="wcbDailyBonusBtn" class="wcb-daily-claim">Claim Now</button>
+    </div>
+    <div id="wcbDailyBonusTimer" class="wcb-daily-timer">00:00:00</div>
+    <div id="wcbDailyBonusStatus" class="wcb-daily-status"></div>
+  </div>
+</div>
+<script>
+(function(){
+  if(window.wcbDailyBonusFloatingBound) return;
+  window.wcbDailyBonusFloatingBound = true;
+  var widget = document.getElementById('wcbDailyBonusWidget');
+  if(!widget) return;
+  try{
+    if(sessionStorage.getItem('wcbDailyBonusClosed') === '1'){
+      widget.classList.add('wcb-hide');
+      return;
+    }
+  }catch(e){}
+  var btn = document.getElementById('wcbDailyBonusBtn');
+  var closeBtn = document.getElementById('wcbDailyBonusClose');
+  var timer = document.getElementById('wcbDailyBonusTimer');
+  var status = document.getElementById('wcbDailyBonusStatus');
+  var canClaim = widget.getAttribute('data-can-claim') === '1';
+  var depositQualified = widget.getAttribute('data-deposit-qualified') === '1';
+  var remaining = parseInt(widget.getAttribute('data-seconds') || '0', 10);
+  var cycle = parseInt(widget.getAttribute('data-cycle') || '86400', 10);
+  var defaultText = btn ? btn.textContent : 'Claim';
+  var intervalId = null;
+  function pad(n){return n < 10 ? '0' + n : '' + n;}
+  function format(sec){
+    sec = Math.max(0, parseInt(sec || 0, 10));
+    var h = Math.floor(sec / 3600);
+    var m = Math.floor((sec % 3600) / 60);
+    var s = sec % 60;
+    return pad(h) + ':' + pad(m) + ':' + pad(s);
+  }
+  function render(){
+    if(!timer || !btn) return;
+    if(canClaim){
+      timer.textContent = '00:00:00';
+      btn.disabled = false;
+      btn.textContent = defaultText;
+      if(status) status.textContent = 'Ready to claim';
+    }else{
+      timer.textContent = format(remaining);
+      btn.disabled = true;
+      btn.textContent = 'Claim';
+      if(status) status.textContent = 'Next bonus available';
+    }
+  }
+  function startCountdown(){
+    if(intervalId) clearInterval(intervalId);
+    intervalId = setInterval(function(){
+      if(!canClaim && remaining > 0){
+        remaining--;
+        render();
+      }
+      if(!canClaim && remaining <= 0){
+        canClaim = true;
+        render();
+        clearInterval(intervalId);
+      }
+    }, 1000);
+  }
+  function celebrate(){
+    var layer = document.createElement('div');
+    layer.className = 'wcb-fireworks-layer';
+    document.body.appendChild(layer);
+    var colors = ['#ff3157','#ffc107','#20c997','#38bdf8','#a855f7','#fb923c','#ffffff'];
+    for(var i=0;i<86;i++){
+      var p = document.createElement('span');
+      p.className = 'wcb-fire-particle';
+      var left = 12 + Math.random() * 76;
+      var top = 12 + Math.random() * 66;
+      var angle = Math.random() * Math.PI * 2;
+      var distance = 70 + Math.random() * 150;
+      p.style.setProperty('--l', left + 'vw');
+      p.style.setProperty('--t', top + 'vh');
+      p.style.setProperty('--x', Math.cos(angle) * distance + 'px');
+      p.style.setProperty('--y', Math.sin(angle) * distance + 'px');
+      p.style.setProperty('--c', colors[Math.floor(Math.random() * colors.length)]);
+      p.style.animationDelay = (Math.random() * .28) + 's';
+      layer.appendChild(p);
+    }
+    var ring = document.createElement('div');
+    ring.className = 'wcb-success-ring';
+    document.body.appendChild(ring);
+    setTimeout(function(){ if(layer && layer.parentNode) layer.parentNode.removeChild(layer); if(ring && ring.parentNode) ring.parentNode.removeChild(ring); }, 1600);
+  }
+  if(closeBtn){
+    closeBtn.addEventListener('click', function(){
+      try{sessionStorage.setItem('wcbDailyBonusClosed','1');}catch(e){}
+      widget.classList.add('wcb-hide');
+    });
+  }
+  if(btn){
+    btn.addEventListener('click', function(){
+      if(!depositQualified){
+        window.location.href = '/player/deposit.php';
+        return;
+      }
+      if(!canClaim || btn.disabled) return;
+      btn.disabled = true;
+      btn.textContent = '...';
+      if(status) status.textContent = 'Claiming bonus';
+      fetch('/api/daily_bonus_claim.php', {method:'POST', credentials:'same-origin', headers:{'X-Requested-With':'XMLHttpRequest'}})
+        .then(function(r){return r.json();})
+        .then(function(data){
+          if(data && data.success){
+            celebrate();
+            canClaim = false;
+            remaining = cycle;
+            btn.textContent = 'Claimed';
+            if(status) status.textContent = 'Bonus claimed successfully';
+            render();
+            startCountdown();
+          }else if(data && data.redirect){
+            window.location.href = data.redirect;
+          }else{
+            if(status) status.textContent = (data && data.message) ? data.message : 'Claim failed';
+            btn.disabled = false;
+            btn.textContent = defaultText;
+          }
+        })
+        .catch(function(){
+          if(status) status.textContent = 'Network error';
+          btn.disabled = false;
+          btn.textContent = defaultText;
+        });
+    });
+  }
+  render();
+  if(!canClaim && remaining > 0) startCountdown();
+})();
+</script>    <script>
+        let selectedMin=100;
+        let selectedMax=25000;
+        function togglePromo(){document.getElementById('promoDropdownList').classList.toggle('show')}
+        function selectPromo(title,id){document.getElementById('selectedPromoLabel').innerHTML='<i class="fas fa-gift mr-2"></i> '+title;document.getElementById('promoIdInput').value=id;togglePromo()}
+        function setAmt(v,b){document.getElementById('amtInput').value=v;document.querySelectorAll('.amt-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active')}
+        function syncAmtButtons(){const val=document.getElementById('amtInput').value;document.querySelectorAll('.amt-btn').forEach(btn=>btn.classList.toggle('active',btn.dataset.val===val))}
+        function updateGateway(input){document.querySelectorAll('.pay-card').forEach(card=>card.classList.remove('active'));input.parentElement.querySelector('.pay-card').classList.add('active');selectedMin=parseFloat(input.dataset.min||1);selectedMax=parseFloat(input.dataset.max||25000);const amount=document.getElementById('amtInput');amount.min=selectedMin;amount.max=selectedMax;amount.placeholder=selectedMin.toFixed(selectedMin%1?2:0);document.getElementById('rangeNote').textContent='Min '+selectedMin.toLocaleString('en-US')+' / Max '+selectedMax.toLocaleString('en-US')}
+        function validateDepositForm(){const gateway=document.querySelector('input[name="gateway_id"]:checked');const amount=parseFloat(document.getElementById('amtInput').value||0);if(!gateway){alert('Please select a payment method.');return false}if(!Number.isFinite(amount)||amount<selectedMin||amount>selectedMax){alert('Deposit amount must be between ৳'+selectedMin.toLocaleString('en-US')+' and ৳'+selectedMax.toLocaleString('en-US'));return false}return true}
+    </script>
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092" integrity="sha512-UKNk8GbxkABxKcXYuLkO16EleLGUkcvJWtpSNmExE0Too3ZaFAxTscNWEc1OdAv5/BikHawapSCaiD2XCmp+Bw==" data-cf-beacon='{"version":"2024.11.0","token":"1e9ffc3000b94193be2e4d85f1c6d584","r":1,"spa":2}' crossorigin="anonymous"></script>
+</body>
+</html>

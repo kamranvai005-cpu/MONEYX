@@ -1,0 +1,31 @@
+{
+  "id": "/",
+  "name": "MONEYX — Bangladesh #1 Live Casino, Slots & Trading",
+  "short_name": "MONEYX",
+  "description": "MONEYX Official App — Play JILI Slots, Live Casino, Sportsbook, Aviator Crash, WinGo 30s & Binary Trading with Instant bKash/Nagad/Rocket Payouts.",
+  "theme_color": "#071f18",
+  "background_color": "#071f18",
+  "display": "standalone",
+  "start_url": "/",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/pwa-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/pwa-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/pwa-maskable-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
