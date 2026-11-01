@@ -800,105 +800,65 @@ export const DailyBonusFloatingWidget: React.FC<{
   onClaimDailyBonus: () => void;
 }> = ({ onClaimDailyBonus }) => {
   const [closed, setClosed] = useState<boolean>(false);
-  const [canClaim, setCanClaim] = useState<boolean>(true);
-  const [remaining, setRemaining] = useState<number>(0);
-  const [celebrating, setCelebrating] = useState<boolean>(false);
-
-  useEffect(() => {
-    if (canClaim || remaining <= 0) return;
-    const t = setInterval(() => {
-      setRemaining((r) => {
-        if (r <= 1) {
-          setCanClaim(true);
-          return 0;
-        }
-        return r - 1;
-      });
-    }, 1000);
-    return () => clearInterval(t);
-  }, [canClaim, remaining]);
 
   if (closed) return null;
 
-  const formatTimer = (sec: number) => {
-    const h = Math.floor(sec / 3600);
-    const m = Math.floor((sec % 3600) / 60);
-    const s = sec % 60;
-    const pad = (n: number) => (n < 10 ? `0${n}` : `${n}`);
-    return `${pad(h)}:${pad(m)}:${pad(s)}`;
-  };
-
-  const handleClaim = () => {
-    if (!canClaim) return;
-    setCelebrating(true);
-    setCanClaim(false);
-    setRemaining(86400);
-    onClaimDailyBonus();
-    setTimeout(() => setCelebrating(false), 1400);
-  };
-
   return (
-    <>
-      {celebrating && (
-        <div className="fixed inset-0 z-[9998] pointer-events-none flex items-center justify-center">
-          <div className="w-64 h-64 rounded-full border-4 border-amber-400/80 animate-ping" />
-        </div>
-      )}
-      <div
-        className="fixed right-4 bottom-[96px] w-[74px] z-50 text-center select-none"
-        style={{
-          animation: 'planeFly 2.8s ease-in-out infinite',
-        }}
+    <div
+      className="fixed right-4 bottom-[96px] w-[76px] z-50 text-center select-none"
+      style={{
+        animation: 'planeFly 2.8s ease-in-out infinite',
+      }}
+    >
+      <button
+        type="button"
+        onClick={() => setClosed(true)}
+        aria-label="Close Bonus Vault"
+        className="absolute -top-5 -left-1.5 w-6 h-6 rounded-full bg-slate-700/90 text-white text-base leading-none flex items-center justify-center cursor-pointer shadow-md z-10"
       >
+        ×
+      </button>
+
+      <div
+        onClick={onClaimDailyBonus}
+        className="relative w-[68px] h-[74px] mx-auto cursor-pointer"
+      >
+        <div
+          className="absolute left-1 right-1 top-0.5 h-[58px] rounded-full"
+          style={{
+            background:
+              'radial-gradient(circle at 50% 35%, #ffd86c 0%, #ff8b3e 52%, #c1343d 100%)',
+            boxShadow:
+              'inset 0 0 0 2px rgba(255,255,255,0.28), 0 5px 12px rgba(255,102,45,0.28)',
+          }}
+        />
+        <div className="absolute left-2.5 right-2.5 top-2 h-10 flex items-center justify-center text-[30px] leading-none">
+          🔐
+        </div>
+        <div
+          className="absolute -right-1 top-0 rounded-full px-1.5 py-0.5 text-[9px] font-extrabold text-orange-900 shadow"
+          style={{
+            background: 'linear-gradient(180deg, #fff8b5, #ffd83f)',
+          }}
+        >
+          ভল্ট
+        </div>
         <button
           type="button"
-          onClick={() => setClosed(true)}
-          aria-label="Close Daily Bonus"
-          className="absolute -top-5 -left-1.5 w-6 h-6 rounded-full bg-slate-700/90 text-white text-base leading-none flex items-center justify-center cursor-pointer shadow-md z-10"
+          onClick={(e) => {
+            e.stopPropagation();
+            onClaimDailyBonus();
+          }}
+          className="absolute left-0.5 right-0.5 bottom-2 h-[22px] rounded-md text-white text-[9.5px] font-black cursor-pointer shadow"
+          style={{
+            background:
+              'linear-gradient(180deg, #ffb044 0%, #ff7043 44%, #ff3f6a 100%)',
+          }}
         >
-          ×
+          🔒 Bonus
         </button>
-
-        <div className="relative w-[66px] h-[74px] mx-auto">
-          <div
-            className="absolute left-1 right-1 top-0.5 h-[58px] rounded-full"
-            style={{
-              background:
-                'radial-gradient(circle at 50% 35%, #ffd86c 0%, #ff8b3e 52%, #c1343d 100%)',
-              boxShadow:
-                'inset 0 0 0 2px rgba(255,255,255,0.28), 0 5px 12px rgba(255,102,45,0.28)',
-            }}
-          />
-          <div className="absolute left-2.5 right-2.5 top-2 h-10 flex items-center justify-center text-[32px] leading-none">
-            🎁
-          </div>
-          <div
-            className="absolute -right-1 top-0 rounded-full px-1.5 py-0.5 text-[9px] font-extrabold text-orange-800 shadow"
-            style={{
-              background: 'linear-gradient(180deg, #fff8b5, #ffd83f)',
-            }}
-          >
-            ৳ 100
-          </div>
-          <button
-            type="button"
-            disabled={!canClaim}
-            onClick={handleClaim}
-            className="absolute left-1 right-1 bottom-2.5 h-[22px] rounded-md text-white text-[10.5px] font-bold cursor-pointer shadow disabled:opacity-75"
-            style={{
-              background:
-                'linear-gradient(180deg, #ffb044 0%, #ff7043 44%, #ff3f6a 100%)',
-            }}
-          >
-            {canClaim ? 'Claim Now' : 'Claimed'}
-          </button>
-        </div>
-
-        <div className="mt-0.5 text-[#ffd84d] text-xs font-extrabold font-mono-num drop-shadow">
-          {canClaim ? '00:00:00' : formatTimer(remaining)}
-        </div>
       </div>
-    </>
+    </div>
   );
 };
 
@@ -920,7 +880,7 @@ export const PillBottomNav: React.FC<{
             '0 0 0 2px #071f18, inset 0 1px 0 rgba(30,200,130,0.18), 0 -2px 0 0 #1edd96, 0 4px 24px rgba(0,0,0,0.5)',
         }}
       >
-        {/* 1. Home */}
+        {/* 1. Home (/) */}
         <button
           type="button"
           onClick={() => {
@@ -943,33 +903,36 @@ export const PillBottomNav: React.FC<{
           </span>
         </button>
 
-        {/* 2. Promotion / Deposit */}
+        {/* 2. Promotion / Bonus Vault (/bonus) */}
         <button
           type="button"
           onClick={() => {
-            onNavigateView('deposit_page');
+            onNavigateView('bonus_page');
             window.scrollTo(0, 0);
           }}
           className={`flex flex-col items-center justify-center gap-0.5 flex-1 py-1.5 cursor-pointer transition-colors ${
-            activeView === 'deposit_page' ? 'text-[#f5c518]' : 'text-[#3db88a]'
+            activeView === 'bonus_page' ? 'text-[#f5c518]' : 'text-[#3db88a]'
           }`}
         >
           <span className="text-lg leading-none">🎁</span>
           <span
             className={`text-[10px] font-bold ${
-              activeView === 'deposit_page'
+              activeView === 'bonus_page'
                 ? 'border-b-2 border-[#f5c518] pb-[1px]'
                 : ''
             }`}
           >
-            Promotion
+            Bonus
           </span>
         </button>
 
-        {/* 3. Center Elevated Invite Button */}
+        {/* 3. Center Elevated Refer Button (/refer) */}
         <button
           type="button"
-          onClick={() => onOpenModal('invite')}
+          onClick={() => {
+            onNavigateView('refer_page');
+            window.scrollTo(0, 0);
+          }}
           className="relative flex-1 flex flex-col items-center justify-end pb-0 cursor-pointer group"
         >
           <div className="flex flex-col items-center gap-0.5 relative -top-[18px]">
@@ -983,18 +946,33 @@ export const PillBottomNav: React.FC<{
             >
               🔗
             </div>
-            <span className="text-[10px] font-bold text-[#3db88a]">Invite</span>
+            <span
+              className={`text-[10px] font-bold ${
+                activeView === 'refer_page'
+                  ? 'text-[#f5c518]'
+                  : 'text-[#3db88a]'
+              }`}
+            >
+              Refer
+            </span>
           </div>
         </button>
 
-        {/* 4. Reward / VIP */}
+        {/* 4. Deposit (/deposit) */}
         <button
           type="button"
-          onClick={() => onOpenModal('vip')}
-          className="flex flex-col items-center justify-center gap-0.5 flex-1 py-1.5 text-[#3db88a] hover:text-[#f5c518] cursor-pointer transition-colors"
+          onClick={() => {
+            onNavigateView('deposit_page');
+            window.scrollTo(0, 0);
+          }}
+          className={`flex flex-col items-center justify-center gap-0.5 flex-1 py-1.5 cursor-pointer transition-colors ${
+            activeView === 'deposit_page'
+              ? 'text-[#f5c518]'
+              : 'text-[#3db88a] hover:text-[#f5c518]'
+          }`}
         >
-          <span className="text-lg leading-none">🏆</span>
-          <span className="text-[10px] font-bold">Reward</span>
+          <span className="text-lg leading-none">💳</span>
+          <span className="text-[10px] font-bold">Deposit</span>
         </button>
 
         {/* 5. Member / Account */}

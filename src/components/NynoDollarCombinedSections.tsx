@@ -91,8 +91,8 @@ const SIDEBAR_3D_CARDS: Array<{
     label: 'Invite friends',
     faIcon: 'fa-solid fa-user-group',
     iconColor: '#49b9ab',
-    actionType: 'modal',
-    target: 'invite',
+    actionType: 'view',
+    target: 'refer_page',
   },
   {
     id: 'sb-fav',
@@ -108,7 +108,7 @@ const SIDEBAR_3D_CARDS: Array<{
     faIcon: 'fa-solid fa-gift',
     iconColor: '#db9c3f',
     actionType: 'view',
-    target: 'deposit_page',
+    target: 'bonus_page',
   },
   {
     id: 'sb-slots',
@@ -123,8 +123,8 @@ const SIDEBAR_3D_CARDS: Array<{
     label: 'Reward Center',
     faIcon: 'fa-solid fa-award',
     iconColor: '#db9c3f',
-    actionType: 'modal',
-    target: 'gifts',
+    actionType: 'view',
+    target: 'bonus_page',
   },
   {
     id: 'sb-live',
@@ -393,7 +393,8 @@ export const NynoBetDesktopMegaNav: React.FC<{
 
   const navLinks = [
     { id: 'ALL', labelBn: 'হোম', icon: 'fas fa-home' },
-    { id: 'hot', labelBn: 'Hot', icon: 'fas fa-fire' },
+    { id: 'REFER_PAGE', labelBn: 'রেফার (/refer)', icon: 'fas fa-user-plus' },
+    { id: 'BONUS_PAGE', labelBn: 'বোনাস ভল্ট (/bonus)', icon: 'fas fa-gift' },
     { id: 'sports', labelBn: 'খেলাধুলা', icon: 'fas fa-futbol' },
     { id: 'BINARY', labelBn: 'বাইনারি OTC', icon: 'fas fa-chart-line' },
     { id: 'WINGO', labelBn: 'উইনগো ৩০সে', icon: 'fas fa-bullseye' },
@@ -402,24 +403,31 @@ export const NynoBetDesktopMegaNav: React.FC<{
     { id: 'fishing', labelBn: 'মাছ ধরা', icon: 'fas fa-fish' },
     { id: 'crash', labelBn: 'ক্র্যাশ', icon: 'fas fa-rocket' },
     { id: 'dice', labelBn: 'ডাইস', icon: 'fas fa-dice-five' },
-    { id: 'card', labelBn: 'কার্ড ও টেবিল', icon: 'fas fa-clone' },
   ];
 
   const handleSpinFortuneWheel = () => {
     if (wheelSpinning) return;
+    if (balance < 500) {
+      setWheelWonText(
+        '🔒 শর্ত পূরণ হয়নি! ফরচুন হুইল স্পিন করতে অ্যাকাউন্টে ন্যূনতম ৳৫০০ ভেরিফাইড ডিপোজিট ব্যালেন্স থাকতে হবে।'
+      );
+      return;
+    }
     setWheelSpinning(true);
     setWheelWonText(null);
     const nextAngle = wheelAngle + 1440 + Math.floor(Math.random() * 360);
     setWheelAngle(nextAngle);
 
     setTimeout(() => {
-      const prizes = [50, 88, 120, 200, 300, 500];
+      const prizes = [50, 88, 120, 200];
       const wonAmt = prizes[Math.floor(Math.random() * prizes.length)];
       setTokens((t) => Math.max(0, t - 1));
       setPoints((p) => p + 150);
       setWheelSpinning(false);
-      setWheelWonText(`🎉 অভিনন্দন! আপনি জিতেছেন BDT ${wonAmt}.00!`);
-      onClaimWheelReward('MONEYX Fortune Wheel Spin Prize', wonAmt);
+      setWheelWonText(
+        `🔐 অভিনন্দন! BDT ${wonAmt}.00 লকড বোনাস ভল্টে (/bonus) জমা হয়েছে (৩x টার্নওভার শেষে আনলক হবে)।`
+      );
+      onClaimWheelReward('MONEYX Fortune Wheel Vault Prize', wonAmt);
     }, 1800);
   };
 
@@ -439,6 +447,10 @@ export const NynoBetDesktopMegaNav: React.FC<{
                     onNavigateView('binary');
                   } else if (item.id === 'WINGO') {
                     onNavigateView('trading');
+                  } else if (item.id === 'REFER_PAGE') {
+                    onNavigateView('refer_page');
+                  } else if (item.id === 'BONUS_PAGE') {
+                    onNavigateView('bonus_page');
                   } else {
                     onSelectCategory(item.id === 'hot' ? 'ALL' : item.id);
                   }

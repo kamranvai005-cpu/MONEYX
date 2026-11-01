@@ -8,6 +8,11 @@ export type ActiveView =
   | 'slot_game'
   | 'register'
   | 'login'
+  | 'refer_page'
+  | 'bonus_page'
+  | 'vip_page'
+  | 'promo_detail'
+  | 'php_github_page'
   | 'admin_panel';
 
 export interface SiteAdminSettings {
@@ -54,6 +59,9 @@ export interface UserProfile {
   uid: string;
   mobile?: string;
   isLoggedIn?: boolean;
+  referredBy?: string;
+  referralToken?: string;
+  lockedBonusBalance?: number;
   avatar: string;
   vipLevel: number;
   lastLogin: string;
@@ -134,6 +142,9 @@ export interface BonusRecord {
   id: string;
   title: string;
   amount: number;
+  status?: 'Locked' | 'Unlocked' | 'Claimed';
+  requiredDeposit?: number;
+  requiredTurnover?: number;
   createdAt: string;
 }
 

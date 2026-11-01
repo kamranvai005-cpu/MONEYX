@@ -6,6 +6,16 @@
     <meta name="referrer" content="no-referrer" />
     <script>
       (function () {
+        // Restore GitHub Pages deep-link route if redirected from 404.html
+        var ghRedirect = sessionStorage.getItem('moneyx_gh_redirect');
+        if (ghRedirect) {
+          sessionStorage.removeItem('moneyx_gh_redirect');
+          try {
+            window.history.replaceState(null, '', ghRedirect);
+          } catch (e) {}
+        }
+
+        // Suppress Vite HMR WebSocket proxy hiccups
         window.addEventListener(
           'unhandledrejection',
           function (event) {
@@ -38,11 +48,13 @@
           },
           true
         );
-        if ('serviceWorker' in navigator && location.hostname.indexOf('ais-dev') !== -1) {
-          navigator.serviceWorker.getRegistrations().then(function (regs) {
-            for (var i = 0; i < regs.length; i++) {
-              regs[i].unregister();
-            }
+
+        // Register MONEYX Standalone PWA Service Worker (/sw.js) for real native installation
+        if ('serviceWorker' in navigator) {
+          window.addEventListener('load', function () {
+            navigator.serviceWorker
+              .register('/sw.js', { scope: '/' })
+              .catch(function () {});
           });
         }
       })();
@@ -58,7 +70,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="MONEYX" />
-    <meta name="application-name" content="MONEYX App" />
+    <meta name="application-name" content="MONEYX" />
     <link rel="manifest" href="/manifest.webmanifest" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="icon" type="image/svg+xml" href="/icon.svg" />

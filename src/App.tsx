@@ -7,6 +7,14 @@ import {
   WithdrawMoneyView,
 } from './components/CompletePaymentAndWithdrawViews';
 import {
+  PROMO_PICTURES_CATALOG,
+  PhpGithubExportPageView,
+  ProfessionalBonusVaultView,
+  PromoPictureDetailPageView,
+  ReferAndAffiliatePageView,
+  buildLongReferralRegisterLink,
+} from './components/DedicatedPagesView';
+import {
   DailyBonusFloatingWidget,
   FundsManagementView,
   PillBottomNav,
@@ -48,15 +56,15 @@ import {
 } from './types';
 
 const STORAGE_KEYS = {
-  BALANCE: 'moneyx_balance_v1',
-  PROFILE: 'moneyx_profile_v1',
-  WINGO_BETS: 'moneyx_wingo_bets_v1',
-  BINARY_TRADES: 'moneyx_binary_trades_v1',
-  TRANSACTIONS: 'moneyx_transactions_v1',
-  BONUSES: 'moneyx_bonuses_v1',
-  FAVORITES: 'moneyx_favorites_v1',
-  SAVED_WALLETS: 'moneyx_saved_wallets_v1',
-  ADMIN_SETTINGS: 'moneyx_admin_settings_v1',
+  BALANCE: 'moneyx_strict_balance_v2',
+  PROFILE: 'moneyx_strict_profile_v2',
+  WINGO_BETS: 'moneyx_wingo_bets_v2',
+  BINARY_TRADES: 'moneyx_binary_trades_v2',
+  TRANSACTIONS: 'moneyx_transactions_v2',
+  BONUSES: 'moneyx_bonuses_v2',
+  FAVORITES: 'moneyx_favorites_v2',
+  SAVED_WALLETS: 'moneyx_saved_wallets_v2',
+  ADMIN_SETTINGS: 'moneyx_admin_settings_v2',
 };
 
 export type GameCategoryType =
@@ -75,6 +83,7 @@ export type GameCategoryType =
 
 interface GameItem {
   id: string;
+  slug: string;
   name: string;
   provider: string;
   category: GameCategoryType;
@@ -88,6 +97,7 @@ const GAME_CATALOG: GameItem[] = [
   // ==================== HOT GAMES ====================
   {
     id: 'binary-pro',
+    slug: 'binary-otc-pro',
     name: 'Binary OTC Pro',
     provider: 'MONEYX ORIGINAL',
     category: 'hot',
@@ -98,6 +108,7 @@ const GAME_CATALOG: GameItem[] = [
   },
   {
     id: 'wingo-30s',
+    slug: 'wingo-30s-live',
     name: 'WinGo 30s Live',
     provider: 'MONEYX LOTTERY',
     category: 'hot',
@@ -108,6 +119,7 @@ const GAME_CATALOG: GameItem[] = [
   },
   {
     id: '737',
+    slug: 'aviator',
     name: 'Aviator',
     provider: 'SPRIBE',
     category: 'hot',
@@ -118,6 +130,7 @@ const GAME_CATALOG: GameItem[] = [
   },
   {
     id: '879',
+    slug: 'super-ace',
     name: 'Super Ace',
     provider: 'JILI',
     category: 'hot',
@@ -128,6 +141,7 @@ const GAME_CATALOG: GameItem[] = [
   },
   {
     id: '792',
+    slug: 'fortune-gems',
     name: 'Fortune Gems',
     provider: 'JILI',
     category: 'hot',
@@ -138,6 +152,7 @@ const GAME_CATALOG: GameItem[] = [
   },
   {
     id: '6260',
+    slug: 'bti-gaming',
     name: 'BtiGaming',
     provider: 'BTI SPORTS',
     category: 'hot',
@@ -150,6 +165,7 @@ const GAME_CATALOG: GameItem[] = [
   // ==================== POPULAR GAMES ====================
   {
     id: '581',
+    slug: 'super-ace-deluxe',
     name: 'Super Ace Deluxe',
     provider: 'JILI',
     category: 'popular',
@@ -160,6 +176,7 @@ const GAME_CATALOG: GameItem[] = [
   },
   {
     id: '4602',
+    slug: 'revenge-of-loki',
     name: 'Revenge of Loki',
     provider: 'PRAGMATIC',
     category: 'popular',
@@ -170,6 +187,7 @@ const GAME_CATALOG: GameItem[] = [
   },
   {
     id: '1074',
+    slug: 'mega-ace',
     name: 'Mega Ace',
     provider: 'JILI',
     category: 'popular',
@@ -180,6 +198,7 @@ const GAME_CATALOG: GameItem[] = [
   },
   {
     id: '75',
+    slug: 'jili-caishen',
     name: 'JILI CAISHEN',
     provider: 'JILI',
     category: 'popular',
@@ -190,6 +209,7 @@ const GAME_CATALOG: GameItem[] = [
   },
   {
     id: '4800',
+    slug: 'extra-juicy-megaways',
     name: 'Extra Juicy Megaways',
     provider: 'PRAGMATIC',
     category: 'popular',
@@ -200,6 +220,7 @@ const GAME_CATALOG: GameItem[] = [
   },
   {
     id: '925',
+    slug: 'mega-fishing',
     name: 'Mega Fishing',
     provider: 'JILI',
     category: 'popular',
@@ -212,6 +233,7 @@ const GAME_CATALOG: GameItem[] = [
   // ==================== CRASH GAMES ====================
   {
     id: 'crash-aviator',
+    slug: 'aviator-pro',
     name: 'Aviator Pro',
     provider: 'SPRIBE',
     category: 'crash',
@@ -222,6 +244,7 @@ const GAME_CATALOG: GameItem[] = [
   },
   {
     id: '7195',
+    slug: 'air-jet',
     name: 'Air Jet',
     provider: '100HP',
     category: 'crash',
@@ -232,6 +255,7 @@ const GAME_CATALOG: GameItem[] = [
   },
   {
     id: '6425',
+    slug: 'fortune-crash',
     name: 'Fortune Crash',
     provider: 'JILI CRASH',
     category: 'crash',
@@ -242,6 +266,7 @@ const GAME_CATALOG: GameItem[] = [
   },
   {
     id: '7120',
+    slug: 'aviafly',
     name: 'Aviafly',
     provider: 'INOUT',
     category: 'crash',
@@ -252,6 +277,7 @@ const GAME_CATALOG: GameItem[] = [
   },
   {
     id: '7202',
+    slug: 'astronaut',
     name: 'Astronaut',
     provider: '100HP',
     category: 'crash',
@@ -262,6 +288,7 @@ const GAME_CATALOG: GameItem[] = [
   },
   {
     id: '6989',
+    slug: 'aviamasters',
     name: 'Aviamasters',
     provider: 'BGAMING',
     category: 'crash',
@@ -274,6 +301,7 @@ const GAME_CATALOG: GameItem[] = [
   // ==================== LIVE CASINO ====================
   {
     id: '6302',
+    slug: 'crazy-time-a',
     name: 'Crazy Time A',
     provider: 'EVOLUTION',
     category: 'live',
@@ -284,6 +312,7 @@ const GAME_CATALOG: GameItem[] = [
   },
   {
     id: '5764',
+    slug: 'mega-roulette',
     name: 'Mega Roulette',
     provider: 'PRAGMATIC LIVE',
     category: 'live',
@@ -294,6 +323,7 @@ const GAME_CATALOG: GameItem[] = [
   },
   {
     id: '5746',
+    slug: 'speed-baccarat-3',
     name: 'Speed Baccarat 3',
     provider: 'EVOLUTION',
     category: 'live',
@@ -304,6 +334,7 @@ const GAME_CATALOG: GameItem[] = [
   },
   {
     id: '5685',
+    slug: 'italian-mega-roulette',
     name: 'Italian Mega Roulette',
     provider: 'EVOLUTION',
     category: 'live',
@@ -314,6 +345,7 @@ const GAME_CATALOG: GameItem[] = [
   },
   {
     id: '5669',
+    slug: 'baccarat-8',
     name: 'Baccarat 8',
     provider: 'PRAGMATIC LIVE',
     category: 'live',
@@ -324,6 +356,7 @@ const GAME_CATALOG: GameItem[] = [
   },
   {
     id: '6298',
+    slug: 'cash-or-crash',
     name: 'Cash or Crash',
     provider: 'EVOLUTION',
     category: 'live',
@@ -336,6 +369,7 @@ const GAME_CATALOG: GameItem[] = [
   // ==================== SPORTS ====================
   {
     id: '7004',
+    slug: 'lucksport-gaming',
     name: 'LuckSportGaming',
     provider: 'SPORTSBOOK',
     category: 'sports',
@@ -346,6 +380,7 @@ const GAME_CATALOG: GameItem[] = [
   },
   {
     id: '4451',
+    slug: 'saba-sports',
     name: 'SABA Sports',
     provider: 'SABA',
     category: 'sports',
@@ -356,6 +391,7 @@ const GAME_CATALOG: GameItem[] = [
   },
   {
     id: '7463',
+    slug: 'sbo-sportsbook',
     name: 'SBO Sportsbook',
     provider: 'SBOBET',
     category: 'sports',
@@ -366,6 +402,7 @@ const GAME_CATALOG: GameItem[] = [
   },
   {
     id: 'sports-bpl',
+    slug: 'cricket-exchange-live',
     name: 'Cricket Exchange Live',
     provider: 'MONEYX SPORTS',
     category: 'sports',
@@ -378,6 +415,7 @@ const GAME_CATALOG: GameItem[] = [
   // ==================== SLOTS ====================
   {
     id: '634',
+    slug: 'agent-ace',
     name: 'Agent Ace',
     provider: 'JILI',
     category: 'slots',
@@ -388,6 +426,7 @@ const GAME_CATALOG: GameItem[] = [
   },
   {
     id: '931',
+    slug: 'ali-baba',
     name: 'Ali Baba',
     provider: 'JILI',
     category: 'slots',
@@ -398,6 +437,7 @@ const GAME_CATALOG: GameItem[] = [
   },
   {
     id: '699',
+    slug: 'boxing-king',
     name: 'Boxing King',
     provider: 'JILI',
     category: 'slots',
@@ -408,6 +448,7 @@ const GAME_CATALOG: GameItem[] = [
   },
   {
     id: '700',
+    slug: 'charge-buffalo',
     name: 'Charge Buffalo',
     provider: 'JILI',
     category: 'slots',
@@ -418,6 +459,7 @@ const GAME_CATALOG: GameItem[] = [
   },
   {
     id: '482',
+    slug: 'book-of-gold',
     name: 'Book of Gold',
     provider: 'JILI',
     category: 'slots',
@@ -428,6 +470,7 @@ const GAME_CATALOG: GameItem[] = [
   },
   {
     id: '468',
+    slug: 'crazy-hunter',
     name: 'Crazy Hunter',
     provider: 'JILI',
     category: 'slots',
@@ -440,6 +483,7 @@ const GAME_CATALOG: GameItem[] = [
   // ==================== POKER & FISHING ====================
   {
     id: '1308',
+    slug: 'all-in-poker',
     name: 'ALL-IN POKER',
     provider: 'JILI POKER',
     category: 'poker',
@@ -450,6 +494,7 @@ const GAME_CATALOG: GameItem[] = [
   },
   {
     id: '7296',
+    slug: 'crystal-poker',
     name: 'Crystal Poker',
     provider: 'EVOPLAY',
     category: 'poker',
@@ -460,6 +505,7 @@ const GAME_CATALOG: GameItem[] = [
   },
   {
     id: '7285',
+    slug: 'video-poker',
     name: 'Video Poker',
     provider: 'EVOPLAY',
     category: 'poker',
@@ -470,6 +516,7 @@ const GAME_CATALOG: GameItem[] = [
   },
   {
     id: '728',
+    slug: 'all-star-fishing',
     name: 'All-star Fishing',
     provider: 'JILI FISHING',
     category: 'fishing',
@@ -480,6 +527,7 @@ const GAME_CATALOG: GameItem[] = [
   },
   {
     id: '698',
+    slug: 'bombing-fishing',
     name: 'Bombing Fishing',
     provider: 'JILI FISHING',
     category: 'fishing',
@@ -490,6 +538,7 @@ const GAME_CATALOG: GameItem[] = [
   },
   {
     id: '922',
+    slug: 'jackpot-fishing',
     name: 'Jackpot Fishing',
     provider: 'JILI FISHING',
     category: 'fishing',
@@ -502,6 +551,7 @@ const GAME_CATALOG: GameItem[] = [
   // ==================== DICE GAMES ====================
   {
     id: '6894',
+    slug: 'aztec-claw-wild-dice',
     name: "Aztec's Claw Wild Dice",
     provider: 'BGAMING',
     category: 'dice',
@@ -512,6 +562,7 @@ const GAME_CATALOG: GameItem[] = [
   },
   {
     id: '3373',
+    slug: 'bonus-dice',
     name: 'Bonus Dice',
     provider: 'EGT',
     category: 'dice',
@@ -522,6 +573,7 @@ const GAME_CATALOG: GameItem[] = [
   },
   {
     id: '6875',
+    slug: 'dice-bonanza',
     name: 'Dice Bonanza',
     provider: 'BGAMING',
     category: 'dice',
@@ -532,6 +584,7 @@ const GAME_CATALOG: GameItem[] = [
   },
   {
     id: '6984',
+    slug: 'dice-clash',
     name: 'Dice Clash',
     provider: 'BGAMING',
     category: 'dice',
@@ -544,6 +597,7 @@ const GAME_CATALOG: GameItem[] = [
   // ==================== LOTTERY ====================
   {
     id: 'lottery-wingo',
+    slug: 'wingo-30s-color',
     name: 'WinGo 30s Color Draw',
     provider: 'MONEYX LOTTERY',
     category: 'lottery',
@@ -554,6 +608,7 @@ const GAME_CATALOG: GameItem[] = [
   },
   {
     id: '1363',
+    slug: 'cq9-lottery',
     name: 'CQ9 Lottery',
     provider: 'CQ9',
     category: 'lottery',
@@ -564,6 +619,7 @@ const GAME_CATALOG: GameItem[] = [
   },
   {
     id: '7908',
+    slug: 'magic-keno',
     name: 'Magic Keno',
     provider: 'TURBO GAMES',
     category: 'lottery',
@@ -576,6 +632,7 @@ const GAME_CATALOG: GameItem[] = [
   // ==================== CARD & TABLE GAMES ====================
   {
     id: '1296',
+    slug: 'dragon-tiger-joker',
     name: 'Dragon Tiger - Joker Bonus',
     provider: 'CQ9',
     category: 'card',
@@ -586,6 +643,7 @@ const GAME_CATALOG: GameItem[] = [
   },
   {
     id: '908',
+    slug: 'pusoy-rush',
     name: 'Pusoy Rush',
     provider: 'JILI',
     category: 'card',
@@ -596,6 +654,7 @@ const GAME_CATALOG: GameItem[] = [
   },
   {
     id: '962',
+    slug: 'tongits-go',
     name: 'Tongits Go',
     provider: 'JILI',
     category: 'card',
@@ -606,6 +665,7 @@ const GAME_CATALOG: GameItem[] = [
   },
   {
     id: '6965',
+    slug: 'classic-blackjack',
     name: 'Classic Multihand Blackjack',
     provider: 'BGAMING',
     category: 'table',
@@ -616,6 +676,7 @@ const GAME_CATALOG: GameItem[] = [
   },
   {
     id: '6891',
+    slug: 'european-roulette-vip',
     name: 'European Roulette VIP',
     provider: 'BGAMING',
     category: 'table',
@@ -626,6 +687,7 @@ const GAME_CATALOG: GameItem[] = [
   },
   {
     id: '7344',
+    slug: 'texas-holdem-3d',
     name: 'Texas Holdem Poker 3D',
     provider: 'EVOPLAY',
     category: 'table',
@@ -657,12 +719,71 @@ function generateInitialWingoHistory(count = 40): WingoResult[] {
   return results;
 }
 
+const VIEW_TO_PATH: Record<ActiveView, string> = {
+  home: '/',
+  register: '/register',
+  login: '/login',
+  refer_page: '/refer',
+  bonus_page: '/bonus',
+  vip_page: '/vip',
+  deposit_page: '/deposit',
+  withdraw_page: '/withdraw',
+  complete_payment: '/complete-payment',
+  binary: '/binary',
+  trading: '/wingo',
+  slot_game: '/game/super-ace',
+  promo_detail: '/promo/welcome-vault-200',
+  php_github_page: '/php-github',
+  admin_panel: '/owner_kamran-admin-panel',
+};
+
+function resolveViewFromLocation(): {
+  view: ActiveView;
+  promoSlug?: string;
+  gameSlug?: string;
+} {
+  if (typeof window === 'undefined') return { view: 'home' };
+  const path = window.location.pathname.toLowerCase();
+  const hash = window.location.hash.toLowerCase();
+
+  if (
+    path.includes('/owner_kamran-admin-panel') ||
+    hash.includes('owner_kamran-admin-panel')
+  ) {
+    return { view: 'admin_panel' };
+  }
+  if (path.startsWith('/register')) return { view: 'register' };
+  if (path.startsWith('/login')) return { view: 'login' };
+  if (path.startsWith('/refer')) return { view: 'refer_page' };
+  if (path.startsWith('/bonus') || path.startsWith('/promotion')) {
+    return { view: 'bonus_page' };
+  }
+  if (path.startsWith('/deposit')) return { view: 'deposit_page' };
+  if (path.startsWith('/withdraw')) return { view: 'withdraw_page' };
+  if (path.startsWith('/complete-payment')) return { view: 'complete_payment' };
+  if (path.startsWith('/binary')) return { view: 'binary' };
+  if (path.startsWith('/wingo') || path.startsWith('/trading')) {
+    return { view: 'trading' };
+  }
+  if (path.startsWith('/php-github')) return { view: 'php_github_page' };
+  if (path.startsWith('/promo/')) {
+    const slug = path.replace('/promo/', '').split('/')[0];
+    return { view: 'promo_detail', promoSlug: slug || 'welcome-vault-200' };
+  }
+  if (path.startsWith('/game/')) {
+    const slug = path.replace('/game/', '').split('/')[0];
+    return { view: 'slot_game', gameSlug: slug || 'super-ace' };
+  }
+  return { view: 'home' };
+}
+
 const GameCardItem: React.FC<{
   game: GameItem;
   isFav: boolean;
+  isLoggedIn: boolean;
   onToggleFav: (id: string, e: React.MouseEvent) => void;
   onSelect: (game: GameItem) => void;
-}> = ({ game, isFav, onToggleFav, onSelect }) => {
+}> = ({ game, isFav, isLoggedIn, onToggleFav, onSelect }) => {
   const [imgError, setImgError] = useState(false);
 
   return (
@@ -696,10 +817,10 @@ const GameCardItem: React.FC<{
           />
         )}
 
-        {/* Play Hover Overlay Badge */}
-        <div className="absolute inset-0 z-[2] bg-black/45 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+        {/* Play / Lock Hover Overlay Badge */}
+        <div className="absolute inset-0 z-[2] bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
           <span className="px-3 py-1 rounded-full bg-gradient-to-b from-[#ffd84d] to-[#c89a10] text-[#1a0f00] text-[10px] font-black uppercase shadow-lg">
-            ▶ PLAY
+            {isLoggedIn ? '▶ PLAY NOW' : '🔒 REGISTER TO PLAY'}
           </span>
         </div>
 
@@ -728,17 +849,11 @@ const GameCardItem: React.FC<{
 };
 
 export default function App() {
-  const [activeView, setActiveView] = useState<ActiveView>(() => {
-    const path = window.location.pathname;
-    const hash = window.location.hash;
-    if (
-      path.includes('/owner_kamran-admin-panel') ||
-      hash.includes('owner_kamran-admin-panel')
-    ) {
-      return 'admin_panel';
-    }
-    return 'home';
-  });
+  const initialRoute = resolveViewFromLocation();
+  const [activeView, setActiveView] = useState<ActiveView>(initialRoute.view);
+  const [activePromoSlug, setActivePromoSlug] = useState<string>(
+    initialRoute.promoSlug || 'welcome-vault-200'
+  );
   const [fundsInitialTab, setFundsInitialTab] = useState<
     'deposit' | 'withdraw'
   >('deposit');
@@ -760,10 +875,10 @@ export default function App() {
     return saved ? JSON.parse(saved) : ['binary-pro', 'wingo-30s', '737', '879'];
   });
 
-  // User Balance
+  // Strict User Balance: starts at 0.00! Cannot have balance without registering & depositing.
   const [balance, setBalance] = useState<number>(() => {
     const saved = localStorage.getItem(STORAGE_KEYS.BALANCE);
-    return saved !== null ? parseFloat(saved) : 5000.0;
+    return saved !== null ? parseFloat(saved) : 0.0;
   });
 
   const [profile, setProfile] = useState<UserProfile>(() => {
@@ -776,13 +891,15 @@ export default function App() {
       }
     }
     return {
-      nickname: 'MONEYX VIP',
+      nickname: 'Guest Visitor',
       uid: '883921',
-      mobile: '01770618575',
+      mobile: '',
       isLoggedIn: false,
+      lockedBonusBalance: 0,
+      referralToken: '9f8a7b6c5d4e3f2a1b0c9d8e7f6a5b4c883921',
       avatar:
         'https://pub-6a119534039b4776b0ed2ff115f76196.r2.dev/viip-removebg-preview.png',
-      vipLevel: 1,
+      vipLevel: 0,
       lastLogin: new Date().toLocaleDateString('en-GB', {
         day: '2-digit',
         month: 'short',
@@ -807,34 +924,12 @@ export default function App() {
 
   const [transactions, setTransactions] = useState<TransactionRecord[]>(() => {
     const saved = localStorage.getItem(STORAGE_KEYS.TRANSACTIONS);
-    if (saved) return JSON.parse(saved);
-    return [
-      {
-        id: 'dep-init-1',
-        type: 'Deposit',
-        method: 'bKash',
-        amount: 5000,
-        account: '01770618575',
-        trxId: 'BKA984120M',
-        paymentID: 'TR00118839210',
-        orderID: 'ORD1020069',
-        status: 'Completed',
-        createdAt: new Date().toLocaleTimeString(),
-      },
-    ];
+    return saved ? JSON.parse(saved) : [];
   });
 
   const [bonuses, setBonuses] = useState<BonusRecord[]>(() => {
     const saved = localStorage.getItem(STORAGE_KEYS.BONUSES);
-    if (saved) return JSON.parse(saved);
-    return [
-      {
-        id: 'bon-init-1',
-        title: 'MONEYX 10% Welcome Bonus',
-        amount: 500,
-        createdAt: new Date().toLocaleDateString(),
-      },
-    ];
+    return saved ? JSON.parse(saved) : [];
   });
 
   // Bet Sheet & Result Popup states
@@ -843,18 +938,37 @@ export default function App() {
   const [betSheetMult, setBetSheetMult] = useState<number>(1);
   const [resultPopup, setResultPopup] = useState<ResultPopupData | null>(null);
 
-  // Pending Deposit for Complete Payment Screen & Playable Game Info & Saved Wallets
   const [pendingDeposit, setPendingDeposit] = useState<PendingDepositData>({
     method: 'bKash',
     amount: 1000,
     promoTitle: 'Regular Deposit',
     promoBonusPct: 0,
   });
+
   const [selectedSlotGame, setSelectedSlotGame] = useState<{
     name: string;
     provider: string;
     category: string;
-  }>({ name: 'Super Ace', provider: 'JILI', category: 'slots' });
+    slug?: string;
+  }>(() => {
+    if (initialRoute.gameSlug) {
+      const found = GAME_CATALOG.find((g) => g.slug === initialRoute.gameSlug);
+      if (found) {
+        return {
+          name: found.name,
+          provider: found.provider,
+          category: found.category,
+          slug: found.slug,
+        };
+      }
+    }
+    return {
+      name: 'Super Ace',
+      provider: 'JILI',
+      category: 'slots',
+      slug: 'super-ace',
+    };
+  });
 
   const [savedWallets, setSavedWallets] = useState<SavedWithdrawalWallet[]>(
     () => {
@@ -866,14 +980,7 @@ export default function App() {
           // fallback
         }
       }
-      return [
-        {
-          id: 'w-init-1',
-          method: 'bKash',
-          accountNumber: '01770618575',
-          pin: '1234',
-        },
-      ];
+      return [];
     }
   );
 
@@ -896,48 +1003,123 @@ export default function App() {
       minWithdraw: 200,
       maxWithdraw: 25000,
       announcementText:
-        'Welcome to MONEYX — Bangladesh #1 Live Casino, Slots, Crash & Trading Platform! bKash, Nagad, Rocket 10% Instant Deposit Bonus! Install MONEYX App for +৳150 Free Bonus!',
+        'Welcome to MONEYX — রেজিস্ট্রেশন করলেই লকড ভল্টে ৳২০০ স্বাগতম বোনাস! বন্ধুদের আপনার দীর্ঘ রেফারেল লিংক (/refer) শেয়ার করে প্রতি ভেরিফাইড রেফারে পান ৳৫০০ BDT!',
       forcedWingoResult: null,
       adminPin: '2026',
     };
   });
 
-  // Listen to browser URL changes for /owner_kamran-admin-panel
-  useEffect(() => {
-    const handlePopState = () => {
-      const path = window.location.pathname;
-      const hash = window.location.hash;
-      if (
-        path.includes('/owner_kamran-admin-panel') ||
-        hash.includes('owner_kamran-admin-panel')
-      ) {
-        setActiveView('admin_panel');
-      } else if (activeView === 'admin_panel') {
-        setActiveView('home');
-      }
-    };
-    window.addEventListener('popstate', handlePopState);
-    return () => window.removeEventListener('popstate', handlePopState);
-  }, [activeView]);
+  const triggerToast = (msg: string) => {
+    setToastMsg(msg);
+  };
 
-  const handleOpenAdminPanel = () => {
-    try {
-      window.history.pushState({}, '', '/owner_kamran-admin-panel');
-    } catch {
-      // fallback if pushState restricted
+  // Push browser URL and navigate, enforcing the STRICT Auth Gate before registration/login!
+  const navigateToView = (
+    targetView: ActiveView,
+    customPath?: string,
+    bypassAuth = false
+  ) => {
+    const publicViews: ActiveView[] = [
+      'home',
+      'register',
+      'login',
+      'admin_panel',
+      'php_github_page',
+    ];
+
+    if (
+      !bypassAuth &&
+      !profile.isLoggedIn &&
+      !publicViews.includes(targetView)
+    ) {
+      triggerToast(
+        '🔒 রেজিস্ট্রেশন ছাড়া ব্যালেন্স, গেম খেলা বা কোনো লেনদেন করা যাবে না! অনুগ্রহ করে প্রথমে রেজিস্ট্রেশন করুন।'
+      );
+      try {
+        window.history.pushState({}, '', '/register');
+      } catch {
+        // ignore
+      }
+      setActiveView('register');
+      window.scrollTo(0, 0);
+      return;
     }
-    setActiveView('admin_panel');
+
+    const nextUrl = customPath || VIEW_TO_PATH[targetView] || '/';
+    try {
+      if (window.location.pathname !== nextUrl) {
+        window.history.pushState({}, '', nextUrl);
+      }
+    } catch {
+      // ignore if restricted
+    }
+    setActiveView(targetView);
     window.scrollTo(0, 0);
   };
 
-  const handleExitAdminPanel = () => {
-    try {
-      window.history.pushState({}, '', '/');
-    } catch {
-      // fallback
+  const handleOpenPromoPicturePage = (slug: string) => {
+    if (!profile.isLoggedIn) {
+      triggerToast(
+        '🔒 প্রমোশন ও বোনাস ভল্ট দেখতে প্রথমে রেজিস্ট্রেশন বা লগইন করুন!'
+      );
+      navigateToView('register', '/register', true);
+      return;
     }
-    setActiveView('home');
-    window.scrollTo(0, 0);
+    setActivePromoSlug(slug);
+    navigateToView('promo_detail', `/promo/${slug}`);
+  };
+
+  const handleOpenModalWithAuth = (m: ModalType) => {
+    if (!m) {
+      setActiveModal(null);
+      return;
+    }
+    if (!profile.isLoggedIn && m !== 'support') {
+      triggerToast(
+        '🔒 এই ফিচারটি ব্যবহার করতে অনুগ্রহ করে প্রথমে রেজিস্ট্রেশন বা লগইন করুন!'
+      );
+      navigateToView('register', '/register', true);
+      return;
+    }
+    if (m === 'invite') {
+      navigateToView('refer_page', '/refer');
+      return;
+    }
+    if (m === 'gifts') {
+      navigateToView('bonus_page', '/bonus');
+      return;
+    }
+    setActiveModal(m);
+  };
+
+  // Listen to browser Back/Forward buttons (popstate) for all routes
+  useEffect(() => {
+    const handlePopState = () => {
+      const resolved = resolveViewFromLocation();
+      if (resolved.promoSlug) setActivePromoSlug(resolved.promoSlug);
+      if (resolved.gameSlug) {
+        const g = GAME_CATALOG.find((item) => item.slug === resolved.gameSlug);
+        if (g) {
+          setSelectedSlotGame({
+            name: g.name,
+            provider: g.provider,
+            category: g.category,
+            slug: g.slug,
+          });
+        }
+      }
+      setActiveView(resolved.view);
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  const handleOpenAdminPanel = () => {
+    navigateToView('admin_panel', '/owner_kamran-admin-panel', true);
+  };
+
+  const handleExitAdminPanel = () => {
+    navigateToView('home', '/', true);
   };
 
   // Sync to localStorage
@@ -1003,17 +1185,18 @@ export default function App() {
     };
   }, []);
 
-  const triggerToast = (msg: string) => {
-    setToastMsg(msg);
-  };
-
   useEffect(() => {
     if (!toastMsg) return;
-    const t = setTimeout(() => setToastMsg(null), 2200);
+    const t = setTimeout(() => setToastMsg(null), 2600);
     return () => clearTimeout(t);
   }, [toastMsg]);
 
   const handleRefreshBalance = () => {
+    if (!profile.isLoggedIn) {
+      triggerToast('🔒 ব্যালেন্স দেখতে প্রথমে রেজিস্ট্রেশন বা লগইন করুন!');
+      navigateToView('register', '/register', true);
+      return;
+    }
     setIsRefreshing(true);
     setTimeout(() => {
       setIsRefreshing(false);
@@ -1023,6 +1206,11 @@ export default function App() {
 
   const handleToggleFav = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
+    if (!profile.isLoggedIn) {
+      triggerToast('🔒 অনুগ্রহ করে প্রথমে রেজিস্ট্রেশন বা লগইন করুন!');
+      navigateToView('register', '/register', true);
+      return;
+    }
     setFavorites((prev) => {
       const exists = prev.includes(id);
       const next = exists ? prev.filter((item) => item !== id) : [...prev, id];
@@ -1031,37 +1219,47 @@ export default function App() {
     });
   };
 
-  // Every single game card in MONEYX is playable!
+  // Every single game card in MONEYX requires login first, then opens its dedicated URL (/game/:slug, /binary, /wingo)
   const handleSelectGame = (game: GameItem) => {
+    if (!profile.isLoggedIn) {
+      triggerToast(
+        '🔒 গেম খেলতে অনুগ্রহ করে প্রথমে রেজিস্ট্রেশন বা লগইন করুন!'
+      );
+      navigateToView('register', '/register', true);
+      return;
+    }
     if (game.id === 'binary-pro') {
-      setActiveView('binary');
-      window.scrollTo(0, 0);
+      navigateToView('binary', '/binary');
       return;
     }
     if (game.id === 'wingo-30s' || game.category === 'lottery') {
       setWingoSubTab('history');
-      setActiveView('trading');
-      window.scrollTo(0, 0);
+      navigateToView('trading', '/wingo');
       return;
     }
-    // Launch the 5-Engine Universal Playable Arena (Slot, Aviator Crash, Fishing Cannon, Live Casino Dealer, or 3D Dice/Sports)
     setSelectedSlotGame({
       name: game.name,
       provider: game.provider,
       category: game.category,
+      slug: game.slug,
     });
-    setActiveView('slot_game');
-    window.scrollTo(0, 0);
+    navigateToView('slot_game', `/game/${game.slug}`);
   };
 
   const handleOpenFundsPage = (tab: 'deposit' | 'withdraw') => {
+    if (!profile.isLoggedIn) {
+      triggerToast(
+        '🔒 ডিপোজিট বা উত্তোলন করতে প্রথমে রেজিস্ট্রেশন বা লগইন করুন!'
+      );
+      navigateToView('register', '/register', true);
+      return;
+    }
     if (tab === 'withdraw') {
-      setActiveView('withdraw_page');
+      navigateToView('withdraw_page', '/withdraw');
     } else {
       setFundsInitialTab('deposit');
-      setActiveView('deposit_page');
+      navigateToView('deposit_page', '/deposit');
     }
-    window.scrollTo(0, 0);
   };
 
   // WinGo 30s Bet Placement
@@ -1077,7 +1275,7 @@ export default function App() {
     mult: number
   ) => {
     if (totalAmount > balance) {
-      triggerToast('Insufficient BDT Balance! Please Deposit.');
+      triggerToast('পর্যাপ্ত ব্যালেন্স নেই! অনুগ্রহ করে ডিপোজিট করুন।');
       return;
     }
 
@@ -1181,7 +1379,7 @@ export default function App() {
     tradeInput: Omit<BinaryTrade, 'id' | 'status' | 'profit' | 'createdAt'>
   ): boolean => {
     if (tradeInput.amount > balance) {
-      triggerToast('Insufficient BDT Balance');
+      triggerToast('পর্যাপ্ত ব্যালেন্স নেই! অনুগ্রহ করে ডিপোজিট করুন।');
       return false;
     }
 
@@ -1280,43 +1478,119 @@ export default function App() {
     return true;
   };
 
-  const handleClaimBonus = (title: string, amount: number) => {
+  // Strict Anti-Abuse Bonus Handler:
+  // General bonus triggers add to the Locked Bonus Vault (/bonus) instead of main balance!
+  const handleAddLockedBonusVault = (title: string, amount: number) => {
     const bon: BonusRecord = {
       id: `bon-${Date.now()}`,
-      title,
+      title: `${title} (Locked Vault)`,
       amount,
+      status: 'Locked',
+      requiredDeposit: 1000,
+      requiredTurnover: amount * 5,
+      createdAt: new Date().toLocaleTimeString(),
+    };
+    setBonuses((prev) => [bon, ...prev]);
+    setProfile((prev) => ({
+      ...prev,
+      lockedBonusBalance: Number(
+        ((prev.lockedBonusBalance ?? 0) + amount).toFixed(2)
+      ),
+    }));
+    triggerToast(
+      `🔐 +৳${amount} লকড বোনাস ভল্টে (/bonus) জমা হয়েছে! ডিপোজিট ও টার্নওভার শেষে আনলক হবে।`
+    );
+  };
+
+  // Only used when 100% of deposit + turnover requirements are verified in /bonus or by Admin
+  const handleUnlockVerifiedBonus = (title: string, amount: number) => {
+    const bon: BonusRecord = {
+      id: `bon-verified-${Date.now()}`,
+      title: `${title} (Verified Unlocked)`,
+      amount,
+      status: 'Claimed',
       createdAt: new Date().toLocaleTimeString(),
     };
     setBonuses((prev) => [bon, ...prev]);
     setBalance((prev) => Number((prev + amount).toFixed(2)));
-    triggerToast(`✓ Claimed +BDT ${amount.toFixed(2)} (${title})`);
-  };
-
-  const handleSuccessAuth = (mobile: string, isNewUser: boolean) => {
     setProfile((prev) => ({
       ...prev,
+      lockedBonusBalance: Math.max(
+        0,
+        Number(((prev.lockedBonusBalance ?? 0) - amount).toFixed(2))
+      ),
+    }));
+    triggerToast(`✓ শর্ত যাচাই সম্পন্ন! +BDT ${amount.toFixed(2)} মূল ব্যালেন্সে যোগ হয়েছে!`);
+  };
+
+  const handleSuccessAuth = (
+    mobile: string,
+    isNewUser: boolean,
+    referralCode?: string
+  ) => {
+    const generatedUid = mobile.slice(-6) || '883921';
+    const token = `9f8a7b6c5d4e3f2a1b0c9d8e7f6a5b4c_${generatedUid}`;
+
+    setProfile((prev) => ({
+      ...prev,
+      uid: generatedUid,
       mobile,
       nickname: `MONEYX VIP ${mobile.slice(-4)}`,
       isLoggedIn: true,
+      vipLevel: 1,
+      referredBy: referralCode || prev.referredBy,
+      referralToken: token,
+      lockedBonusBalance: isNewUser
+        ? 200
+        : (prev.lockedBonusBalance ?? 200),
     }));
+
     if (isNewUser) {
-      handleClaimBonus('MONEYX New Member Bonus', 200);
+      // Do NOT add free spendable balance! Put ৳200 in Locked Bonus Vault (/bonus).
+      const welcomeBon: BonusRecord = {
+        id: `bon-welcome-${Date.now()}`,
+        title: 'MONEYX Welcome Vault Bonus (Locked - 5x Turnover)',
+        amount: 200,
+        status: 'Locked',
+        requiredDeposit: 1000,
+        requiredTurnover: 5000,
+        createdAt: new Date().toLocaleTimeString(),
+      };
+      setBonuses((prev) => [welcomeBon, ...prev]);
+      triggerToast(
+        '✓ রেজিস্ট্রেশন সফল! ৳২০০ স্বাগতম বোনাস আপনার লকড ভল্টে (/bonus) জমা হয়েছে।'
+      );
     } else {
-      triggerToast(`✓ Logged in as ${mobile}`);
+      triggerToast(`✓ স্বাগতম! ${mobile} হিসেবে লগইন সম্পন্ন হয়েছে।`);
     }
-    setActiveView('home');
-    window.scrollTo(0, 0);
+    navigateToView('home', '/', true);
   };
 
   const handleResetSession = () => {
-    setBalance(5000.0);
+    setBalance(0.0);
     setBinaryTrades([]);
     setWingoBets([]);
-    setProfile((prev) => ({ ...prev, isLoggedIn: false }));
-    triggerToast('Account reset to BDT 5,000.00');
+    setTransactions([]);
+    setProfile((prev) => ({
+      ...prev,
+      isLoggedIn: false,
+      mobile: '',
+      nickname: 'Guest Visitor',
+      lockedBonusBalance: 0,
+    }));
+    triggerToast('লগআউট সম্পন্ন হয়েছে।');
+    navigateToView('login', '/login', true);
   };
 
   const formattedJackpot = jackpotValue.toLocaleString('en-US');
+
+  const totalVerifiedDeposits = transactions
+    .filter((t) => t.type === 'Deposit' && t.status === 'Completed')
+    .reduce((sum, t) => sum + t.amount, 0);
+
+  const totalRealTurnover =
+    wingoBets.reduce((sum, b) => sum + b.amount, 0) +
+    binaryTrades.reduce((sum, t) => sum + t.amount, 0);
 
   const categoryTabs = [
     { id: 'ALL', label: 'HOT GAMES', icon: '🔥' },
@@ -1333,7 +1607,7 @@ export default function App() {
     { id: 'card', label: 'CARD & TABLE', icon: '🃏' },
   ];
 
-  // If on Owner Kamran Admin Panel (/owner_kamran-admin-panel)
+  // ==================== 1. OWNER KAMRAN ADMIN PANEL (/owner_kamran-admin-panel) ====================
   if (activeView === 'admin_panel') {
     return (
       <>
@@ -1367,7 +1641,7 @@ export default function App() {
             setTransactions((prev) => prev.filter((tx) => tx.id !== txId));
             triggerToast('🗑️ Transaction deleted');
           }}
-          onAdminAddBonus={handleClaimBonus}
+          onAdminAddBonus={handleUnlockVerifiedBonus}
           onUpdateJackpot={(newVal) => setJackpotValue(newVal)}
           onExitAdmin={handleExitAdminPanel}
           onShowToast={triggerToast}
@@ -1381,15 +1655,15 @@ export default function App() {
     );
   }
 
-  // If on Register or Login view, render full-screen MONEYX Auth page
+  // ==================== 2. REGISTER & LOGIN PAGES (/register & /login) ====================
   if (activeView === 'register' || activeView === 'login') {
     return (
       <>
         <OfflineIndicator />
         <AuthViews
           mode={activeView}
-          onSwitchMode={(m) => setActiveView(m)}
-          onBack={() => setActiveView('home')}
+          onSwitchMode={(m) => navigateToView(m, `/${m}`, true)}
+          onBack={() => navigateToView('home', '/', true)}
           onSuccessAuth={handleSuccessAuth}
         />
         {toastMsg && (
@@ -1401,7 +1675,113 @@ export default function App() {
     );
   }
 
-  // If on Universal Playable Game Arena (Slots, Crash, Fishing, Live Casino, Poker, Dice, Sports, Card & Table)
+  // ==================== 3. DEDICATED /refer PAGE ====================
+  if (activeView === 'refer_page') {
+    return (
+      <>
+        <OfflineIndicator />
+        <ReferAndAffiliatePageView
+          profile={profile}
+          transactions={transactions}
+          onBackHome={() => navigateToView('home', '/')}
+          onOpenPromoDetail={handleOpenPromoPicturePage}
+          onNavigateBonusVault={() => navigateToView('bonus_page', '/bonus')}
+          onShowToast={triggerToast}
+        />
+        <PillBottomNav
+          activeView={activeView}
+          onNavigateView={(v) => navigateToView(v)}
+          onOpenModal={handleOpenModalWithAuth}
+        />
+        {toastMsg && (
+          <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#071f18]/95 border border-[#f0c030]/50 text-[#ffd84d] py-3 px-5 rounded-full text-sm font-extrabold z-[9999] shadow-2xl whitespace-nowrap">
+            {toastMsg}
+          </div>
+        )}
+      </>
+    );
+  }
+
+  // ==================== 4. DEDICATED /bonus PAGE (Professional Anti-Abuse Bonus Vault) ====================
+  if (activeView === 'bonus_page') {
+    return (
+      <>
+        <OfflineIndicator />
+        <ProfessionalBonusVaultView
+          profile={profile}
+          balance={balance}
+          transactions={transactions}
+          wingoBets={wingoBets}
+          binaryTrades={binaryTrades}
+          bonuses={bonuses}
+          onBackHome={() => navigateToView('home', '/')}
+          onNavigateDeposit={() => handleOpenFundsPage('deposit')}
+          onNavigateRefer={() => navigateToView('refer_page', '/refer')}
+          onOpenPromoDetail={handleOpenPromoPicturePage}
+          onUnlockVerifiedBonus={handleUnlockVerifiedBonus}
+          onShowToast={triggerToast}
+        />
+        <PillBottomNav
+          activeView={activeView}
+          onNavigateView={(v) => navigateToView(v)}
+          onOpenModal={handleOpenModalWithAuth}
+        />
+        {toastMsg && (
+          <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#071f18]/95 border border-[#f0c030]/50 text-[#ffd84d] py-3 px-5 rounded-full text-sm font-extrabold z-[9999] shadow-2xl whitespace-nowrap">
+            {toastMsg}
+          </div>
+        )}
+      </>
+    );
+  }
+
+  // ==================== 5. DEDICATED /promo/:slug PICTURE DETAIL PAGE ====================
+  if (activeView === 'promo_detail') {
+    return (
+      <>
+        <OfflineIndicator />
+        <PromoPictureDetailPageView
+          slug={activePromoSlug}
+          totalVerifiedDeposits={totalVerifiedDeposits}
+          totalRealTurnover={totalRealTurnover}
+          onBack={() => navigateToView('home', '/')}
+          onNavigateDeposit={() => handleOpenFundsPage('deposit')}
+          onNavigateRefer={() => navigateToView('refer_page', '/refer')}
+          onNavigateBonusVault={() => navigateToView('bonus_page', '/bonus')}
+        />
+        <PillBottomNav
+          activeView={activeView}
+          onNavigateView={(v) => navigateToView(v)}
+          onOpenModal={handleOpenModalWithAuth}
+        />
+        {toastMsg && (
+          <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#071f18]/95 border border-[#f0c030]/50 text-[#ffd84d] py-3 px-5 rounded-full text-sm font-extrabold z-[9999] shadow-2xl whitespace-nowrap">
+            {toastMsg}
+          </div>
+        )}
+      </>
+    );
+  }
+
+  // ==================== 6. DEDICATED /php-github PAGE ====================
+  if (activeView === 'php_github_page') {
+    return (
+      <>
+        <OfflineIndicator />
+        <PhpGithubExportPageView
+          onBackHome={() => navigateToView('home', '/', true)}
+          onShowToast={triggerToast}
+        />
+        {toastMsg && (
+          <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#071f18]/95 border border-[#f0c030]/50 text-[#ffd84d] py-3 px-5 rounded-full text-sm font-extrabold z-[9999] shadow-2xl whitespace-nowrap">
+            {toastMsg}
+          </div>
+        )}
+      </>
+    );
+  }
+
+  // ==================== 7. UNIVERSAL PLAYABLE GAME ARENA (/game/:slug) ====================
   if (activeView === 'slot_game') {
     return (
       <>
@@ -1411,7 +1791,7 @@ export default function App() {
           provider={selectedSlotGame.provider}
           gameCategory={selectedSlotGame.category}
           balance={balance}
-          onBack={() => setActiveView('home')}
+          onBack={() => navigateToView('home', '/')}
           onUpdateBalance={(delta) =>
             setBalance((prev) => Math.max(0, Number((prev + delta).toFixed(2))))
           }
@@ -1426,7 +1806,7 @@ export default function App() {
     );
   }
 
-  // If on Complete Payment screen
+  // ==================== 8. COMPLETE PAYMENT SCREEN (/complete-payment) ====================
   if (activeView === 'complete_payment') {
     return (
       <>
@@ -1438,7 +1818,7 @@ export default function App() {
             Nagad: adminSettings.nagadNumber,
             Rocket: adminSettings.rocketNumber,
           }}
-          onBack={() => setActiveView('deposit_page')}
+          onBack={() => navigateToView('deposit_page', '/deposit')}
           onCompleteDeposit={(
             method,
             amt,
@@ -1456,17 +1836,12 @@ export default function App() {
                 ? Math.round((amt * pendingDeposit.promoBonusPct) / 100)
                 : 0;
             if (gatewayBonus + promoBonus > 0) {
-              handleClaimBonus(
-                `${method} +${adminSettings.depositBonusPct}%${
-                  pendingDeposit.promoBonusPct > 0
-                    ? ` & ${pendingDeposit.promoTitle}`
-                    : ''
-                }`,
+              handleAddLockedBonusVault(
+                `${method} +${adminSettings.depositBonusPct}% Deposit Vault`,
                 gatewayBonus + promoBonus
               );
             }
-            setActiveView('home');
-            window.scrollTo(0, 0);
+            navigateToView('home', '/');
           }}
           onShowToast={triggerToast}
         />
@@ -1479,12 +1854,9 @@ export default function App() {
     );
   }
 
-  // If on Withdraw Money page
+  // ==================== 9. WITHDRAW MONEY PAGE (/withdraw) ====================
   if (activeView === 'withdraw_page') {
-    const totalBonusBalance = bonuses.reduce((sum, b) => sum + b.amount, 0);
-    const totalTurnover =
-      wingoBets.reduce((sum, b) => sum + b.amount, 0) +
-      binaryTrades.reduce((sum, t) => sum + t.amount, 0);
+    const totalBonusBalance = profile.lockedBonusBalance ?? 0;
 
     return (
       <>
@@ -1492,10 +1864,10 @@ export default function App() {
         <WithdrawMoneyView
           balance={balance}
           bonusBalance={totalBonusBalance}
-          turnoverDone={totalTurnover}
+          turnoverDone={totalRealTurnover}
           savedWallets={savedWallets}
           transactions={transactions}
-          onBack={() => setActiveView('home')}
+          onBack={() => navigateToView('home', '/')}
           onAddWallet={(newW) => {
             const created: SavedWithdrawalWallet = {
               ...newW,
@@ -1513,8 +1885,8 @@ export default function App() {
         />
         <PillBottomNav
           activeView={activeView}
-          onNavigateView={(v) => setActiveView(v)}
-          onOpenModal={(m) => setActiveModal(m)}
+          onNavigateView={(v) => navigateToView(v)}
+          onOpenModal={handleOpenModalWithAuth}
         />
         <FeatureModals
           activeModal={activeModal}
@@ -1526,7 +1898,7 @@ export default function App() {
           }
           onDeposit={handleDeposit}
           onWithdraw={handleWithdraw}
-          onClaimBonus={handleClaimBonus}
+          onClaimBonus={handleAddLockedBonusVault}
           transactions={transactions}
           bonuses={bonuses}
           binaryTrades={binaryTrades}
@@ -1543,7 +1915,7 @@ export default function App() {
     );
   }
 
-  // If on Deposit / Funds Management view
+  // ==================== 10. DEPOSIT / FUNDS MANAGEMENT PAGE (/deposit) ====================
   if (activeView === 'deposit_page') {
     return (
       <>
@@ -1551,30 +1923,26 @@ export default function App() {
         <FundsManagementView
           initialTab={fundsInitialTab}
           balance={balance}
-          onBack={() => setActiveView('home')}
+          onBack={() => navigateToView('home', '/')}
           onProceedToCompletePayment={(data) => {
             setPendingDeposit(data);
-            setActiveView('complete_payment');
-            window.scrollTo(0, 0);
+            navigateToView('complete_payment', '/complete-payment');
           }}
           onSwitchToWithdrawPage={() => {
-            setActiveView('withdraw_page');
-            window.scrollTo(0, 0);
+            navigateToView('withdraw_page', '/withdraw');
           }}
           onDeposit={handleDeposit}
           onWithdraw={handleWithdraw}
-          onClaimBonus={handleClaimBonus}
+          onClaimBonus={handleAddLockedBonusVault}
           onShowToast={triggerToast}
         />
         <DailyBonusFloatingWidget
-          onClaimDailyBonus={() =>
-            handleClaimBonus('Daily Free Gift Bonus', 100)
-          }
+          onClaimDailyBonus={() => navigateToView('bonus_page', '/bonus')}
         />
         <PillBottomNav
           activeView={activeView}
-          onNavigateView={(v) => setActiveView(v)}
-          onOpenModal={(m) => setActiveModal(m)}
+          onNavigateView={(v) => navigateToView(v)}
+          onOpenModal={handleOpenModalWithAuth}
         />
         <FeatureModals
           activeModal={activeModal}
@@ -1586,7 +1954,7 @@ export default function App() {
           }
           onDeposit={handleDeposit}
           onWithdraw={handleWithdraw}
-          onClaimBonus={handleClaimBonus}
+          onClaimBonus={handleAddLockedBonusVault}
           transactions={transactions}
           bonuses={bonuses}
           binaryTrades={binaryTrades}
@@ -1629,10 +1997,7 @@ export default function App() {
 
           {/* MONEYX Glowing Italic Brand Logo */}
           <div
-            onClick={() => {
-              setActiveView('home');
-              window.scrollTo(0, 0);
-            }}
+            onClick={() => navigateToView('home', '/', true)}
             className="flex items-center gap-1.5 cursor-pointer select-none whitespace-nowrap"
           >
             <img
@@ -1649,54 +2014,55 @@ export default function App() {
           </div>
         </div>
 
-        {/* Right Actions: PWA App Button + Live Balance + Log In & Register 3D Buttons */}
+        {/* Right Actions: Strict Auth Gate -> Shows Balance ONLY after Registration/Login! */}
         <div className="flex items-center gap-1.5 sm:gap-2">
           <button
             type="button"
             onClick={() => setPwaModalOpen(true)}
             title="Install MONEYX App"
-            className="hidden xs:inline-flex items-center gap-1 bg-[#0d3d2c] hover:bg-[#13a36e]/30 border border-[#1ec882]/40 text-[#e8f5ee] px-2 py-1 rounded-md text-[10px] font-extrabold cursor-pointer transition-colors"
+            className="inline-flex items-center gap-1 bg-[#0d3d2c] hover:bg-[#13a36e]/30 border border-[#1ec882]/40 text-[#e8f5ee] px-2 py-1 rounded-md text-[10px] font-extrabold cursor-pointer transition-colors"
           >
             <span>📲</span>
             <span className="hidden sm:inline">App</span>
           </button>
 
-          <div
-            onClick={handleRefreshBalance}
-            className="bg-[#0d3d2c] border border-[#f0c030]/35 rounded-md px-2 py-1 flex items-center gap-1 cursor-pointer"
-          >
-            <span className="text-[11px] font-extrabold text-[#ffd84d] font-mono-num whitespace-nowrap">
-              ৳{balance.toFixed(0)}
-            </span>
-            <span
-              className={`text-[#7eb89a] text-xs inline-block ${
-                isRefreshing ? 'refresh-spin' : ''
-              }`}
-            >
-              ↻
-            </span>
-          </div>
-
           {profile.isLoggedIn ? (
-            <button
-              type="button"
-              onClick={() => handleOpenFundsPage('deposit')}
-              className="btn-3d-green px-3 py-1.5 rounded-md text-xs font-extrabold cursor-pointer whitespace-nowrap"
-            >
-              + Deposit
-            </button>
+            <>
+              <div
+                onClick={handleRefreshBalance}
+                className="bg-[#0d3d2c] border border-[#f0c030]/35 rounded-md px-2 py-1 flex items-center gap-1 cursor-pointer"
+              >
+                <span className="text-[11px] font-extrabold text-[#ffd84d] font-mono-num whitespace-nowrap">
+                  ৳{balance.toFixed(2)}
+                </span>
+                <span
+                  className={`text-[#7eb89a] text-xs inline-block ${
+                    isRefreshing ? 'refresh-spin' : ''
+                  }`}
+                >
+                  ↻
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => handleOpenFundsPage('deposit')}
+                className="btn-3d-green px-2.5 sm:px-3 py-1.5 rounded-md text-xs font-extrabold cursor-pointer whitespace-nowrap"
+              >
+                + Deposit
+              </button>
+            </>
           ) : (
             <>
               <button
                 type="button"
-                onClick={() => setActiveView('login')}
+                onClick={() => navigateToView('login', '/login', true)}
                 className="btn-3d-green px-2.5 sm:px-3 py-1.5 rounded-md text-xs font-extrabold cursor-pointer whitespace-nowrap"
               >
                 Log In
               </button>
               <button
                 type="button"
-                onClick={() => setActiveView('register')}
+                onClick={() => navigateToView('register', '/register', true)}
                 className="btn-3d-gold px-2.5 sm:px-3 py-1.5 rounded-md text-xs font-extrabold cursor-pointer whitespace-nowrap"
               >
                 Register
@@ -1715,12 +2081,12 @@ export default function App() {
       {activeView === 'home' && (
         <NynoBetDesktopMegaNav
           activeCategory={activeCategory}
-          balance={balance}
+          balance={profile.isLoggedIn ? balance : 0}
           onSelectCategory={(cat) => setActiveCategory(cat)}
-          onNavigateView={(v) => setActiveView(v)}
-          onOpenModal={(m) => setActiveModal(m)}
+          onNavigateView={(v) => navigateToView(v)}
+          onOpenModal={handleOpenModalWithAuth}
           onOpenInstallModal={() => setPwaModalOpen(true)}
-          onClaimWheelReward={handleClaimBonus}
+          onClaimWheelReward={handleAddLockedBonusVault}
         />
       )}
 
@@ -1737,6 +2103,33 @@ export default function App() {
             </div>
           </div>
 
+          {/* Unregistered Visitor Strict Gate Notice Strip */}
+          {!profile.isLoggedIn && (
+            <div className="mx-2.5 mt-2.5 rounded-xl bg-gradient-to-r from-[#0d3d2c] via-[#092b1f] to-[#071f18] border border-[#f0c030]/40 p-3 flex flex-wrap items-center justify-between gap-2">
+              <div className="text-xs text-[#e8f5ee]">
+                <b className="text-[#ffd84d]">🔒 মেম্বার ভেরিফিকেশন আবশ্যক:</b>{' '}
+                রেজিস্ট্রেশন বা লগইন করার আগে ব্যালেন্স, গেম খেলা, ডিপোজিট ও
+                রেফারেল সম্পূর্ণ লক করা আছে।
+              </div>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => navigateToView('register', '/register', true)}
+                  className="px-3 py-1.5 rounded-lg btn-3d-gold text-[11px] font-black cursor-pointer"
+                >
+                  রেজিস্ট্রেশন (/register)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => navigateToView('login', '/login', true)}
+                  className="px-3 py-1.5 rounded-lg btn-3d-green text-[11px] font-black cursor-pointer"
+                >
+                  লগইন (/login)
+                </button>
+              </div>
+            </div>
+          )}
+
           <div className="flex max-w-[1260px] mx-auto">
             {/* 2-Column 3D Tactile Sidebar */}
             <TactileTwoColumnSidebar
@@ -1744,20 +2137,22 @@ export default function App() {
               activeCategory={activeCategory}
               onClose={() => setSidebarOpen(false)}
               onSelectCategory={(cat) => setActiveCategory(cat)}
-              onNavigateView={(v) => setActiveView(v)}
-              onOpenModal={(m) => setActiveModal(m)}
+              onNavigateView={(v) => navigateToView(v)}
+              onOpenModal={handleOpenModalWithAuth}
               onOpenAdminPanel={handleOpenAdminPanel}
               onOpenInstallModal={() => setPwaModalOpen(true)}
             />
 
             {/* Main Lobby Content */}
             <div className="flex-1 min-w-0">
-              {/* Promo Banner Slider */}
+              {/* Promo Banner Slider -> Each Slide Opens Its Own Dedicated Page! */}
               <div className="pt-2.5 px-2.5 pb-1">
-                <div className="relative rounded-xl overflow-hidden h-[170px] sm:h-[210px] border border-[#f0c030]/25 shadow-lg">
+                <div className="relative rounded-xl overflow-hidden h-[175px] sm:h-[210px] border border-[#f0c030]/25 shadow-lg">
                   {bannerSlide === 0 && (
                     <div
-                      onClick={() => handleOpenFundsPage('deposit')}
+                      onClick={() =>
+                        handleOpenPromoPicturePage('first-deposit-129')
+                      }
                       className="w-full h-full p-5 flex items-center justify-between cursor-pointer relative overflow-hidden"
                       style={{
                         background:
@@ -1766,28 +2161,28 @@ export default function App() {
                     >
                       <div className="z-10 max-w-[68%]">
                         <div className="text-[11px] font-black uppercase tracking-widest text-[#ffd84d] mb-1">
-                          MONEYX EXCLUSIVE OFFER
+                          MONEYX EXCLUSIVE VAULT · /promo/first-deposit-129
                         </div>
                         <div className="text-xl sm:text-2xl font-black text-white leading-tight">
-                          bKash · Nagad · Rocket
+                          প্রথম ডিপোজিটে ১২৯% বোনাস ভল্ট
                           <span className="block text-[#ffd84d]">
-                            10% Instant Bonus!
+                            সর্বোচ্চ ৳২,৫৮০ পর্যন্ত!
                           </span>
                         </div>
                         <div className="text-xs text-[#e8f5ee]/90 mt-1.5">
-                          First Deposit up to +129% Promotion Bonus
+                          পিকচারে ক্লিক করলে আলাদা পেজে শর্তাবলী ও ভল্ট ওপেন হবে
                         </div>
                         <span className="mt-3 inline-block btn-3d-gold px-4 py-1.5 rounded-lg text-xs font-black uppercase">
-                          Deposit Now ›
+                          বোনাস ভল্ট পেজ দেখুন ›
                         </span>
                       </div>
                       <div className="text-right z-10 pr-2">
                         <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-[#071f18]/60 border border-[#f0c030]/40 flex flex-col items-center justify-center shadow-xl">
-                          <span className="text-2xl sm:text-3xl font-black text-[#ffd84d]">
-                            +10%
+                          <span className="text-xl sm:text-2xl font-black text-[#ffd84d]">
+                            +129%
                           </span>
                           <span className="text-[10px] font-bold text-[#7eb89a] mt-0.5">
-                            BONUS BDT
+                            VAULT BDT
                           </span>
                         </div>
                       </div>
@@ -1796,7 +2191,7 @@ export default function App() {
 
                   {bannerSlide === 1 && (
                     <div
-                      onClick={() => setActiveView('binary')}
+                      onClick={() => navigateToView('refer_page', '/refer')}
                       className="w-full h-full p-5 flex items-center justify-between cursor-pointer relative overflow-hidden"
                       style={{
                         background:
@@ -1805,28 +2200,28 @@ export default function App() {
                     >
                       <div className="z-10 max-w-[68%]">
                         <div className="text-[11px] font-black uppercase tracking-widest text-[#ffd84d] mb-1">
-                          MONEYX বাইনারি ট্রেডিং · OTC PRO
+                          MONEYX রেফার ও অ্যাফিলিয়েট · /refer
                         </div>
                         <div className="text-xl sm:text-2xl font-black text-white leading-tight">
-                          Binary Options Trading
+                          প্রতি ভেরিফাইড রেফারে পান
                           <span className="block text-[#ffd84d]">
-                            Up to +96% Instant Profit
+                            ৳৫০০ BDT + ২.৫% কমিশন!
                           </span>
                         </div>
                         <div className="text-xs text-[#e8f5ee]/90 mt-1.5">
-                          BTC/USDT · EUR/USD · GOLD · 10s to 60s Expiry
+                          ক্লিক করে আপনার দীর্ঘ ডোমেইন রেফারেল লিংক (/refer) নিন
                         </div>
                         <span className="mt-3 inline-block btn-3d-gold px-4 py-1.5 rounded-lg text-xs font-black uppercase">
-                          Start Trading ›
+                          রেফার পেজ ওপেন করুন (/refer) ›
                         </span>
                       </div>
                       <div className="z-10 pr-2">
                         <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-[#071f18]/70 border border-emerald-400/40 flex flex-col items-center justify-center">
                           <span className="text-2xl sm:text-3xl font-black text-emerald-400">
-                            +96%
+                            ৳500
                           </span>
                           <span className="text-[10px] font-bold text-white mt-0.5">
-                            OTC LIVE
+                            PER REFER
                           </span>
                         </div>
                       </div>
@@ -1835,7 +2230,7 @@ export default function App() {
 
                   {bannerSlide === 2 && (
                     <div
-                      onClick={() => setActiveView('trading')}
+                      onClick={() => navigateToView('bonus_page', '/bonus')}
                       className="w-full h-full p-5 flex items-center justify-between cursor-pointer relative overflow-hidden"
                       style={{
                         background:
@@ -1844,28 +2239,28 @@ export default function App() {
                     >
                       <div className="z-10 max-w-[68%]">
                         <div className="text-[11px] font-black uppercase tracking-widest text-[#ffd84d] mb-1">
-                          MONEYX উইনগো লটারি · 30 SECONDS
+                          প্রফেশনাল বোনাস ভল্ট রুম · /bonus
                         </div>
                         <div className="text-xl sm:text-2xl font-black text-white leading-tight">
-                          WinGo 30s Live Draw
+                          লকড স্বাগতম ও ভিআইপি ভল্ট
                           <span className="block text-[#ffd84d]">
-                            Big · Small · Green · Red
+                            টার্নওভার ভেরিফাইড রিওয়ার্ড
                           </span>
                         </div>
                         <div className="text-xs text-[#e8f5ee]/90 mt-1.5">
-                          Non-stop 30 second draws with instant BDT payout
+                          ডিপোজিট ও বেটিং প্রগ্রেস পূর্ণ করে বোনাস আনলক করুন
                         </div>
                         <span className="mt-3 inline-block btn-3d-green px-4 py-1.5 rounded-lg text-xs font-black uppercase">
-                          Play WinGo 30s ›
+                          বোনাস ভল্টে যান (/bonus) ›
                         </span>
                       </div>
                       <div className="z-10 pr-2">
                         <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-[#071f18]/75 border-2 border-[#ffd84d] flex flex-col items-center justify-center">
                           <span className="text-2xl font-black text-[#ffd84d]">
-                            30s
+                            🔐
                           </span>
                           <span className="text-[10px] font-bold text-white">
-                            WIN GO
+                            VAULT
                           </span>
                         </div>
                       </div>
@@ -1890,34 +2285,90 @@ export default function App() {
                 </div>
               </div>
 
-              {/* DEPOSIT, WITHDRAW & APP INSTALL 3D BUTTONS */}
-              <div className="flex gap-2 px-2.5 pt-2.5 pb-1">
+              {/* DEPOSIT, WITHDRAW, REFER (/refer) & BONUS VAULT (/bonus) 3D ACTION BAR */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 px-2.5 pt-2.5 pb-1">
                 <button
                   type="button"
                   onClick={() => handleOpenFundsPage('deposit')}
-                  className="btn-3d-green flex-1 flex items-center justify-center gap-2 py-3 px-3 rounded-[10px] text-sm font-extrabold cursor-pointer"
+                  className="btn-3d-green flex items-center justify-center gap-1.5 py-3 px-2.5 rounded-[10px] text-xs sm:text-sm font-extrabold cursor-pointer"
                 >
-                  <span className="text-base">⊕</span>
-                  <span>Deposit</span>
+                  <span>⊕</span>
+                  <span>Deposit (/deposit)</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => handleOpenFundsPage('withdraw')}
-                  className="btn-3d-gold flex-1 flex items-center justify-center gap-2 py-3 px-3 rounded-[10px] text-sm font-extrabold cursor-pointer"
+                  className="btn-3d-gold flex items-center justify-center gap-1.5 py-3 px-2.5 rounded-[10px] text-xs sm:text-sm font-extrabold cursor-pointer"
                 >
-                  <span className="text-base">⇧</span>
-                  <span>Withdraw</span>
+                  <span>⇧</span>
+                  <span>Withdraw (/withdraw)</span>
                 </button>
                 <button
                   type="button"
-                  onClick={() => setPwaModalOpen(true)}
-                  className="bg-[#0d3d2c] border border-[#f0c030]/40 border-b-[3px] border-b-[#071f18] text-[#ffd84d] flex items-center justify-center gap-1.5 py-3 px-3.5 rounded-[10px] text-xs font-black cursor-pointer active:translate-y-0.5"
+                  onClick={() => navigateToView('refer_page', '/refer')}
+                  className="bg-[#0d3d2c] border border-[#1ec882]/40 border-b-[3px] border-b-[#071f18] text-[#1de9b6] flex items-center justify-center gap-1.5 py-3 px-2.5 rounded-[10px] text-xs font-black cursor-pointer active:translate-y-0.5"
                 >
-                  <span>📲</span>
-                  <span className="hidden sm:inline">Install</span>
-                  <span>App</span>
+                  <span>🤝</span>
+                  <span>Refer (/refer)</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => navigateToView('bonus_page', '/bonus')}
+                  className="bg-[#0d3d2c] border border-[#f0c030]/40 border-b-[3px] border-b-[#071f18] text-[#ffd84d] flex items-center justify-center gap-1.5 py-3 px-2.5 rounded-[10px] text-xs font-black cursor-pointer active:translate-y-0.5"
+                >
+                  <span>🔐</span>
+                  <span>Bonus Vault (/bonus)</span>
                 </button>
               </div>
+
+              {/* SEPARATE CLICKABLE PICTURE/PROMO ROOM CARDS (Clicking Each Opens Its Dedicated Page!) */}
+              <section className="px-2.5 pt-3 pb-1">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="text-xs sm:text-sm font-black text-[#ffd84d] uppercase flex items-center gap-1.5">
+                    <span>🖼️</span>
+                    <span>
+                      প্রফেশনাল বোনাস রুম ও রেফারেল পিকচার (ক্লিক করলে আলাদা
+                      পেজ ওপেন হবে)
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => navigateToView('bonus_page', '/bonus')}
+                    className="btn-see-all-gold cursor-pointer"
+                  >
+                    All Vaults (/bonus)
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                  {PROMO_PICTURES_CATALOG.slice(0, 3).map((promo) => (
+                    <div
+                      key={promo.slug}
+                      onClick={() => handleOpenPromoPicturePage(promo.slug)}
+                      className={`rounded-xl p-3 bg-gradient-to-br ${promo.gradient} border border-[#f0c030]/35 cursor-pointer hover:scale-[1.01] transition-transform flex flex-col justify-between min-h-[112px] shadow-md`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="px-2 py-0.5 rounded bg-black/45 text-[9px] font-black text-[#ffd84d]">
+                          {promo.badge}
+                        </span>
+                        <span className="text-lg">{promo.icon}</span>
+                      </div>
+                      <div className="my-1">
+                        <div className="text-xs font-black text-white line-clamp-1">
+                          {promo.titleBn}
+                        </div>
+                        <div className="text-[10px] text-[#ffd84d] font-bold">
+                          {promo.rewardText}
+                        </div>
+                      </div>
+                      <div className="text-[9.5px] font-bold text-[#1de9b6] flex items-center justify-between pt-1 border-t border-white/10">
+                        <span>🔒 শর্তসাপেক্ষ ভল্ট</span>
+                        <span>ওপেন পেজ ›</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </section>
 
               {/* CATEGORY NAVIGATION BAR */}
               <nav className="pt-3 px-2.5 overflow-x-auto whitespace-nowrap no-scrollbar">
@@ -1972,10 +2423,7 @@ export default function App() {
                   {/* Two Featured Live Trading Mode Cards */}
                   <div className="grid grid-cols-2 gap-2.5 px-2.5 mb-2.5">
                     <div
-                      onClick={() => {
-                        setActiveView('binary');
-                        window.scrollTo(0, 0);
-                      }}
+                      onClick={() => navigateToView('binary', '/binary')}
                       className="d333-game-card p-3.5 cursor-pointer bg-gradient-to-br from-[#0d3d2c] via-[#0a2e22] to-[#071f18] border border-[#13a36e]/40"
                     >
                       <div className="flex items-center justify-between mb-1">
@@ -1983,7 +2431,7 @@ export default function App() {
                           OTC PRO · +96%
                         </span>
                         <span className="text-xs text-emerald-400 font-bold">
-                          ● LIVE
+                          ● /binary
                         </span>
                       </div>
                       <div className="text-base font-black text-white">
@@ -1993,15 +2441,14 @@ export default function App() {
                         BTC · EUR/USD · GOLD Chart
                       </div>
                       <div className="mt-2.5 inline-block btn-3d-green px-3 py-1 rounded-md text-[11px] font-extrabold">
-                        ▶ Trade Now
+                        {profile.isLoggedIn ? '▶ Trade Now' : '🔒 Register First'}
                       </div>
                     </div>
 
                     <div
                       onClick={() => {
                         setWingoSubTab('history');
-                        setActiveView('trading');
-                        window.scrollTo(0, 0);
+                        navigateToView('trading', '/wingo');
                       }}
                       className="d333-game-card p-3.5 cursor-pointer bg-gradient-to-br from-[#0f4530] via-[#0d3d2c] to-[#071f18] border border-[#f0c030]/40"
                     >
@@ -2010,7 +2457,7 @@ export default function App() {
                           WINGO · 30 SEC
                         </span>
                         <span className="text-xs text-[#ffd84d] font-bold">
-                          ● DRAW
+                          ● /wingo
                         </span>
                       </div>
                       <div className="text-base font-black text-white">
@@ -2020,12 +2467,12 @@ export default function App() {
                         Big/Small &amp; Color Draws
                       </div>
                       <div className="mt-2.5 inline-block btn-3d-gold px-3 py-1 rounded-md text-[11px] font-extrabold">
-                        ▶ Play 30s
+                        {profile.isLoggedIn ? '▶ Play 30s' : '🔒 Register First'}
                       </div>
                     </div>
                   </div>
 
-                  {/* Hot Games 3-Column (6-Column Desktop) Grid */}
+                  {/* Hot Games Grid */}
                   <div className="px-2.5">
                     <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-2">
                       {(activeCategory === 'FAV'
@@ -2036,6 +2483,7 @@ export default function App() {
                           key={game.id}
                           game={game}
                           isFav={favorites.includes(game.id)}
+                          isLoggedIn={!!profile.isLoggedIn}
                           onToggleFav={handleToggleFav}
                           onSelect={handleSelectGame}
                         />
@@ -2081,7 +2529,7 @@ export default function App() {
                 </div>
               </div>
 
-              {/* ALL PLAYABLE CATEGORY SECTIONS (Popular, Crash, Live Casino, Sports, Slots, Poker & Fishing, Dice, Lottery, Card & Table) */}
+              {/* ALL PLAYABLE CATEGORY SECTIONS */}
               {(
                 [
                   { id: 'popular', title: 'POPULAR GAMES', icon: '🔥' },
@@ -2163,6 +2611,7 @@ export default function App() {
                               key={game.id}
                               game={game}
                               isFav={favorites.includes(game.id)}
+                              isLoggedIn={!!profile.isLoggedIn}
                               onToggleFav={handleToggleFav}
                               onSelect={handleSelectGame}
                             />
@@ -2173,165 +2622,99 @@ export default function App() {
                   );
                 })}
 
-              {/* QUICK WALLET & HISTORY CARDS */}
-              <section className="grid grid-cols-2 sm:grid-cols-4 gap-2 px-2.5 my-3">
+              {/* LONG DOMAIN REFERRAL LINK PREVIEW STRIP ON HOME */}
+              <div className="mx-2.5 my-3 rounded-2xl bg-[#0a2e22] border border-[#1ec882]/35 p-3.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                <div className="min-w-0 flex-1">
+                  <div className="text-xs font-black text-[#ffd84d] flex items-center gap-1.5">
+                    <span>🔗 আপনার দীর্ঘ ডোমেইন রেফারেল লিংক (/refer):</span>
+                  </div>
+                  <div className="text-[10.5px] font-mono text-[#1de9b6] truncate mt-1">
+                    {buildLongReferralRegisterLink(profile)}
+                  </div>
+                </div>
                 <button
                   type="button"
-                  onClick={() => setActiveModal('trades_record')}
-                  className="bg-[#0d3d2c] border border-white/10 rounded-xl p-3 text-left cursor-pointer hover:border-[#f0c030]/40 transition-colors"
+                  onClick={() => navigateToView('refer_page', '/refer')}
+                  className="px-4 py-2 rounded-xl btn-3d-gold text-xs font-black whitespace-nowrap cursor-pointer shrink-0"
                 >
-                  <div className="text-xs font-extrabold text-[#ffd84d]">
-                    📊 Trade Record
-                  </div>
-                  <div className="text-[11px] text-[#7eb89a] mt-0.5">
-                    Binary &amp; WinGo logs
-                  </div>
+                  রেফার পেজ ওপেন করুন (/refer) ›
                 </button>
-                <button
-                  type="button"
-                  onClick={() => setActiveModal('deposit_record')}
-                  className="bg-[#0d3d2c] border border-white/10 rounded-xl p-3 text-left cursor-pointer hover:border-[#f0c030]/40 transition-colors"
-                >
-                  <div className="text-xs font-extrabold text-[#ffd84d]">
-                    💳 Deposit Logs
-                  </div>
-                  <div className="text-[11px] text-[#7eb89a] mt-0.5">
-                    bKash Gateway Verify
-                  </div>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setActiveModal('bonus_record')}
-                  className="bg-[#0d3d2c] border border-white/10 rounded-xl p-3 text-left cursor-pointer hover:border-[#f0c030]/40 transition-colors"
-                >
-                  <div className="text-xs font-extrabold text-[#ffd84d]">
-                    🎁 Bonus &amp; Gifts
-                  </div>
-                  <div className="text-[11px] text-[#7eb89a] mt-0.5">
-                    Claim daily rewards
-                  </div>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setActiveModal('withdraw_record')}
-                  className="bg-[#0d3d2c] border border-white/10 rounded-xl p-3 text-left cursor-pointer hover:border-[#f0c030]/40 transition-colors"
-                >
-                  <div className="text-xs font-extrabold text-[#ffd84d]">
-                    🏦 Withdrawals
-                  </div>
-                  <div className="text-[11px] text-[#7eb89a] mt-0.5">
-                    Cashout records
-                  </div>
-                </button>
-              </section>
+              </div>
 
-              {/* PARTNER & LIVE CHAT SECTION */}
-              <div className="px-3 py-3 flex gap-3">
+              {/* PARTNER (/refer) & BONUS VAULT (/bonus) BUTTONS */}
+              <div className="px-3 py-2 flex gap-3">
                 <button
                   type="button"
-                  onClick={() => setActiveModal('invite')}
+                  onClick={() => navigateToView('refer_page', '/refer')}
                   className="flex-1 py-3.5 px-2.5 rounded-[10px] text-center text-sm font-extrabold text-[#ffd84d] cursor-pointer border border-white/15 border-b-2 border-b-white/25 shadow-[0_4px_0_#040f09]"
                   style={{
                     background:
                       'linear-gradient(135deg, #1a3a2e 0%, #0d2a1e 100%)',
                   }}
                 >
-                  🤝 Partner &amp; Invite
+                  🤝 Partner &amp; Refer (/refer)
                 </button>
                 <button
                   type="button"
-                  onClick={() => setActiveModal('support')}
+                  onClick={() => navigateToView('bonus_page', '/bonus')}
                   className="flex-1 py-3.5 px-2.5 rounded-[10px] text-center text-sm font-extrabold text-[#ffd84d] cursor-pointer border border-white/15 border-b-2 border-b-white/25 shadow-[0_4px_0_#040f09]"
                   style={{
                     background:
                       'linear-gradient(135deg, #1a4a35 0%, #0d3524 100%)',
                   }}
                 >
-                  💬 Live Chat 24/7
+                  🔐 Bonus Vault (/bonus)
                 </button>
               </div>
 
-              {/* GAME CENTER PILLS */}
+              {/* GAME CENTER & DEDICATED PAGE ROUTES PILLS */}
               <div className="px-3 pt-2 pb-4">
                 <div className="text-base font-extrabold text-[#ffd84d] mb-2.5">
-                  MONEYX Game Center
+                  MONEYX Dedicated Pages &amp; Game Center
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {[
                     {
-                      label: '📲 Install MONEYX App (+৳150)',
+                      label: '📲 Install MONEYX App',
                       action: () => setPwaModalOpen(true),
                     },
                     {
-                      label: 'Binary Trading (+96%)',
-                      action: () => setActiveView('binary'),
+                      label: '🤝 Refer Page (/refer)',
+                      action: () => navigateToView('refer_page', '/refer'),
                     },
                     {
-                      label: 'WinGo 30s Live',
-                      action: () => setActiveView('trading'),
+                      label: '🔐 Bonus Vault (/bonus)',
+                      action: () => navigateToView('bonus_page', '/bonus'),
                     },
                     {
-                      label: 'SuperAce Slot (JILI)',
-                      action: () => {
-                        setSelectedSlotGame({
-                          name: 'Super Ace',
-                          provider: 'JILI',
-                          category: 'slots',
-                        });
-                        setActiveView('slot_game');
-                      },
+                      label: '📝 Register (/register)',
+                      action: () =>
+                        navigateToView('register', '/register', true),
                     },
                     {
-                      label: '✈️ Aviator Crash Live',
-                      action: () => {
-                        setSelectedSlotGame({
-                          name: 'Aviator',
-                          provider: 'SPRIBE',
-                          category: 'crash',
-                        });
-                        setActiveView('slot_game');
-                      },
+                      label: '🔑 Login (/login)',
+                      action: () => navigateToView('login', '/login', true),
                     },
                     {
-                      label: '🦈 Mega Fishing Shooter',
-                      action: () => {
-                        setSelectedSlotGame({
-                          name: 'Mega Fishing',
-                          provider: 'JILI FISHING',
-                          category: 'fishing',
-                        });
-                        setActiveView('slot_game');
-                      },
-                    },
-                    {
-                      label: '🎡 Crazy Time Live Casino',
-                      action: () => {
-                        setSelectedSlotGame({
-                          name: 'Crazy Time A',
-                          provider: 'EVOLUTION',
-                          category: 'live',
-                        });
-                        setActiveView('slot_game');
-                      },
-                    },
-                    {
-                      label: '🎲 Dice Bonanza 3D',
-                      action: () => {
-                        setSelectedSlotGame({
-                          name: 'Dice Bonanza',
-                          provider: 'BGAMING',
-                          category: 'dice',
-                        });
-                        setActiveView('slot_game');
-                      },
-                    },
-                    {
-                      label: 'Funds Management (Deposit)',
+                      label: '💳 Deposit (/deposit)',
                       action: () => handleOpenFundsPage('deposit'),
                     },
                     {
-                      label: 'Withdraw Money Page',
+                      label: '🏦 Withdraw (/withdraw)',
                       action: () => handleOpenFundsPage('withdraw'),
+                    },
+                    {
+                      label: '📈 Binary Trading (/binary)',
+                      action: () => navigateToView('binary', '/binary'),
+                    },
+                    {
+                      label: '🎱 WinGo 30s (/wingo)',
+                      action: () => navigateToView('trading', '/wingo'),
+                    },
+                    {
+                      label: '🐘 PHP & GitHub Files (/php-github)',
+                      action: () =>
+                        navigateToView('php_github_page', '/php-github', true),
                     },
                     {
                       label: '👑 Owner Kamran Admin (/owner_kamran-admin-panel)',
@@ -2342,7 +2725,7 @@ export default function App() {
                       key={pill.label}
                       type="button"
                       onClick={pill.action}
-                      className="py-2 px-4 rounded-lg text-xs font-bold text-[#13a36e] border border-[#0d7a55]/40 border-b-2 border-b-[#1ec882]/50 bg-[#0d7a55]/10 shadow-[0_3px_0_rgba(0,0,0,0.3)] cursor-pointer active:translate-y-0.5"
+                      className="py-2 px-3.5 rounded-lg text-xs font-bold text-[#13a36e] border border-[#0d7a55]/40 border-b-2 border-b-[#1ec882]/50 bg-[#0d7a55]/10 shadow-[0_3px_0_rgba(0,0,0,0.3)] cursor-pointer active:translate-y-0.5"
                     >
                       {pill.label}
                     </button>
@@ -2350,14 +2733,12 @@ export default function App() {
                 </div>
               </div>
 
-              {/* MONEYX COMBINED SECTIONS:
-                  Product Overview, Who We Are, Daily Challenge Leaderboard,
-                  Live Deposit/Withdraw Ticker, Service Speed Gauges & Rich Footer */}
+              {/* MONEYX COMBINED SECTIONS */}
               <NynoDollarCombinedFooterAndLiveSections
                 transactions={transactions}
                 onSelectCategory={(cat) => setActiveCategory(cat)}
-                onNavigateView={(v) => setActiveView(v)}
-                onOpenModal={(m) => setActiveModal(m)}
+                onNavigateView={(v) => navigateToView(v)}
+                onOpenModal={handleOpenModalWithAuth}
                 onOpenAdminPanel={handleOpenAdminPanel}
               />
             </div>
@@ -2365,16 +2746,13 @@ export default function App() {
         </div>
       )}
 
-      {/* ==================== VIEW 2: BINARY TRADING ==================== */}
+      {/* ==================== VIEW 2: BINARY TRADING (/binary) ==================== */}
       {activeView === 'binary' && (
         <BinaryTradingView
           balance={balance}
           isRefreshing={isRefreshing}
           onRefreshBalance={handleRefreshBalance}
-          onNavigateHome={() => {
-            setActiveView('home');
-            window.scrollTo(0, 0);
-          }}
+          onNavigateHome={() => navigateToView('home', '/')}
           onOpenRules={() => setActiveModal('rules_binary')}
           binaryTrades={binaryTrades}
           onPlaceBinaryTrade={handlePlaceBinaryTrade}
@@ -2384,16 +2762,13 @@ export default function App() {
         />
       )}
 
-      {/* ==================== VIEW 3: TRADING (WINGO 30S) ==================== */}
+      {/* ==================== VIEW 3: TRADING (WINGO 30S - /wingo) ==================== */}
       {activeView === 'trading' && (
         <WingoTradingView
           balance={balance}
           isRefreshing={isRefreshing}
           onRefreshBalance={handleRefreshBalance}
-          onNavigateHome={() => {
-            setActiveView('home');
-            window.scrollTo(0, 0);
-          }}
+          onNavigateHome={() => navigateToView('home', '/')}
           onOpenRules={() => setActiveModal('rules_wingo')}
           wingoHistory={wingoHistory}
           wingoBets={wingoBets}
@@ -2406,18 +2781,16 @@ export default function App() {
         />
       )}
 
-      {/* ==================== FLOATING DAILY FREE BONUS WIDGET ==================== */}
+      {/* ==================== FLOATING BONUS VAULT WIDGET ==================== */}
       <DailyBonusFloatingWidget
-        onClaimDailyBonus={() =>
-          handleClaimBonus('Daily Free Gift Bonus', 100)
-        }
+        onClaimDailyBonus={() => navigateToView('bonus_page', '/bonus')}
       />
 
       {/* ==================== PILL-STYLE BOTTOM NAVIGATION BAR ==================== */}
       <PillBottomNav
         activeView={activeView}
-        onNavigateView={(v) => setActiveView(v)}
-        onOpenModal={(m) => setActiveModal(m)}
+        onNavigateView={(v) => navigateToView(v)}
+        onOpenModal={handleOpenModalWithAuth}
       />
 
       {/* ==================== MODALS & POPUPS ==================== */}
@@ -2444,7 +2817,7 @@ export default function App() {
         }
         onDeposit={handleDeposit}
         onWithdraw={handleWithdraw}
-        onClaimBonus={handleClaimBonus}
+        onClaimBonus={handleAddLockedBonusVault}
         transactions={transactions}
         bonuses={bonuses}
         binaryTrades={binaryTrades}
@@ -2456,15 +2829,15 @@ export default function App() {
       {/* ==================== MONEYX PWA INSTALL MODAL ==================== */}
       <MoneyxPWAInstallModal
         isOpen={pwaModalOpen}
+        isLoggedIn={!!profile.isLoggedIn}
         onClose={() => setPwaModalOpen(false)}
-        onClaimInstallBonus={() =>
-          handleClaimBonus('MONEYX App Install Bonus', 150)
-        }
+        onNavigateBonusPage={() => navigateToView('bonus_page', '/bonus')}
+        onNavigateRegister={() => navigateToView('register', '/register', true)}
       />
 
       {/* Toast Notification */}
       {toastMsg && (
-        <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#071f18]/95 border border-[#f0c030]/50 text-[#ffd84d] py-3 px-5 rounded-full text-sm font-extrabold z-[9999] shadow-2xl whitespace-nowrap">
+        <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#071f18]/95 border border-[#f0c030]/50 text-[#ffd84d] py-3 px-5 rounded-full text-xs sm:text-sm font-extrabold z-[9999] shadow-2xl max-w-[92vw] text-center">
           {toastMsg}
         </div>
       )}

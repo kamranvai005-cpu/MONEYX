@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="bn">
+  <head>
+    <meta charset="utf-8" />
+    <title>MONEYX — Redirecting...</title>
+    <script>
+      // GitHub Pages SPA Router Support for /refer, /register, /login, /bonus, /owner_kamran-admin-panel
+      (function () {
+        var l = window.location;
+        sessionStorage.setItem('moneyx_gh_redirect', l.pathname + l.search + l.hash);
+        l.replace(l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') + '/');
+      })();
+    </script>
+  </head>
+  <body style="background:#071f18;color:#ffd84d;font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;">
+    Loading MONEYX...
+  </body>
+</html>

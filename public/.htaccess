@@ -1,0 +1,14 @@
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # Allow direct access to PHP API files and existing static assets
+  RewriteRule ^api\.php$ - [L]
+  RewriteRule ^config\.php$ - [L]
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # Route all SPA paths (/refer, /register, /login, /bonus, /vip, /owner_kamran-admin-panel, etc.) to index.html
+  RewriteRule . /index.html [L]
+</IfModule>
