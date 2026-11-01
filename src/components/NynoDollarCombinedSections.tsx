@@ -7,7 +7,13 @@ import { ActiveView, ModalType, TransactionRecord } from '../types';
 export const AppInstallTopBanner: React.FC<{
   onInstallClick: () => void;
 }> = ({ onInstallClick }) => {
-  const [visible, setVisible] = useState<boolean>(true);
+  const [visible, setVisible] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem('moneyx_app_installed_v1') !== 'true';
+    } catch {
+      return true;
+    }
+  });
   if (!visible) return null;
 
   return (
@@ -67,7 +73,7 @@ interface TactileSidebarProps {
   onNavigateView: (view: ActiveView) => void;
   onOpenModal: (modal: ModalType) => void;
   onOpenInstallModal: () => void;
-  onOpenAdminPanel: () => void;
+  onOpenAdminPanel?: () => void;
 }
 
 const SIDEBAR_3D_CARDS: Array<{
@@ -219,8 +225,16 @@ const SIDEBAR_3D_CARDS: Array<{
     label: 'Affiliate',
     faIcon: 'fa-solid fa-handshake',
     iconColor: '#db9c3f',
-    actionType: 'modal',
-    target: 'invite',
+    actionType: 'view',
+    target: 'refer_page',
+  },
+  {
+    id: 'sb-account',
+    label: 'Account Center',
+    faIcon: 'fa-solid fa-user-shield',
+    iconColor: '#1de9b6',
+    actionType: 'view',
+    target: 'account_page',
   },
 ];
 
@@ -232,7 +246,6 @@ export const TactileTwoColumnSidebar: React.FC<TactileSidebarProps> = ({
   onNavigateView,
   onOpenModal,
   onOpenInstallModal,
-  onOpenAdminPanel,
 }) => {
   const handleCardClick = (item: (typeof SIDEBAR_3D_CARDS)[number]) => {
     if (item.actionType === 'cat') {
@@ -323,7 +336,7 @@ export const TactileTwoColumnSidebar: React.FC<TactileSidebarProps> = ({
           })}
         </div>
 
-        {/* Language Flag & Admin Action Strip */}
+        {/* Language Flag Strip */}
         <div className="px-3.5 space-y-2.5">
           <div className="bg-[#093327] border border-white/10 rounded-xl p-2.5 flex items-center justify-between text-xs">
             <div className="flex items-center gap-2">
@@ -343,18 +356,6 @@ export const TactileTwoColumnSidebar: React.FC<TactileSidebarProps> = ({
             </div>
             <span className="text-[10px] font-bold text-[#ffd84d]">LIVE</span>
           </div>
-
-          <button
-            type="button"
-            onClick={() => {
-              onOpenAdminPanel();
-              onClose();
-            }}
-            className="w-full py-2.5 px-3 rounded-xl bg-amber-500/15 border border-[#f0c030]/40 text-[#ffd84d] text-xs font-extrabold cursor-pointer flex items-center justify-center gap-2"
-          >
-            <i className="fa-solid fa-crown" />
-            <span>Owner Kamran Admin</span>
-          </button>
         </div>
       </aside>
     </>
@@ -393,8 +394,9 @@ export const NynoBetDesktopMegaNav: React.FC<{
 
   const navLinks = [
     { id: 'ALL', labelBn: 'হোম', icon: 'fas fa-home' },
-    { id: 'REFER_PAGE', labelBn: 'রেফার (/refer)', icon: 'fas fa-user-plus' },
-    { id: 'BONUS_PAGE', labelBn: 'বোনাস ভল্ট (/bonus)', icon: 'fas fa-gift' },
+    { id: 'REFER_PAGE', labelBn: 'রেফার ও আয়', icon: 'fas fa-user-plus' },
+    { id: 'BONUS_PAGE', labelBn: 'বোনাস ভল্ট', icon: 'fas fa-gift' },
+    { id: 'ACCOUNT_PAGE', labelBn: 'অ্যাকাউন্ট', icon: 'fas fa-user-shield' },
     { id: 'sports', labelBn: 'খেলাধুলা', icon: 'fas fa-futbol' },
     { id: 'BINARY', labelBn: 'বাইনারি OTC', icon: 'fas fa-chart-line' },
     { id: 'WINGO', labelBn: 'উইনগো ৩০সে', icon: 'fas fa-bullseye' },
@@ -425,7 +427,7 @@ export const NynoBetDesktopMegaNav: React.FC<{
       setPoints((p) => p + 150);
       setWheelSpinning(false);
       setWheelWonText(
-        `🔐 অভিনন্দন! BDT ${wonAmt}.00 লকড বোনাস ভল্টে (/bonus) জমা হয়েছে (৩x টার্নওভার শেষে আনলক হবে)।`
+        `🔐 অভিনন্দন! BDT ${wonAmt}.00 লকড বোনাস ভল্টে জমা হয়েছে (৩x টার্নওভার শেষে আনলক হবে)।`
       );
       onClaimWheelReward('MONEYX Fortune Wheel Vault Prize', wonAmt);
     }, 1800);
@@ -451,6 +453,8 @@ export const NynoBetDesktopMegaNav: React.FC<{
                     onNavigateView('refer_page');
                   } else if (item.id === 'BONUS_PAGE') {
                     onNavigateView('bonus_page');
+                  } else if (item.id === 'ACCOUNT_PAGE') {
+                    onNavigateView('account_page');
                   } else {
                     onSelectCategory(item.id === 'hot' ? 'ALL' : item.id);
                   }
@@ -746,13 +750,12 @@ export const NynoDollarCombinedFooterAndLiveSections: React.FC<{
   onSelectCategory: (cat: string) => void;
   onNavigateView: (view: ActiveView) => void;
   onOpenModal: (modal: ModalType) => void;
-  onOpenAdminPanel: () => void;
+  onOpenAdminPanel?: () => void;
 }> = ({
   transactions,
   onSelectCategory,
   onNavigateView,
   onOpenModal,
-  onOpenAdminPanel,
 }) => {
   const [selectedOverviewTab, setSelectedOverviewTab] =
     useState<string>('live');
@@ -1424,13 +1427,9 @@ export const NynoDollarCombinedFooterAndLiveSections: React.FC<{
                 © 2026 MONEYX. All Rights Reserved. +18
               </div>
             </div>
-            <button
-              type="button"
-              onClick={onOpenAdminPanel}
-              className="px-3 py-1.5 rounded-lg bg-amber-500/15 border border-[#f0c030]/40 text-[#ffd84d] text-[10px] font-black uppercase cursor-pointer shrink-0 hover:bg-amber-500/25"
-            >
-              👑 Admin
-            </button>
+            <span className="px-2.5 py-1 rounded-lg bg-emerald-500/15 border border-emerald-400/30 text-emerald-300 text-[10px] font-black uppercase shrink-0">
+              SSL 256-BIT
+            </span>
           </div>
         </div>
       </footer>

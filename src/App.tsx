@@ -7,15 +7,13 @@ import {
   WithdrawMoneyView,
 } from './components/CompletePaymentAndWithdrawViews';
 import {
-  PROMO_PICTURES_CATALOG,
-  PhpGithubExportPageView,
+  MemberAccountCenterPageView,
   ProfessionalBonusVaultView,
   PromoPictureDetailPageView,
   ReferAndAffiliatePageView,
-  buildLongReferralRegisterLink,
+  buildLongOptionUrl,
 } from './components/DedicatedPagesView';
 import {
-  DailyBonusFloatingWidget,
   FundsManagementView,
   PillBottomNav,
 } from './components/FundsManagementView';
@@ -725,6 +723,7 @@ const VIEW_TO_PATH: Record<ActiveView, string> = {
   login: '/login',
   refer_page: '/refer',
   bonus_page: '/bonus',
+  account_page: '/account',
   vip_page: '/vip',
   deposit_page: '/deposit',
   withdraw_page: '/withdraw',
@@ -757,6 +756,9 @@ function resolveViewFromLocation(): {
   if (path.startsWith('/refer')) return { view: 'refer_page' };
   if (path.startsWith('/bonus') || path.startsWith('/promotion')) {
     return { view: 'bonus_page' };
+  }
+  if (path.startsWith('/account') || path.startsWith('/member')) {
+    return { view: 'account_page' };
   }
   if (path.startsWith('/deposit')) return { view: 'deposit_page' };
   if (path.startsWith('/withdraw')) return { view: 'withdraw_page' };
@@ -861,7 +863,21 @@ export default function App() {
     'history'
   );
   const [activeModal, setActiveModal] = useState<ModalType>(null);
-  const [pwaModalOpen, setPwaModalOpen] = useState<boolean>(false);
+  const [pwaModalOpen, setPwaModalOpen] = useState<boolean>(() => {
+    try {
+      const alreadyInstalled =
+        localStorage.getItem('moneyx_app_installed_v1') === 'true';
+      const alreadyPrompted =
+        sessionStorage.getItem('moneyx_first_open_prompted_v1') === 'true';
+      if (!alreadyInstalled && !alreadyPrompted) {
+        sessionStorage.setItem('moneyx_first_open_prompted_v1', 'true');
+        return true;
+      }
+      return false;
+    } catch {
+      return false;
+    }
+  });
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
 
@@ -1003,7 +1019,7 @@ export default function App() {
       minWithdraw: 200,
       maxWithdraw: 25000,
       announcementText:
-        'Welcome to MONEYX — রেজিস্ট্রেশন করলেই লকড ভল্টে ৳২০০ স্বাগতম বোনাস! বন্ধুদের আপনার দীর্ঘ রেফারেল লিংক (/refer) শেয়ার করে প্রতি ভেরিফাইড রেফারে পান ৳৫০০ BDT!',
+        'Welcome to MONEYX — বাংলাদেশের শীর্ষস্থানীয় এবং বিশ্বস্ত লাইভ ক্যাসিনো, স্পোর্টস বেটিং, JILI স্লট, ক্র্যাশ ও ফিশিং গেমিং প্ল্যাটফর্ম!',
       forcedWingoResult: null,
       adminPin: '2026',
     };
@@ -1011,6 +1027,68 @@ export default function App() {
 
   const triggerToast = (msg: string) => {
     setToastMsg(msg);
+  };
+
+  // Sync referred member's real deposit & turnover activity to the server
+  const syncReferralActivityToServer = (
+    depositDelta = 0,
+    turnoverDelta = 0
+  ) => {
+    if (!profile.isLoggedIn || !profile.uid) return;
+    fetch('/api/refer/sync-activity', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        uid: profile.uid,
+        mobile: profile.mobile,
+        depositDelta,
+        turnoverDelta,
+      }),
+    }).catch(() => {});
+  };
+
+  // Build long cryptographic URL path for each separate option page
+  const getLongPathForView = (
+    targetView: ActiveView,
+    customPath?: string
+  ): string => {
+    if (customPath && customPath.includes('?')) return customPath;
+    if (targetView === 'admin_panel') return '/owner_kamran-admin-panel';
+    if (targetView === 'home') return '/';
+
+    const optionMap: Partial<
+      Record<
+        ActiveView,
+        | 'refer'
+        | 'bonus'
+        | 'account'
+        | 'deposit'
+        | 'withdraw'
+        | 'register'
+        | 'login'
+        | 'vip'
+      >
+    > = {
+      refer_page: 'refer',
+      bonus_page: 'bonus',
+      account_page: 'account',
+      deposit_page: 'deposit',
+      withdraw_page: 'withdraw',
+      register: 'register',
+      login: 'login',
+      vip_page: 'vip',
+    };
+
+    const optKey = optionMap[targetView];
+    if (optKey && typeof window !== 'undefined') {
+      try {
+        const fullUrl = new URL(buildLongOptionUrl(optKey, profile));
+        return `${fullUrl.pathname}${fullUrl.search}`;
+      } catch {
+        // fallback below
+      }
+    }
+    return customPath || VIEW_TO_PATH[targetView] || '/';
   };
 
   // Push browser URL and navigate, enforcing the STRICT Auth Gate before registration/login!
@@ -1035,8 +1113,9 @@ export default function App() {
       triggerToast(
         '🔒 রেজিস্ট্রেশন ছাড়া ব্যালেন্স, গেম খেলা বা কোনো লেনদেন করা যাবে না! অনুগ্রহ করে প্রথমে রেজিস্ট্রেশন করুন।'
       );
+      const regPath = getLongPathForView('register');
       try {
-        window.history.pushState({}, '', '/register');
+        window.history.pushState({}, '', regPath);
       } catch {
         // ignore
       }
@@ -1045,9 +1124,9 @@ export default function App() {
       return;
     }
 
-    const nextUrl = customPath || VIEW_TO_PATH[targetView] || '/';
+    const nextUrl = getLongPathForView(targetView, customPath);
     try {
-      if (window.location.pathname !== nextUrl) {
+      if (window.location.pathname + window.location.search !== nextUrl) {
         window.history.pushState({}, '', nextUrl);
       }
     } catch {
@@ -1082,11 +1161,15 @@ export default function App() {
       return;
     }
     if (m === 'invite') {
-      navigateToView('refer_page', '/refer');
+      navigateToView('refer_page');
       return;
     }
     if (m === 'gifts') {
-      navigateToView('bonus_page', '/bonus');
+      navigateToView('bonus_page');
+      return;
+    }
+    if (m === 'wallet' || m === 'vip') {
+      navigateToView('account_page');
       return;
     }
     setActiveModal(m);
@@ -1295,6 +1378,7 @@ export default function App() {
     setBalance((prev) => Number((prev - totalAmount).toFixed(2)));
     setWingoBets((prev) => [newBet, ...prev]);
     setBetSheetOpen(false);
+    syncReferralActivityToServer(0, totalAmount);
     triggerToast(`Trade Placed: ${choice} (BDT ${totalAmount.toFixed(2)})`);
   };
 
@@ -1393,6 +1477,7 @@ export default function App() {
 
     setBalance((prev) => Number((prev - tradeInput.amount).toFixed(2)));
     setBinaryTrades((prev) => [newTrade, ...prev]);
+    syncReferralActivityToServer(0, tradeInput.amount);
     return true;
   };
 
@@ -1446,6 +1531,7 @@ export default function App() {
     };
     setTransactions((prev) => [rec, ...prev]);
     setBalance((prev) => Number((prev + amount).toFixed(2)));
+    syncReferralActivityToServer(amount, 0);
     triggerToast(`✓ Deposit BDT ${amount.toFixed(2)} Credited!`);
   };
 
@@ -1498,11 +1584,26 @@ export default function App() {
       ),
     }));
     triggerToast(
-      `🔐 +৳${amount} লকড বোনাস ভল্টে (/bonus) জমা হয়েছে! ডিপোজিট ও টার্নওভার শেষে আনলক হবে।`
+      `🔐 +৳${amount} লকড বোনাস ভল্টে জমা হয়েছে! ডিপোজিট ও টার্নওভার শেষে আনলক হবে।`
     );
   };
 
-  // Only used when 100% of deposit + turnover requirements are verified in /bonus or by Admin
+  const handleClaimRealReferralCommission = (amount: number) => {
+    const rec: TransactionRecord = {
+      id: `ref-comm-${Date.now()}`,
+      type: 'Deposit',
+      method: 'bKash',
+      amount,
+      account: profile.mobile || profile.uid,
+      trxId: `REF${Math.floor(100000 + Math.random() * 900000)}`,
+      status: 'Completed',
+      createdAt: new Date().toLocaleTimeString(),
+    };
+    setTransactions((prev) => [rec, ...prev]);
+    setBalance((prev) => Number((prev + amount).toFixed(2)));
+  };
+
+  // Only used when 100% of deposit + turnover requirements are verified in Bonus Vault or by Admin
   const handleUnlockVerifiedBonus = (title: string, amount: number) => {
     const bon: BonusRecord = {
       id: `bon-verified-${Date.now()}`,
@@ -1558,7 +1659,7 @@ export default function App() {
       };
       setBonuses((prev) => [welcomeBon, ...prev]);
       triggerToast(
-        '✓ রেজিস্ট্রেশন সফল! ৳২০০ স্বাগতম বোনাস আপনার লকড ভল্টে (/bonus) জমা হয়েছে।'
+        '✓ রেজিস্ট্রেশন সফল! ৳২০০ স্বাগতম বোনাস আপনার বোনাস ভল্টে জমা হয়েছে।'
       );
     } else {
       triggerToast(`✓ স্বাগতম! ${mobile} হিসেবে লগইন সম্পন্ন হয়েছে।`);
@@ -1675,7 +1776,7 @@ export default function App() {
     );
   }
 
-  // ==================== 3. DEDICATED /refer PAGE ====================
+  // ==================== 3. DEDICATED REFER PAGE ====================
   if (activeView === 'refer_page') {
     return (
       <>
@@ -1685,7 +1786,8 @@ export default function App() {
           transactions={transactions}
           onBackHome={() => navigateToView('home', '/')}
           onOpenPromoDetail={handleOpenPromoPicturePage}
-          onNavigateBonusVault={() => navigateToView('bonus_page', '/bonus')}
+          onNavigateBonusVault={() => navigateToView('bonus_page')}
+          onClaimRealReferralCommission={handleClaimRealReferralCommission}
           onShowToast={triggerToast}
         />
         <PillBottomNav
@@ -1702,7 +1804,7 @@ export default function App() {
     );
   }
 
-  // ==================== 4. DEDICATED /bonus PAGE (Professional Anti-Abuse Bonus Vault) ====================
+  // ==================== 4. DEDICATED BONUS VAULT PAGE ====================
   if (activeView === 'bonus_page') {
     return (
       <>
@@ -1716,7 +1818,7 @@ export default function App() {
           bonuses={bonuses}
           onBackHome={() => navigateToView('home', '/')}
           onNavigateDeposit={() => handleOpenFundsPage('deposit')}
-          onNavigateRefer={() => navigateToView('refer_page', '/refer')}
+          onNavigateRefer={() => navigateToView('refer_page')}
           onOpenPromoDetail={handleOpenPromoPicturePage}
           onUnlockVerifiedBonus={handleUnlockVerifiedBonus}
           onShowToast={triggerToast}
@@ -1735,19 +1837,36 @@ export default function App() {
     );
   }
 
-  // ==================== 5. DEDICATED /promo/:slug PICTURE DETAIL PAGE ====================
-  if (activeView === 'promo_detail') {
+  // ==================== 4B. DEDICATED STANDALONE MEMBER ACCOUNT CENTER ====================
+  if (activeView === 'account_page' || activeView === 'php_github_page') {
     return (
       <>
         <OfflineIndicator />
-        <PromoPictureDetailPageView
-          slug={activePromoSlug}
-          totalVerifiedDeposits={totalVerifiedDeposits}
-          totalRealTurnover={totalRealTurnover}
-          onBack={() => navigateToView('home', '/')}
+        <MemberAccountCenterPageView
+          profile={profile}
+          balance={balance}
+          transactions={transactions}
+          wingoBets={wingoBets}
+          binaryTrades={binaryTrades}
+          bonuses={bonuses}
+          savedWallets={savedWallets}
+          onUpdateProfile={(updates) =>
+            setProfile((prev) => ({ ...prev, ...updates }))
+          }
+          onAddWallet={(w) => {
+            const created: SavedWithdrawalWallet = {
+              ...w,
+              id: `w-${Date.now()}`,
+            };
+            setSavedWallets((prev) => [created, ...prev]);
+          }}
           onNavigateDeposit={() => handleOpenFundsPage('deposit')}
-          onNavigateRefer={() => navigateToView('refer_page', '/refer')}
-          onNavigateBonusVault={() => navigateToView('bonus_page', '/bonus')}
+          onNavigateWithdraw={() => handleOpenFundsPage('withdraw')}
+          onNavigateRefer={() => navigateToView('refer_page')}
+          onNavigateBonus={() => navigateToView('bonus_page')}
+          onBackHome={() => navigateToView('home', '/')}
+          onLogout={handleResetSession}
+          onShowToast={triggerToast}
         />
         <PillBottomNav
           activeView={activeView}
@@ -1763,14 +1882,24 @@ export default function App() {
     );
   }
 
-  // ==================== 6. DEDICATED /php-github PAGE ====================
-  if (activeView === 'php_github_page') {
+  // ==================== 5. DEDICATED PROMO PICTURE DETAIL PAGE ====================
+  if (activeView === 'promo_detail') {
     return (
       <>
         <OfflineIndicator />
-        <PhpGithubExportPageView
-          onBackHome={() => navigateToView('home', '/', true)}
-          onShowToast={triggerToast}
+        <PromoPictureDetailPageView
+          slug={activePromoSlug}
+          totalVerifiedDeposits={totalVerifiedDeposits}
+          totalRealTurnover={totalRealTurnover}
+          onBack={() => navigateToView('home', '/')}
+          onNavigateDeposit={() => handleOpenFundsPage('deposit')}
+          onNavigateRefer={() => navigateToView('refer_page')}
+          onNavigateBonusVault={() => navigateToView('bonus_page')}
+        />
+        <PillBottomNav
+          activeView={activeView}
+          onNavigateView={(v) => navigateToView(v)}
+          onOpenModal={handleOpenModalWithAuth}
         />
         {toastMsg && (
           <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#071f18]/95 border border-[#f0c030]/50 text-[#ffd84d] py-3 px-5 rounded-full text-sm font-extrabold z-[9999] shadow-2xl whitespace-nowrap">
@@ -1792,9 +1921,14 @@ export default function App() {
           gameCategory={selectedSlotGame.category}
           balance={balance}
           onBack={() => navigateToView('home', '/')}
-          onUpdateBalance={(delta) =>
-            setBalance((prev) => Math.max(0, Number((prev + delta).toFixed(2))))
-          }
+          onUpdateBalance={(delta) => {
+            if (delta < 0) {
+              syncReferralActivityToServer(0, Math.abs(delta));
+            }
+            setBalance((prev) =>
+              Math.max(0, Number((prev + delta).toFixed(2)))
+            );
+          }}
           onShowToast={triggerToast}
         />
         {toastMsg && (
@@ -1935,9 +2069,6 @@ export default function App() {
           onWithdraw={handleWithdraw}
           onClaimBonus={handleAddLockedBonusVault}
           onShowToast={triggerToast}
-        />
-        <DailyBonusFloatingWidget
-          onClaimDailyBonus={() => navigateToView('bonus_page', '/bonus')}
         />
         <PillBottomNav
           activeView={activeView}
@@ -2109,22 +2240,22 @@ export default function App() {
               <div className="text-xs text-[#e8f5ee]">
                 <b className="text-[#ffd84d]">🔒 মেম্বার ভেরিফিকেশন আবশ্যক:</b>{' '}
                 রেজিস্ট্রেশন বা লগইন করার আগে ব্যালেন্স, গেম খেলা, ডিপোজিট ও
-                রেফারেল সম্পূর্ণ লক করা আছে।
+                উত্তোলন সম্পূর্ণ লক করা আছে।
               </div>
               <div className="flex gap-2">
                 <button
                   type="button"
-                  onClick={() => navigateToView('register', '/register', true)}
+                  onClick={() => navigateToView('register', undefined, true)}
                   className="px-3 py-1.5 rounded-lg btn-3d-gold text-[11px] font-black cursor-pointer"
                 >
-                  রেজিস্ট্রেশন (/register)
+                  রেজিস্ট্রেশন
                 </button>
                 <button
                   type="button"
-                  onClick={() => navigateToView('login', '/login', true)}
+                  onClick={() => navigateToView('login', undefined, true)}
                   className="px-3 py-1.5 rounded-lg btn-3d-green text-[11px] font-black cursor-pointer"
                 >
-                  লগইন (/login)
+                  লগইন
                 </button>
               </div>
             </div>
@@ -2139,20 +2270,22 @@ export default function App() {
               onSelectCategory={(cat) => setActiveCategory(cat)}
               onNavigateView={(v) => navigateToView(v)}
               onOpenModal={handleOpenModalWithAuth}
-              onOpenAdminPanel={handleOpenAdminPanel}
               onOpenInstallModal={() => setPwaModalOpen(true)}
             />
 
-            {/* Main Lobby Content */}
+            {/* Main Lobby Content (PURE GAMES ON HOME SCREEN) */}
             <div className="flex-1 min-w-0">
-              {/* Promo Banner Slider -> Each Slide Opens Its Own Dedicated Page! */}
+              {/* Game Hero Slider */}
               <div className="pt-2.5 px-2.5 pb-1">
                 <div className="relative rounded-xl overflow-hidden h-[175px] sm:h-[210px] border border-[#f0c030]/25 shadow-lg">
                   {bannerSlide === 0 && (
                     <div
-                      onClick={() =>
-                        handleOpenPromoPicturePage('first-deposit-129')
-                      }
+                      onClick={() => {
+                        const superAce = GAME_CATALOG.find(
+                          (g) => g.slug === 'super-ace'
+                        );
+                        if (superAce) handleSelectGame(superAce);
+                      }}
                       className="w-full h-full p-5 flex items-center justify-between cursor-pointer relative overflow-hidden"
                       style={{
                         background:
@@ -2161,28 +2294,28 @@ export default function App() {
                     >
                       <div className="z-10 max-w-[68%]">
                         <div className="text-[11px] font-black uppercase tracking-widest text-[#ffd84d] mb-1">
-                          MONEYX EXCLUSIVE VAULT · /promo/first-deposit-129
+                          JILI OFFICIAL SLOTS · 1024 WAYS
                         </div>
                         <div className="text-xl sm:text-2xl font-black text-white leading-tight">
-                          প্রথম ডিপোজিটে ১২৯% বোনাস ভল্ট
+                          SUPER ACE &amp; FORTUNE GEMS
                           <span className="block text-[#ffd84d]">
-                            সর্বোচ্চ ৳২,৫৮০ পর্যন্ত!
+                            গোল্ডেন কার্ড ক্যাসকেড জ্যাকপট!
                           </span>
                         </div>
                         <div className="text-xs text-[#e8f5ee]/90 mt-1.5">
-                          পিকচারে ক্লিক করলে আলাদা পেজে শর্তাবলী ও ভল্ট ওপেন হবে
+                          সরাসরি ফুল-স্ক্রিন স্লট এবং ৫x মাল্টিপ্লায়ার রিল উপভোগ করুন
                         </div>
                         <span className="mt-3 inline-block btn-3d-gold px-4 py-1.5 rounded-lg text-xs font-black uppercase">
-                          বোনাস ভল্ট পেজ দেখুন ›
+                          এখনই খেলুন ›
                         </span>
                       </div>
                       <div className="text-right z-10 pr-2">
                         <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-[#071f18]/60 border border-[#f0c030]/40 flex flex-col items-center justify-center shadow-xl">
                           <span className="text-xl sm:text-2xl font-black text-[#ffd84d]">
-                            +129%
+                            🃏 ACE
                           </span>
                           <span className="text-[10px] font-bold text-[#7eb89a] mt-0.5">
-                            VAULT BDT
+                            1024 WAYS
                           </span>
                         </div>
                       </div>
@@ -2191,7 +2324,12 @@ export default function App() {
 
                   {bannerSlide === 1 && (
                     <div
-                      onClick={() => navigateToView('refer_page', '/refer')}
+                      onClick={() => {
+                        const aviator = GAME_CATALOG.find(
+                          (g) => g.slug === 'aviator'
+                        );
+                        if (aviator) handleSelectGame(aviator);
+                      }}
                       className="w-full h-full p-5 flex items-center justify-between cursor-pointer relative overflow-hidden"
                       style={{
                         background:
@@ -2200,28 +2338,28 @@ export default function App() {
                     >
                       <div className="z-10 max-w-[68%]">
                         <div className="text-[11px] font-black uppercase tracking-widest text-[#ffd84d] mb-1">
-                          MONEYX রেফার ও অ্যাফিলিয়েট · /refer
+                          SPRIBE &amp; EVOLUTION · LIVE ARENA
                         </div>
                         <div className="text-xl sm:text-2xl font-black text-white leading-tight">
-                          প্রতি ভেরিফাইড রেফারে পান
+                          AVIATOR CRASH &amp; CRAZY TIME
                           <span className="block text-[#ffd84d]">
-                            ৳৫০০ BDT + ২.৫% কমিশন!
+                            ১০০x মাল্টিপ্লায়ার লাইভ গেমিং!
                           </span>
                         </div>
                         <div className="text-xs text-[#e8f5ee]/90 mt-1.5">
-                          ক্লিক করে আপনার দীর্ঘ ডোমেইন রেফারেল লিংক (/refer) নিন
+                          তাৎক্ষণিক ক্যাশআউট এবং লাইভ ডিলার ক্যাসিনো টেবিল
                         </div>
                         <span className="mt-3 inline-block btn-3d-gold px-4 py-1.5 rounded-lg text-xs font-black uppercase">
-                          রেফার পেজ ওপেন করুন (/refer) ›
+                          গেম চালু করুন ›
                         </span>
                       </div>
                       <div className="z-10 pr-2">
                         <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-[#071f18]/70 border border-emerald-400/40 flex flex-col items-center justify-center">
                           <span className="text-2xl sm:text-3xl font-black text-emerald-400">
-                            ৳500
+                            ✈️
                           </span>
                           <span className="text-[10px] font-bold text-white mt-0.5">
-                            PER REFER
+                            100X CRASH
                           </span>
                         </div>
                       </div>
@@ -2230,7 +2368,7 @@ export default function App() {
 
                   {bannerSlide === 2 && (
                     <div
-                      onClick={() => navigateToView('bonus_page', '/bonus')}
+                      onClick={() => navigateToView('binary', '/binary')}
                       className="w-full h-full p-5 flex items-center justify-between cursor-pointer relative overflow-hidden"
                       style={{
                         background:
@@ -2239,28 +2377,28 @@ export default function App() {
                     >
                       <div className="z-10 max-w-[68%]">
                         <div className="text-[11px] font-black uppercase tracking-widest text-[#ffd84d] mb-1">
-                          প্রফেশনাল বোনাস ভল্ট রুম · /bonus
+                          MONEYX ORIGINAL · LIVE TRADING
                         </div>
                         <div className="text-xl sm:text-2xl font-black text-white leading-tight">
-                          লকড স্বাগতম ও ভিআইপি ভল্ট
+                          BINARY OTC +96% &amp; WINGO 30S
                           <span className="block text-[#ffd84d]">
-                            টার্নওভার ভেরিফাইড রিওয়ার্ড
+                            ৩০ সেকেন্ডে রিয়েল-টাইম ফলাফল
                           </span>
                         </div>
                         <div className="text-xs text-[#e8f5ee]/90 mt-1.5">
-                          ডিপোজিট ও বেটিং প্রগ্রেস পূর্ণ করে বোনাস আনলক করুন
+                          BTC/USDT চার্ট ট্রেডিং এবং নন-স্টপ কালার প্রেডিকশন
                         </div>
                         <span className="mt-3 inline-block btn-3d-green px-4 py-1.5 rounded-lg text-xs font-black uppercase">
-                          বোনাস ভল্টে যান (/bonus) ›
+                          ট্রেডিং শুরু করুন ›
                         </span>
                       </div>
                       <div className="z-10 pr-2">
                         <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-[#071f18]/75 border-2 border-[#ffd84d] flex flex-col items-center justify-center">
                           <span className="text-2xl font-black text-[#ffd84d]">
-                            🔐
+                            📈
                           </span>
                           <span className="text-[10px] font-bold text-white">
-                            VAULT
+                            +96% OTC
                           </span>
                         </div>
                       </div>
@@ -2285,15 +2423,15 @@ export default function App() {
                 </div>
               </div>
 
-              {/* DEPOSIT, WITHDRAW, REFER (/refer) & BONUS VAULT (/bonus) 3D ACTION BAR */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 px-2.5 pt-2.5 pb-1">
+              {/* QUICK GAME WALLET & ACCOUNT BAR (NO BONUS MENTIONS ON HOME) */}
+              <div className="grid grid-cols-3 gap-2 px-2.5 pt-2.5 pb-1">
                 <button
                   type="button"
                   onClick={() => handleOpenFundsPage('deposit')}
                   className="btn-3d-green flex items-center justify-center gap-1.5 py-3 px-2.5 rounded-[10px] text-xs sm:text-sm font-extrabold cursor-pointer"
                 >
                   <span>⊕</span>
-                  <span>Deposit (/deposit)</span>
+                  <span>ডিপোজিট</span>
                 </button>
                 <button
                   type="button"
@@ -2301,74 +2439,17 @@ export default function App() {
                   className="btn-3d-gold flex items-center justify-center gap-1.5 py-3 px-2.5 rounded-[10px] text-xs sm:text-sm font-extrabold cursor-pointer"
                 >
                   <span>⇧</span>
-                  <span>Withdraw (/withdraw)</span>
+                  <span>উত্তোলন</span>
                 </button>
                 <button
                   type="button"
-                  onClick={() => navigateToView('refer_page', '/refer')}
-                  className="bg-[#0d3d2c] border border-[#1ec882]/40 border-b-[3px] border-b-[#071f18] text-[#1de9b6] flex items-center justify-center gap-1.5 py-3 px-2.5 rounded-[10px] text-xs font-black cursor-pointer active:translate-y-0.5"
+                  onClick={() => navigateToView('account_page')}
+                  className="bg-[#0d3d2c] border border-[#1ec882]/40 border-b-[3px] border-b-[#071f18] text-[#1de9b6] flex items-center justify-center gap-1.5 py-3 px-2.5 rounded-[10px] text-xs sm:text-sm font-black cursor-pointer active:translate-y-0.5"
                 >
-                  <span>🤝</span>
-                  <span>Refer (/refer)</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => navigateToView('bonus_page', '/bonus')}
-                  className="bg-[#0d3d2c] border border-[#f0c030]/40 border-b-[3px] border-b-[#071f18] text-[#ffd84d] flex items-center justify-center gap-1.5 py-3 px-2.5 rounded-[10px] text-xs font-black cursor-pointer active:translate-y-0.5"
-                >
-                  <span>🔐</span>
-                  <span>Bonus Vault (/bonus)</span>
+                  <span>👤</span>
+                  <span>অ্যাকাউন্ট</span>
                 </button>
               </div>
-
-              {/* SEPARATE CLICKABLE PICTURE/PROMO ROOM CARDS (Clicking Each Opens Its Dedicated Page!) */}
-              <section className="px-2.5 pt-3 pb-1">
-                <div className="flex items-center justify-between mb-2">
-                  <div className="text-xs sm:text-sm font-black text-[#ffd84d] uppercase flex items-center gap-1.5">
-                    <span>🖼️</span>
-                    <span>
-                      প্রফেশনাল বোনাস রুম ও রেফারেল পিকচার (ক্লিক করলে আলাদা
-                      পেজ ওপেন হবে)
-                    </span>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => navigateToView('bonus_page', '/bonus')}
-                    className="btn-see-all-gold cursor-pointer"
-                  >
-                    All Vaults (/bonus)
-                  </button>
-                </div>
-
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                  {PROMO_PICTURES_CATALOG.slice(0, 3).map((promo) => (
-                    <div
-                      key={promo.slug}
-                      onClick={() => handleOpenPromoPicturePage(promo.slug)}
-                      className={`rounded-xl p-3 bg-gradient-to-br ${promo.gradient} border border-[#f0c030]/35 cursor-pointer hover:scale-[1.01] transition-transform flex flex-col justify-between min-h-[112px] shadow-md`}
-                    >
-                      <div className="flex items-center justify-between">
-                        <span className="px-2 py-0.5 rounded bg-black/45 text-[9px] font-black text-[#ffd84d]">
-                          {promo.badge}
-                        </span>
-                        <span className="text-lg">{promo.icon}</span>
-                      </div>
-                      <div className="my-1">
-                        <div className="text-xs font-black text-white line-clamp-1">
-                          {promo.titleBn}
-                        </div>
-                        <div className="text-[10px] text-[#ffd84d] font-bold">
-                          {promo.rewardText}
-                        </div>
-                      </div>
-                      <div className="text-[9.5px] font-bold text-[#1de9b6] flex items-center justify-between pt-1 border-t border-white/10">
-                        <span>🔒 শর্তসাপেক্ষ ভল্ট</span>
-                        <span>ওপেন পেজ ›</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </section>
 
               {/* CATEGORY NAVIGATION BAR */}
               <nav className="pt-3 px-2.5 overflow-x-auto whitespace-nowrap no-scrollbar">
@@ -2431,7 +2512,7 @@ export default function App() {
                           OTC PRO · +96%
                         </span>
                         <span className="text-xs text-emerald-400 font-bold">
-                          ● /binary
+                          ● LIVE
                         </span>
                       </div>
                       <div className="text-base font-black text-white">
@@ -2457,7 +2538,7 @@ export default function App() {
                           WINGO · 30 SEC
                         </span>
                         <span className="text-xs text-[#ffd84d] font-bold">
-                          ● /wingo
+                          ● LIVE
                         </span>
                       </div>
                       <div className="text-base font-black text-white">
@@ -2622,124 +2703,12 @@ export default function App() {
                   );
                 })}
 
-              {/* LONG DOMAIN REFERRAL LINK PREVIEW STRIP ON HOME */}
-              <div className="mx-2.5 my-3 rounded-2xl bg-[#0a2e22] border border-[#1ec882]/35 p-3.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                <div className="min-w-0 flex-1">
-                  <div className="text-xs font-black text-[#ffd84d] flex items-center gap-1.5">
-                    <span>🔗 আপনার দীর্ঘ ডোমেইন রেফারেল লিংক (/refer):</span>
-                  </div>
-                  <div className="text-[10.5px] font-mono text-[#1de9b6] truncate mt-1">
-                    {buildLongReferralRegisterLink(profile)}
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => navigateToView('refer_page', '/refer')}
-                  className="px-4 py-2 rounded-xl btn-3d-gold text-xs font-black whitespace-nowrap cursor-pointer shrink-0"
-                >
-                  রেফার পেজ ওপেন করুন (/refer) ›
-                </button>
-              </div>
-
-              {/* PARTNER (/refer) & BONUS VAULT (/bonus) BUTTONS */}
-              <div className="px-3 py-2 flex gap-3">
-                <button
-                  type="button"
-                  onClick={() => navigateToView('refer_page', '/refer')}
-                  className="flex-1 py-3.5 px-2.5 rounded-[10px] text-center text-sm font-extrabold text-[#ffd84d] cursor-pointer border border-white/15 border-b-2 border-b-white/25 shadow-[0_4px_0_#040f09]"
-                  style={{
-                    background:
-                      'linear-gradient(135deg, #1a3a2e 0%, #0d2a1e 100%)',
-                  }}
-                >
-                  🤝 Partner &amp; Refer (/refer)
-                </button>
-                <button
-                  type="button"
-                  onClick={() => navigateToView('bonus_page', '/bonus')}
-                  className="flex-1 py-3.5 px-2.5 rounded-[10px] text-center text-sm font-extrabold text-[#ffd84d] cursor-pointer border border-white/15 border-b-2 border-b-white/25 shadow-[0_4px_0_#040f09]"
-                  style={{
-                    background:
-                      'linear-gradient(135deg, #1a4a35 0%, #0d3524 100%)',
-                  }}
-                >
-                  🔐 Bonus Vault (/bonus)
-                </button>
-              </div>
-
-              {/* GAME CENTER & DEDICATED PAGE ROUTES PILLS */}
-              <div className="px-3 pt-2 pb-4">
-                <div className="text-base font-extrabold text-[#ffd84d] mb-2.5">
-                  MONEYX Dedicated Pages &amp; Game Center
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {[
-                    {
-                      label: '📲 Install MONEYX App',
-                      action: () => setPwaModalOpen(true),
-                    },
-                    {
-                      label: '🤝 Refer Page (/refer)',
-                      action: () => navigateToView('refer_page', '/refer'),
-                    },
-                    {
-                      label: '🔐 Bonus Vault (/bonus)',
-                      action: () => navigateToView('bonus_page', '/bonus'),
-                    },
-                    {
-                      label: '📝 Register (/register)',
-                      action: () =>
-                        navigateToView('register', '/register', true),
-                    },
-                    {
-                      label: '🔑 Login (/login)',
-                      action: () => navigateToView('login', '/login', true),
-                    },
-                    {
-                      label: '💳 Deposit (/deposit)',
-                      action: () => handleOpenFundsPage('deposit'),
-                    },
-                    {
-                      label: '🏦 Withdraw (/withdraw)',
-                      action: () => handleOpenFundsPage('withdraw'),
-                    },
-                    {
-                      label: '📈 Binary Trading (/binary)',
-                      action: () => navigateToView('binary', '/binary'),
-                    },
-                    {
-                      label: '🎱 WinGo 30s (/wingo)',
-                      action: () => navigateToView('trading', '/wingo'),
-                    },
-                    {
-                      label: '🐘 PHP & GitHub Files (/php-github)',
-                      action: () =>
-                        navigateToView('php_github_page', '/php-github', true),
-                    },
-                    {
-                      label: '👑 Owner Kamran Admin (/owner_kamran-admin-panel)',
-                      action: handleOpenAdminPanel,
-                    },
-                  ].map((pill) => (
-                    <button
-                      key={pill.label}
-                      type="button"
-                      onClick={pill.action}
-                      className="py-2 px-3.5 rounded-lg text-xs font-bold text-[#13a36e] border border-[#0d7a55]/40 border-b-2 border-b-[#1ec882]/50 bg-[#0d7a55]/10 shadow-[0_3px_0_rgba(0,0,0,0.3)] cursor-pointer active:translate-y-0.5"
-                    >
-                      {pill.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
               {/* MONEYX COMBINED SECTIONS */}
               <NynoDollarCombinedFooterAndLiveSections
                 transactions={transactions}
                 onSelectCategory={(cat) => setActiveCategory(cat)}
                 onNavigateView={(v) => navigateToView(v)}
                 onOpenModal={handleOpenModalWithAuth}
-                onOpenAdminPanel={handleOpenAdminPanel}
               />
             </div>
           </div>
@@ -2780,11 +2749,6 @@ export default function App() {
           forcedResult={adminSettings.forcedWingoResult}
         />
       )}
-
-      {/* ==================== FLOATING BONUS VAULT WIDGET ==================== */}
-      <DailyBonusFloatingWidget
-        onClaimDailyBonus={() => navigateToView('bonus_page', '/bonus')}
-      />
 
       {/* ==================== PILL-STYLE BOTTOM NAVIGATION BAR ==================== */}
       <PillBottomNav
@@ -2831,8 +2795,9 @@ export default function App() {
         isOpen={pwaModalOpen}
         isLoggedIn={!!profile.isLoggedIn}
         onClose={() => setPwaModalOpen(false)}
-        onNavigateBonusPage={() => navigateToView('bonus_page', '/bonus')}
-        onNavigateRegister={() => navigateToView('register', '/register', true)}
+        onInstalledSuccess={() =>
+          triggerToast('✓ MONEYX অফিশিয়াল অ্যাপ সফলভাবে ইনস্টল হয়েছে!')
+        }
       />
 
       {/* Toast Notification */}

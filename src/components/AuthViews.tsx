@@ -27,19 +27,33 @@ export const AuthViews: React.FC<AuthViewsProps> = ({
   const [termsAccepted, setTermsAccepted] = useState<boolean>(true);
   const [promosAccepted, setPromosAccepted] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState<boolean>(false);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
       const refParam =
         params.get('ref') ||
+        params.get('partner') ||
         params.get('referral') ||
         localStorage.getItem('moneyx_referred_by') ||
         '';
       const tokenParam = params.get('invite_token') || '';
       if (refParam) {
-        setReferralCode(refParam);
-        localStorage.setItem('moneyx_referred_by', refParam);
+        const cleanRef = refParam.toUpperCase().replace(/[^A-Z0-9]/g, '');
+        setReferralCode(cleanRef);
+        localStorage.setItem('moneyx_referred_by', cleanRef);
+
+        // Track real referral click on backend once per browser session
+        const trackedKey = `moneyx_click_tracked_${cleanRef}`;
+        if (!sessionStorage.getItem(trackedKey)) {
+          sessionStorage.setItem(trackedKey, '1');
+          fetch('/api/refer/track-click', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ refCode: cleanRef }),
+          }).catch(() => {});
+        }
       }
       if (tokenParam) {
         setInviteToken(tokenParam);
@@ -52,7 +66,7 @@ export const AuthViews: React.FC<AuthViewsProps> = ({
     setMobile(digitsOnly);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg(null);
 
@@ -72,25 +86,33 @@ export const AuthViews: React.FC<AuthViewsProps> = ({
         return;
       }
       if (!termsAccepted) {
-        setErrorMsg('অনুগ্রহ করে Terms & Conditions গ্রহণ করুন।');
+        setErrorMsg('অনুগ্রহ করে শর্তাবলী গ্রহণ করুন।');
+        return;
       }
     }
 
-    onSuccessAuth(
-      mobile,
-      mode === 'register',
-      referralCode.trim() || undefined
-    );
-  };
+    setSubmitting(true);
+    const cleanRef = referralCode.trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
 
-  const currentUrlPath =
-    typeof window !== 'undefined'
-      ? window.location.origin +
-        (mode === 'register' ? '/register' : '/login') +
-        window.location.search
-      : mode === 'register'
-        ? '/register'
-        : '/login';
+    if (mode === 'register') {
+      try {
+        await fetch('/api/refer/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            mobile,
+            uid: mobile.slice(-6),
+            refCode: cleanRef,
+          }),
+        });
+      } catch {
+        // continue local registration if offline
+      }
+    }
+
+    setSubmitting(false);
+    onSuccessAuth(mobile, mode === 'register', cleanRef || undefined);
+  };
 
   return (
     <div
@@ -102,7 +124,7 @@ export const AuthViews: React.FC<AuthViewsProps> = ({
       }}
     >
       <div className="w-full max-w-[460px] mx-auto p-5 min-h-screen flex flex-col relative">
-        {/* Top Bar with Back Button & Current Route Badge */}
+        {/* Top Bar with Back Button */}
         <div className="flex items-center justify-between mt-2">
           <button
             type="button"
@@ -122,20 +144,20 @@ export const AuthViews: React.FC<AuthViewsProps> = ({
             >
               <polyline points="15 18 9 12 15 6" />
             </svg>
-            <span className="text-xs font-bold text-[#7eb89a]">Home</span>
+            <span className="text-xs font-bold text-[#7eb89a]">ফিরে যান</span>
           </button>
 
-          <span className="px-2.5 py-1 rounded-full bg-black/35 border border-white/10 text-[10px] font-mono text-[#1de9b6] truncate max-w-[230px]">
-            {currentUrlPath}
+          <span className="px-2.5 py-1 rounded-full bg-black/35 border border-white/10 text-[10px] font-bold text-[#1de9b6]">
+            🔒 SSL 256-Bit Encrypted
           </span>
         </div>
 
         {/* MONEYX Logo */}
-        <div className="flex items-center justify-center gap-2.5 mt-4">
+        <div className="flex items-center justify-center gap-3 mt-4">
           <img
             src="/icon.svg"
             alt="MONEYX"
-            className="w-11 h-11 rounded-xl border border-[#ffcc00]/50 shadow-lg"
+            className="w-12 h-12 rounded-2xl border border-[#ffcc00]/50 shadow-lg"
           />
           <div
             className="text-center text-[34px] font-black italic text-[#ffcc00] tracking-[1.5px] select-none"
@@ -154,16 +176,14 @@ export const AuthViews: React.FC<AuthViewsProps> = ({
             🔒 অফিশিয়াল মেম্বার ভেরিফিকেশন গেট
           </div>
           <div className="text-[11px] text-[#7eb89a] mt-0.5 leading-snug">
-            রেজিস্ট্রেশন বা লগইন করার আগে কোনো গেম খেলা, ব্যালেন্স দেখা, ডিপোজিট
-            বা বোনাস ক্লেইম করা সম্পূর্ণ লক করা আছে।
+            রেজিস্ট্রেশন বা লগইন করার আগে কোনো গেম খেলা, ব্যালেন্স দেখা বা
+            লেনদেন করা সম্পূর্ণ লক করা আছে।
           </div>
         </div>
 
         {/* Page Title */}
         <div className="text-center text-[#ffcc00] text-2xl font-bold mt-4">
-          {mode === 'register'
-            ? 'Official Member Registration'
-            : 'Member Login'}
+          {mode === 'register' ? 'নতুন অ্যাকাউন্ট রেজিস্ট্রেশন' : 'মেম্বার লগইন'}
         </div>
 
         {/* Switch Link */}
@@ -179,7 +199,7 @@ export const AuthViews: React.FC<AuthViewsProps> = ({
                 }}
                 className="text-[#1de9b6] underline font-bold cursor-pointer"
               >
-                Login (/login)
+                লগইন করুন
               </button>
             </>
           ) : (
@@ -193,7 +213,7 @@ export const AuthViews: React.FC<AuthViewsProps> = ({
                 }}
                 className="text-[#1de9b6] underline font-bold cursor-pointer"
               >
-                Register (/register)
+                রেজিস্ট্রেশন করুন
               </button>
             </>
           )}
@@ -203,14 +223,14 @@ export const AuthViews: React.FC<AuthViewsProps> = ({
         {mode === 'register' && (referralCode || inviteToken) && (
           <div className="bg-emerald-500/15 border border-emerald-400/40 rounded-xl p-3 mb-4 text-xs">
             <div className="flex items-center justify-between font-black text-[#1de9b6]">
-              <span>🤝 রেফারেল ইনভাইট লিংক ভেরিফাইড</span>
+              <span>🤝 ভেরিফাইড রেফারেল ইনভাইট সংযুক্ত</span>
               <span className="px-2 py-0.5 rounded bg-[#ffcc00] text-black text-[10px]">
                 {referralCode || 'VIP-PARTNER'}
               </span>
             </div>
             {inviteToken && (
               <div className="text-[10px] font-mono text-[#7eb89a] truncate mt-1">
-                Token: {inviteToken}
+                সিকিউরিটি সিগনেচার: {inviteToken}
               </div>
             )}
           </div>
@@ -233,7 +253,7 @@ export const AuthViews: React.FC<AuthViewsProps> = ({
               type="tel"
               value={mobile}
               onChange={handleMobileChange}
-              placeholder="Bangladesh (+880): 01XXXXXXXXX"
+              placeholder="মোবাইল নাম্বার (+880): 01XXXXXXXXX"
               required
               minLength={11}
               maxLength={11}
@@ -251,7 +271,7 @@ export const AuthViews: React.FC<AuthViewsProps> = ({
               type={showPass1 ? 'text' : 'password'}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Password (কমপক্ষে ৪ অক্ষর)"
+              placeholder="পাসওয়ার্ড (কমপক্ষে ৪ অক্ষর)"
               required
               className="w-full bg-[#021e18] border border-[#094a3e] focus:border-[#1de9b6] rounded-[10px] py-4 px-12 text-white text-sm placeholder-[#1de9b6] placeholder:font-medium transition-colors"
             />
@@ -278,7 +298,7 @@ export const AuthViews: React.FC<AuthViewsProps> = ({
                   type={showPass2 ? 'text' : 'password'}
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  placeholder="Confirm password"
+                  placeholder="পুনরায় পাসওয়ার্ড দিন"
                   required
                   className="w-full bg-[#021e18] border border-[#094a3e] focus:border-[#1de9b6] rounded-[10px] py-4 px-12 text-white text-sm placeholder-[#1de9b6] placeholder:font-medium transition-colors"
                 />
@@ -304,7 +324,7 @@ export const AuthViews: React.FC<AuthViewsProps> = ({
                   type="text"
                   value={referralCode}
                   onChange={(e) => setReferralCode(e.target.value)}
-                  placeholder="Referral / Invite Code (ঐচ্ছিক, যেমন: MX883921VIP)"
+                  placeholder="রেফারেল কোড (যেমন: MX883921VIP)"
                   className="w-full bg-[#021e18] border border-[#094a3e] focus:border-[#ffcc00] rounded-[10px] py-3.5 pr-4 pl-12 text-[#ffcc00] text-xs font-mono placeholder-[#7eb89a] transition-colors"
                 />
               </div>
@@ -330,8 +350,8 @@ export const AuthViews: React.FC<AuthViewsProps> = ({
                   )}
                 </div>
                 <div className="text-[11px] text-white leading-[1.4]">
-                  আমার বয়স ১৮ বছরের বেশি এবং আমি MONEYX-এর সকল নিয়মাবলী, বোনাস
-                  টার্নওভার শর্তাবলী ও বেটিং রুলস মেনে নিচ্ছি।
+                  আমার বয়স ১৮ বছরের বেশি এবং আমি সকল নিয়মাবলী ও শর্তাবলী মেনে
+                  নিচ্ছি।
                 </div>
               </div>
 
@@ -351,8 +371,7 @@ export const AuthViews: React.FC<AuthViewsProps> = ({
                   )}
                 </div>
                 <div className="text-[11px] text-white leading-[1.4]">
-                  আমি ভিআইপি প্রমোশন, রেফারেল রিওয়ার্ড ও ভল্ট বোনাস নোটিফিকেশন
-                  পেতে চাই।
+                  আমি ভিআইপি আপডেট ও বিশেষ অফার পেতে সম্মত আছি।
                 </div>
               </div>
             </>
@@ -361,15 +380,18 @@ export const AuthViews: React.FC<AuthViewsProps> = ({
           {/* 3D Gold-Orange Register / Login Button */}
           <button
             type="submit"
+            disabled={submitting}
             className="w-full rounded-lg py-3.5 text-lg font-black text-[#8c2800] cursor-pointer mt-2 mb-5 active:translate-y-1 transition-all border border-white/40"
             style={{
               background: 'linear-gradient(180deg, #ffdf00 0%, #ff9d00 100%)',
               boxShadow: '0 4px 0px #c57300, 0 6px 10px rgba(0,0,0,0.3)',
             }}
           >
-            {mode === 'register'
-              ? '✓ রেজিস্ট্রেশন সম্পন্ন করুন'
-              : '✓ লগইন করুন'}
+            {submitting
+              ? 'ভেরিফাই হচ্ছে...'
+              : mode === 'register'
+                ? '✓ রেজিস্ট্রেশন সম্পন্ন করুন'
+                : '✓ লগইন করুন'}
           </button>
         </form>
       </div>

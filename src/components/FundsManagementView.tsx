@@ -978,11 +978,26 @@ export const PillBottomNav: React.FC<{
         {/* 5. Member / Account */}
         <button
           type="button"
-          onClick={() => onOpenModal('wallet')}
-          className="flex flex-col items-center justify-center gap-0.5 flex-1 py-1.5 text-[#3db88a] hover:text-[#f5c518] cursor-pointer transition-colors"
+          onClick={() => {
+            onNavigateView('account_page');
+            window.scrollTo(0, 0);
+          }}
+          className={`flex flex-col items-center justify-center gap-0.5 flex-1 py-1.5 cursor-pointer transition-colors ${
+            activeView === 'account_page'
+              ? 'text-[#f5c518]'
+              : 'text-[#3db88a] hover:text-[#f5c518]'
+          }`}
         >
           <span className="text-lg leading-none">👤</span>
-          <span className="text-[10px] font-bold">Member</span>
+          <span
+            className={`text-[10px] font-bold ${
+              activeView === 'account_page'
+                ? 'border-b-2 border-[#f5c518] pb-[1px]'
+                : ''
+            }`}
+          >
+            Account
+          </span>
         </button>
       </div>
     </nav>

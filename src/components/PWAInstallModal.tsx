@@ -5,7 +5,8 @@ interface BeforeInstallPromptEvent extends Event {
   userChoice: Promise<{ outcome: 'accepted' | 'dismissed'; platform: string }>;
 }
 
-// Keep a global reference in case beforeinstallprompt fires before modal mounts
+const APP_INSTALLED_KEY = 'moneyx_app_installed_v1';
+
 let globalDeferredPrompt: BeforeInstallPromptEvent | null = null;
 if (typeof window !== 'undefined') {
   window.addEventListener('beforeinstallprompt', (e: Event) => {
@@ -17,16 +18,28 @@ if (typeof window !== 'undefined') {
 export function usePWAInstall() {
   const [deferredPrompt, setDeferredPrompt] =
     useState<BeforeInstallPromptEvent | null>(() => globalDeferredPrompt);
-  const [isInstalled, setIsInstalled] = useState(false);
+  const [isInstalled, setIsInstalled] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return false;
+    const standalone =
+      window.matchMedia('(display-mode: standalone)').matches ||
+      (window.navigator as unknown as { standalone?: boolean }).standalone ===
+        true;
+    const savedInstalled =
+      localStorage.getItem(APP_INSTALLED_KEY) === 'true';
+    return standalone || savedInstalled;
+  });
   const [isIOS, setIsIOS] = useState(false);
   const [isInIframe, setIsInIframe] = useState(false);
 
   useEffect(() => {
-    const isStandalone =
+    const standalone =
       window.matchMedia('(display-mode: standalone)').matches ||
       (window.navigator as unknown as { standalone?: boolean }).standalone ===
         true;
-    setIsInstalled(isStandalone);
+    if (standalone) {
+      localStorage.setItem(APP_INSTALLED_KEY, 'true');
+      setIsInstalled(true);
+    }
 
     try {
       setIsInIframe(window.self !== window.top);
@@ -44,6 +57,7 @@ export function usePWAInstall() {
     };
 
     const handleAppInstalled = () => {
+      localStorage.setItem(APP_INSTALLED_KEY, 'true');
       setIsInstalled(true);
       globalDeferredPrompt = null;
       setDeferredPrompt(null);
@@ -61,13 +75,18 @@ export function usePWAInstall() {
     };
   }, []);
 
+  const markInstalledPermanently = () => {
+    localStorage.setItem(APP_INSTALLED_KEY, 'true');
+    setIsInstalled(true);
+  };
+
   const install = async () => {
     const promptEvent = deferredPrompt || globalDeferredPrompt;
     if (!promptEvent) return false;
     await promptEvent.prompt();
     const { outcome } = await promptEvent.userChoice;
     if (outcome === 'accepted') {
-      setIsInstalled(true);
+      markInstalledPermanently();
       globalDeferredPrompt = null;
       setDeferredPrompt(null);
       return true;
@@ -81,6 +100,7 @@ export function usePWAInstall() {
     isIOS,
     isInIframe,
     install,
+    markInstalledPermanently,
   };
 }
 
@@ -121,20 +141,19 @@ export const MoneyxPWAInstallModal: React.FC<{
   isOpen: boolean;
   isLoggedIn: boolean;
   onClose: () => void;
-  onNavigateBonusPage: () => void;
-  onNavigateRegister: () => void;
-}> = ({
-  isOpen,
-  isLoggedIn,
-  onClose,
-  onNavigateBonusPage,
-  onNavigateRegister,
-}) => {
-  const { isInstallable, isInstalled, isIOS, isInIframe, install } =
-    usePWAInstall();
+  onInstalledSuccess: () => void;
+}> = ({ isOpen, onClose, onInstalledSuccess }) => {
+  const {
+    isInstallable,
+    isInstalled,
+    isIOS,
+    isInIframe,
+    install,
+    markInstalledPermanently,
+  } = usePWAInstall();
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
 
-  if (!isOpen) return null;
+  if (!isOpen || isInstalled) return null;
 
   const currentOriginUrl =
     typeof window !== 'undefined' ? window.location.origin : '';
@@ -143,14 +162,13 @@ export const MoneyxPWAInstallModal: React.FC<{
     if (isInstallable) {
       const accepted = await install();
       if (accepted) {
-        setStatusMessage(
-          '✓ MONEYX অ্যাপটি আপনার ডিভাইসে সফলভাবে ইনস্টল হয়েছে!'
-        );
+        onInstalledSuccess();
+        onClose();
       }
       return;
     }
 
-    // Download a standalone WebApp Launcher package for the user's device + show native browser instructions
+    // Download standalone WebApp package & mark as installed so it never nags again
     const launcherHtml = `<!DOCTYPE html>
 <html lang="bn">
 <head>
@@ -164,7 +182,7 @@ export const MoneyxPWAInstallModal: React.FC<{
 </head>
 <body>
 <h2>MONEYX OFFICIAL APP</h2>
-<p>Launching MONEYX Secure Server...</p>
+<p>Connecting to MONEYX Secure Server...</p>
 <script>window.location.replace("${currentOriginUrl}");</script>
 </body>
 </html>`;
@@ -178,9 +196,12 @@ export const MoneyxPWAInstallModal: React.FC<{
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
 
-    setStatusMessage(
-      '📲 ব্রাউজারের উপরে ডানপাশের ⋮ (Three Dots) মেনু থেকে "Install app" বা "Add to Home screen"-এ ট্যাপ করে হোমস্ক্রিনে ইনস্টল সম্পন্ন করুন!'
-    );
+    markInstalledPermanently();
+    setStatusMessage('✓ অ্যাপ ইনস্টল সম্পন্ন হয়েছে!');
+    onInstalledSuccess();
+    setTimeout(() => {
+      onClose();
+    }, 900);
   };
 
   return (
@@ -190,7 +211,7 @@ export const MoneyxPWAInstallModal: React.FC<{
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-[430px] rounded-3xl bg-[#0a2e22] border-2 border-[#f0c030]/40 p-6 text-white shadow-2xl relative overflow-hidden"
+        className="w-full max-w-[420px] rounded-3xl bg-[#0a2e22] border-2 border-[#f0c030]/40 p-6 text-white shadow-2xl relative overflow-hidden"
       >
         <button
           type="button"
@@ -204,115 +225,84 @@ export const MoneyxPWAInstallModal: React.FC<{
           <img
             src="/icon.svg"
             alt="MONEYX App"
-            className="w-16 h-16 rounded-2xl shadow-lg border border-[#ffd84d]/40"
+            className="w-16 h-16 rounded-2xl shadow-lg border border-[#ffd84d]/50"
           />
           <div>
             <div className="text-xl font-black italic text-[#ffd84d] tracking-wider">
               MONEY<span className="text-white">X</span> OFFICIAL APP
             </div>
             <div className="text-xs text-[#1de9b6] font-bold">
-              Native PWA &amp; Android WebAPK Installer
+              Android &amp; iOS Official Casino &amp; Trading App
             </div>
             <div className="text-[11px] text-[#ffd84d] mt-0.5">
-              ★★★★★ 4.9 · Verified Security · v2.5 PRO
+              ★★★★★ 4.9 · Fast &amp; Secure · v2.5 PRO
             </div>
           </div>
         </div>
 
         <div className="bg-[#071f18] border border-white/10 rounded-2xl p-3.5 text-xs text-[#7eb89a] space-y-2 mb-4">
           <div className="flex items-center justify-between">
-            <span>📲 স্ট্যান্ডঅ্যালোন ফুল-স্ক্রিন অ্যাপ মোড</span>
-            <span className="text-emerald-400 font-bold">✓ Active</span>
+            <span>📲 ১-ক্লিকে সুপার ফাস্ট গেম লোডিং</span>
+            <span className="text-emerald-400 font-bold">✓ Ready</span>
           </div>
           <div className="flex items-center justify-between">
-            <span>🔒 বায়োমেট্রিক সিকিউরিটি ও ফাস্ট লোডিং</span>
+            <span>🔒 বায়োমেট্রিক ও পিন সিকিউরিটি</span>
             <span className="text-emerald-400 font-bold">✓ Verified</span>
           </div>
           <div className="flex items-center justify-between">
-            <span>🎁 অ্যাপ ইনস্টল বোনাস (শর্তসাপেক্ষ ভল্ট)</span>
-            <span className="text-[#ffd84d] font-black">🔒 ৳১৫০ ভল্ট</span>
+            <span>⚡ তাৎক্ষণিক বিকাশ ও নগদ পেমেন্ট</span>
+            <span className="text-[#ffd84d] font-black">২ মিনিট</span>
           </div>
         </div>
 
-        {/* Notice if inside preview iframe */}
-        {isInIframe && !isInstalled && (
+        {isInIframe && (
           <div className="bg-emerald-500/15 border border-emerald-400/40 rounded-xl p-3 text-xs text-emerald-200 mb-3.5 leading-relaxed">
-            <div className="font-black text-[#ffd84d] mb-1">
-              💡 সরাসরি মোবাইল/ক্রোমে রিয়েল ইনস্টল করতে:
-            </div>
-            আপনি বর্তমানে প্রিভিউ ফ্রেমে আছেন। নিচের{' '}
-            <b>&ldquo;নতুন ট্যাবে ওপেন করে ইনস্টল করুন&rdquo;</b> বাটনে ক্লিক
-            করলে আপনার মূল ব্রাউজারে সরাসরি <b>Install MONEYX App</b> অপশন চলে
-            আসবে!
             <a
               href={currentOriginUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-2.5 w-full py-2.5 rounded-lg bg-[#13a36e] hover:bg-[#0d7a55] text-white font-black text-center block shadow-md"
+              onClick={() => {
+                markInstalledPermanently();
+                onInstalledSuccess();
+              }}
+              className="w-full py-2.5 rounded-lg bg-[#13a36e] hover:bg-[#0d7a55] text-white font-black text-center block shadow-md"
             >
-              ↗ নতুন ট্যাবে ওপেন করে সরাসরি ইনস্টল করুন
+              ↗ মূল ব্রাউজারে ওপেন করে সরাসরি ইনস্টল করুন
             </a>
           </div>
         )}
 
         {isIOS && (
           <div className="bg-amber-500/10 border border-amber-400/30 rounded-xl p-3 text-xs text-amber-200 mb-4 leading-relaxed">
-            <b>iPhone / iPad (Safari):</b> নিচের <b>Share (⬆️)</b> বাটনে ট্যাপ
-            করে <b>&ldquo;Add to Home Screen&rdquo;</b> সিলেক্ট করলে সত্যিকারের
-            MONEYX অ্যাপ হোমস্ক্রিনে ইনস্টল হয়ে যাবে।
+            <b>iPhone / iPad:</b> Safari-এর <b>Share</b> বাটনে ট্যাপ করে{' '}
+            <b>&ldquo;Add to Home Screen&rdquo;</b> নির্বাচন করুন।
           </div>
         )}
 
         {statusMessage && (
-          <div className="bg-[#071f18] border border-[#ffd84d]/40 rounded-xl p-3 text-xs text-[#ffd84d] font-bold mb-3.5 leading-relaxed">
+          <div className="bg-[#071f18] border border-[#ffd84d]/40 rounded-xl p-3 text-xs text-[#ffd84d] font-bold mb-3.5 text-center">
             {statusMessage}
           </div>
         )}
 
-        {isInstalled ? (
-          <div className="text-center space-y-3">
-            <div className="py-2.5 px-3 rounded-xl bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 text-xs font-black">
-              ✓ MONEYX অ্যাপটি আপনার ডিভাইসে ইনস্টল করা আছে!
-            </div>
-            <button
-              type="button"
-              onClick={onClose}
-              className="w-full py-3 rounded-xl btn-3d-gold text-xs font-black uppercase cursor-pointer"
-            >
-              অ্যাপে ফিরে যান
-            </button>
-          </div>
-        ) : (
-          <div className="space-y-2.5">
-            <button
-              type="button"
-              onClick={handleNativeInstall}
-              className="w-full py-3.5 rounded-xl btn-3d-gold text-sm font-black uppercase cursor-pointer flex items-center justify-center gap-2"
-            >
-              <i className="fa-solid fa-download" />
-              <span>
-                {isInstallable
-                  ? 'এখনই সত্যিকারের অ্যাপ ইনস্টল করুন (Native Install)'
-                  : 'ডাউনলোড ও ইনস্টল করুন (MONEYX App)'}
-              </span>
-            </button>
+        <div className="space-y-2">
+          <button
+            type="button"
+            onClick={handleNativeInstall}
+            className="w-full py-3.5 rounded-xl btn-3d-gold text-sm font-black uppercase cursor-pointer flex items-center justify-center gap-2"
+          >
+            <i className="fa-solid fa-download" />
+            <span>এখনই অ্যাপ ইনস্টল করুন</span>
+          </button>
 
-            <button
-              type="button"
-              onClick={() => {
-                onClose();
-                if (!isLoggedIn) {
-                  onNavigateRegister();
-                } else {
-                  onNavigateBonusPage();
-                }
-              }}
-              className="w-full py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/15 text-xs font-bold text-[#7eb89a] cursor-pointer"
-            >
-              🔒 ইনস্টল বোনাস শর্তাবলী ও ভল্ট দেখুন (/bonus)
-            </button>
-          </div>
-        )}
+          <button
+            type="button"
+            onClick={onClose}
+            className="w-full py-2 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-bold text-[#7eb89a] cursor-pointer"
+          >
+            পরে করব
+          </button>
+        </div>
       </div>
     </div>
   );

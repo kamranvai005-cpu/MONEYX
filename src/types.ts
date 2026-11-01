@@ -10,6 +10,7 @@ export type ActiveView =
   | 'login'
   | 'refer_page'
   | 'bonus_page'
+  | 'account_page'
   | 'vip_page'
   | 'promo_detail'
   | 'php_github_page'
@@ -58,6 +59,12 @@ export interface UserProfile {
   nickname: string;
   uid: string;
   mobile?: string;
+  email?: string;
+  nidNumber?: string;
+  kycStatus?: 'Unverified' | 'Pending' | 'Verified';
+  twoFactorEnabled?: boolean;
+  biometricEnabled?: boolean;
+  txPin?: string;
   isLoggedIn?: boolean;
   referredBy?: string;
   referralToken?: string;

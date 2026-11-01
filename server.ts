@@ -287,6 +287,269 @@ async function startServer() {
     }
   });
 
+  // ============================================================================
+  // 7. REAL PERSISTENT REFERRAL & MULTI-TIER COMMISSION ENGINE
+  // ============================================================================
+  const fs = await import('fs');
+  const liveDbPath = path.join(__dirname, 'moneyx_live_db.json');
+
+  interface ReferredMemberRecord {
+    uid: string;
+    mobile: string;
+    mobileMasked: string;
+    depositTotal: number;
+    turnoverTotal: number;
+    commissionEarned: number;
+    isVerified: boolean;
+    joinedAt: string;
+  }
+
+  interface LiveDatabaseSchema {
+    refClicks: Record<string, number>;
+    referrals: Record<string, ReferredMemberRecord[]>;
+    userReferredBy: Record<string, string>;
+    claimedCommissions: Record<string, number>;
+  }
+
+  const loadLiveDb = (): LiveDatabaseSchema => {
+    try {
+      if (fs.existsSync(liveDbPath)) {
+        return JSON.parse(fs.readFileSync(liveDbPath, 'utf-8'));
+      }
+    } catch {
+      // fallback
+    }
+    return {
+      refClicks: {},
+      referrals: {},
+      userReferredBy: {},
+      claimedCommissions: {},
+    };
+  };
+
+  const saveLiveDb = (db: LiveDatabaseSchema) => {
+    try {
+      fs.writeFileSync(liveDbPath, JSON.stringify(db, null, 2), 'utf-8');
+    } catch {
+      // ignore write errors
+    }
+  };
+
+  // Track real click on referral link
+  app.post('/api/refer/track-click', (req, res) => {
+    const rawRef = String(req.body?.refCode || '')
+      .toUpperCase()
+      .replace(/[^A-Z0-9]/g, '');
+    if (!rawRef) {
+      res.json({ status: 'ignored' });
+      return;
+    }
+    const db = loadLiveDb();
+    db.refClicks[rawRef] = (db.refClicks[rawRef] || 0) + 1;
+    saveLiveDb(db);
+    res.json({
+      status: 'ok',
+      refCode: rawRef,
+      clicks: db.refClicks[rawRef],
+    });
+  });
+
+  // Register a real referred user under referrer's code
+  app.post('/api/refer/register', (req, res) => {
+    const mobile = String(req.body?.mobile || '').replace(/[^0-9]/g, '');
+    const uid = String(req.body?.uid || mobile.slice(-6) || '883921');
+    const refCode = String(req.body?.refCode || '')
+      .toUpperCase()
+      .replace(/[^A-Z0-9]/g, '');
+    const ownRefCode = `MX${uid}VIP`;
+
+    const db = loadLiveDb();
+    if (refCode && refCode !== ownRefCode) {
+      if (!db.referrals[refCode]) {
+        db.referrals[refCode] = [];
+      }
+      const alreadyExists = db.referrals[refCode].some(
+        (m) => m.mobile === mobile || m.uid === uid
+      );
+      if (!alreadyExists) {
+        const masked =
+          mobile.length >= 7
+            ? `${mobile.slice(0, 4)}****${mobile.slice(-3)}`
+            : mobile;
+        db.referrals[refCode].push({
+          uid,
+          mobile,
+          mobileMasked: masked,
+          depositTotal: 0,
+          turnoverTotal: 0,
+          commissionEarned: 0,
+          isVerified: false,
+          joinedAt: new Date().toLocaleString('en-GB', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+          }),
+        });
+        db.userReferredBy[uid] = refCode;
+        saveLiveDb(db);
+      }
+    }
+    res.json({ status: 'ok', uid, referredBy: refCode });
+  });
+
+  // Sync a user's real deposits & betting turnover so their referrer gets real commission
+  app.post('/api/refer/sync-activity', (req, res) => {
+    const uid = String(req.body?.uid || '');
+    const mobile = String(req.body?.mobile || '');
+    const referredBy = String(req.body?.referredBy || '')
+      .toUpperCase()
+      .replace(/[^A-Z0-9]/g, '');
+    const depositTotal = Number(req.body?.depositTotal || 0);
+    const turnoverTotal = Number(req.body?.turnoverTotal || 0);
+
+    const db = loadLiveDb();
+    const targetRef = referredBy || db.userReferredBy[uid] || '';
+
+    if (targetRef) {
+      if (!db.referrals[targetRef]) {
+        db.referrals[targetRef] = [];
+      }
+      let member = db.referrals[targetRef].find(
+        (m) => m.uid === uid || (mobile && m.mobile === mobile)
+      );
+      if (!member && mobile) {
+        const masked =
+          mobile.length >= 7
+            ? `${mobile.slice(0, 4)}****${mobile.slice(-3)}`
+            : mobile;
+        member = {
+          uid,
+          mobile,
+          mobileMasked: masked,
+          depositTotal: 0,
+          turnoverTotal: 0,
+          commissionEarned: 0,
+          isVerified: false,
+          joinedAt: new Date().toLocaleString('en-GB', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+          }),
+        };
+        db.referrals[targetRef].push(member);
+      }
+      if (member) {
+        member.depositTotal = Math.max(member.depositTotal, depositTotal);
+        member.turnoverTotal = Math.max(member.turnoverTotal, turnoverTotal);
+        member.isVerified =
+          member.depositTotal >= 1000 && member.turnoverTotal >= 3000;
+        member.commissionEarned = Number(
+          (
+            member.depositTotal * 0.025 +
+            (member.isVerified ? 500 : 0)
+          ).toFixed(2)
+        );
+        saveLiveDb(db);
+      }
+    }
+    res.json({ status: 'ok' });
+  });
+
+  // Get real-time referral stats for a user
+  app.get('/api/refer/stats/:uid', (req, res) => {
+    const uid = String(req.params.uid || '883921').replace(/[^a-zA-Z0-9]/g, '');
+    const refCode = `MX${uid}VIP`;
+    const db = loadLiveDb();
+
+    const clicks = db.refClicks[refCode] || 0;
+    const members = db.referrals[refCode] || [];
+
+    let verifiedCount = 0;
+    let lockedBonus = 0;
+    let totalEarned = 0;
+
+    for (const m of members) {
+      const verified = m.depositTotal >= 1000 && m.turnoverTotal >= 3000;
+      m.isVerified = verified;
+      const comm = Number(
+        (m.depositTotal * 0.025 + (verified ? 500 : 0)).toFixed(2)
+      );
+      m.commissionEarned = comm;
+      if (verified) {
+        verifiedCount += 1;
+        totalEarned += comm;
+      } else {
+        lockedBonus += 500;
+        totalEarned += Number((m.depositTotal * 0.025).toFixed(2));
+      }
+    }
+
+    const alreadyClaimed = db.claimedCommissions[refCode] || 0;
+    const claimableCommission = Math.max(
+      0,
+      Number((totalEarned - alreadyClaimed).toFixed(2))
+    );
+
+    res.json({
+      status: 'ok',
+      uid,
+      refCode,
+      clicks,
+      totalInvited: members.length,
+      verifiedCount,
+      lockedBonus,
+      claimableCommission,
+      totalClaimed: alreadyClaimed,
+      members: [...members].reverse(),
+    });
+  });
+
+  // Claim unlocked referral commission
+  app.post('/api/refer/claim-commission', (req, res) => {
+    const uid = String(req.body?.uid || '').replace(/[^a-zA-Z0-9]/g, '');
+    const refCode = `MX${uid}VIP`;
+    const db = loadLiveDb();
+    const members = db.referrals[refCode] || [];
+
+    let totalEarned = 0;
+    for (const m of members) {
+      const verified = m.depositTotal >= 1000 && m.turnoverTotal >= 3000;
+      totalEarned += Number(
+        (m.depositTotal * 0.025 + (verified ? 500 : 0)).toFixed(2)
+      );
+    }
+
+    const alreadyClaimed = db.claimedCommissions[refCode] || 0;
+    const claimable = Math.max(
+      0,
+      Number((totalEarned - alreadyClaimed).toFixed(2))
+    );
+
+    if (claimable <= 0) {
+      res.status(400).json({
+        status: 'error',
+        message:
+          'আপনার এখনও কোনো আনলকড রেফারেল কমিশন জমা হয়নি! আমন্ত্রিত বন্ধুকে ন্যূনতম ৳১,০০০ ডিপোজিট ও ৩x টার্নওভার সম্পন্ন করতে হবে।',
+      });
+      return;
+    }
+
+    db.claimedCommissions[refCode] = Number(
+      (alreadyClaimed + claimable).toFixed(2)
+    );
+    saveLiveDb(db);
+
+    res.json({
+      status: 'ok',
+      claimedAmount: claimable,
+      totalClaimed: db.claimedCommissions[refCode],
+    });
+  });
+
   const { createServer: createHttpServer } = await import('http');
   const httpServer = createHttpServer(app);
 
